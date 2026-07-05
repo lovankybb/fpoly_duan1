@@ -114,10 +114,6 @@
     </style>
 </head>
 <body>
-<div>
-    <%@include file="fragments/header.jsp" %>
-</div>
-
 
 <div>
     <div class="register-container">
