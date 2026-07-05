@@ -161,7 +161,7 @@
         <div class="footer-column">
             <h4>Khám phá</h4>
             <ul>
-                <li><a href="${pageContext.request.contextPath}/collections">Bộ sưu tập</a></li>
+                <li><a href="${pageContext.request.contextPath}/shop">Bộ sưu tập</a></li>
                 <li><a href="${pageContext.request.contextPath}/about">Về chúng tôi</a></li>
                 <li><a href="${pageContext.request.contextPath}/blog">Tạp chí</a></li>
             </ul>

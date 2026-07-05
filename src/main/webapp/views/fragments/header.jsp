@@ -122,8 +122,9 @@
         <nav class="header-nav">
             <ul>
                 <li><a href="${pageContext.request.contextPath}/">Trang chủ</a></li>
-                <li><a href="${pageContext.request.contextPath}/shop">Cửa hàng</a></li>
+                <li><a href="${pageContext.request.contextPath}/products">Cửa hàng</a></li>
                 <li><a href="${pageContext.request.contextPath}/about">Về chúng tôi</a></li>
+                <li><a href="${pageContext.request.contextPath}/contact">Liên hệ</a></li>
                 <c:if test="${authentication.roles.contains('ADMIN')}">
                     <li><a href="${pageContext.request.contextPath}/admin">Quản lý</a></li>
                 </c:if>

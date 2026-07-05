@@ -74,8 +74,6 @@
 <body>
 
 
-<%@include file="fragments/header.jsp" %>
-
 <main>
     <div class="error-container">
         <div class="error-code">${errorCode}</div>
@@ -87,7 +85,7 @@
             </div>
         </div>
 
-        <a href="${pageContext.request.contextPath}/home" class="btn-home">Quay về Trang chủ</a>
+        <a href="${pageContext.request.contextPath}/" class="btn-home">Quay về Trang chủ</a>
     </div>
 </main>
 
