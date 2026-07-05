@@ -15,6 +15,12 @@
         <maven.compiler.target>8</maven.compiler.target>
         <maven.compiler.source>8</maven.compiler.source>
         <junit.version>5.13.2</junit.version>
+        <sqlserver.version>12.6.1.jre11</sqlserver.version>
+        <lombok.version>1.18.46</lombok.version>
+        <jstl.version>2.0.0</jstl.version>
+        <jbcrypt.version>0.4</jbcrypt.version>
+        <nimbus.version>10.9.1</nimbus.version>
+        <lettuce.version>6.3.2.RELEASE</lettuce.version>
     </properties>
 
     <dependencies>
@@ -36,6 +42,45 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>${sqlserver.version}</version>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/com.nimbusds/nimbus-jose-jwt -->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>${nimbus.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+
+        <!-- Source: https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+
+        <!-- Source: https://mvnrepository.com/artifact/jstl/jstl -->
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+            <version>${jstl.version}</version> <!-- Hoặc 3.0.0, 3.0.1... -->
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version> ${jbcrypt.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -44,6 +89,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>15</source>
+                    <target>15</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

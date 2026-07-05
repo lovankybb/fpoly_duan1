@@ -1,0 +1,217 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #fcfcfd;
+    color: #1a1a1a;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Tiêu đề trang */
+.page-header {
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+/* Bố cục 2 cột: Grid Layout */
+.profile-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr; /* Cột trái 320px, cột phải chiếm phần còn lại */
+    gap: 30px;
+}
+
+/* CARD CHUNG */
+.card {
+    background-color: #fff;
+    border-radius: 16px;
+    border: 1px solid #eaeaea;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+/* --- CỘT TRÁI: THÔNG TIN TÀI KHOẢN --- */
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    background-color: #f1f3f5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px auto;
+    color: #888;
+}
+
+.user-info {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.user-info h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.user-info p {
+    font-size: 14px;
+    color: #666;
+}
+
+.user-role {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 12px;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.profile-menu {
+    list-style: none;
+    border-top: 1px solid #eaeaea;
+    padding-top: 20px;
+}
+
+.profile-menu li {
+    margin-bottom: 15px;
+}
+
+.profile-menu a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #1a1a1a;
+    font-weight: 500;
+    font-size: 15px;
+    transition: color 0.2s;
+}
+
+.profile-menu a:hover {
+    color: #3498db;
+}
+
+.btn-logout {
+    color: #e74c3c !important;
+    margin-top: 20px;
+}
+
+/* --- CỘT PHẢI: LỊCH SỬ MUA HÀNG --- */
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 15px;
+}
+
+.order-item {
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.order-item:hover {
+    border-color: #ccc;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.order-id {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.order-date {
+    color: #888;
+}
+
+/* Trạng thái đơn hàng */
+.status {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status.completed {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status.pending {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+
+.status.canceled {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.order-body {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.order-img {
+    width: 60px;
+    height: 60px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    object-fit: contain;
+    padding: 5px;
+}
+
+.order-product-info {
+    flex: 1;
+}
+
+.order-product-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.order-qty {
+    font-size: 13px;
+    color: #666;
+}
+
+.order-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+}
