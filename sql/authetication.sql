@@ -97,3 +97,11 @@ SELECT r.* FROM roles r
 JOIN users_roles ur ON r.id = ur.role_id 
 JOIN users u ON ur.user_id = u.id
 WHERE u.username = 'lovanky'; // Dừng xử lý logic phía dưới
+
+
+create table categories(
+    id INT PRIMARY KEY IDENTITY(1,1),
+    name VARCHAR(255) NOT NULL,
+    description NVARCHAR(255)
+)
+
