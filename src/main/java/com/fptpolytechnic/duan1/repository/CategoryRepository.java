@@ -10,4 +10,5 @@ public class CategoryRepository {
     public List<Category> findAll() {
         return null;
     }
+    public Category create(){return null;}
 }
