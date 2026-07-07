@@ -31,8 +31,9 @@
             padding: 40px;
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Đổ bóng mịn */
-            width: 100%;
+            width: 400px;
             max-width: 400px;
+
             box-sizing: border-box;
         }
 

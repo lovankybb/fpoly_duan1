@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <title>Quản lý Danh mục - Admin Atelier Mobile</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="/styles/category.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/styles/category.css" rel="stylesheet">
 </head>
 <body>
 
