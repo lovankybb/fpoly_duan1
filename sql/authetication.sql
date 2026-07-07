@@ -101,7 +101,49 @@ WHERE u.username = 'lovanky'; // Dừng xử lý logic phía dưới
 
 create table categories(
     id INT PRIMARY KEY IDENTITY(1,1),
-    name VARCHAR(255) NOT NULL,
+    name NVARCHAR(255) NOT NULL,
     description NVARCHAR(255)
 )
 
+
+
+create table products(
+    id INT PRIMARY KEY IDENTITY(1,1),
+    name NVARCHAR(255) NOT NULL,
+    description NVARCHAR(255),
+    price DECIMAL(10, 2) NOT NULL,
+    sale_price DECIMAL(10, 2),
+    status NVARCHAR(50) NOT NULL,
+    category_id INT,
+    brand_id INT,
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME DEFAULT GETDATE()
+    -- FOREIGN KEY (category_id) REFERENCES categories(id)
+    -- FOREIGN KEY (brand_id) REFERENCES brands(id)
+)
+
+drop table if exists product_images;
+drop table if exists products;
+
+
+
+create table product_images(
+    id INT PRIMARY KEY IDENTITY(1,1),
+    product_id INT NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES products(id)
+)
+
+
+INSERT INTO products (name, description, price, sale_price, status, category_id, brand_id) VALUES
+(N'Product 1', N'Description for Product 1', 100.00, 90.00, N'Đang bán', 1, 1),
+(N'Product 2', N'Description for Product 2', 150.00, NULL, N'inactive', 2, 2),
+(N'Product 3', N'Description for Product 3', 200.00, 180.00, N'active', 1, 1);
+
+
+select * from products;
+select * from product_images;
+
+select * from products
+order by created_at desc
+offset 0 rows fetch next 10 rows only;
