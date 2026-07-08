@@ -8,7 +8,7 @@
     <title>Quản lý Phiên bản - Admin Atelier Mobile</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-   <link href="/styles/version.css" rel="stylesheet" >
+   <link href="${pageContext.request.contextPath}/styles/version.css" rel="stylesheet" >
 </head>
 <body>
 

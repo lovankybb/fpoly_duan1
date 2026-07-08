@@ -30,7 +30,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Tên danh mục</th>
-                    <th>Trạng thái</th>
+
                     <th>Thao tác</th>
                 </tr>
                 </thead>
@@ -39,12 +39,7 @@
                     <tr>
                         <td>#${cat.id}</td>
                         <td><strong>${cat.name}</strong></td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${cat.status == 1}"><span class="badge active">Đang hiển thị</span></c:when>
-                                <c:otherwise><span class="badge hidden">Đang ẩn</span></c:otherwise>
-                            </c:choose>
-                        </td>
+
                         <td>
                             <a href="${pageContext.request.contextPath}/admin/categories?editId=${cat.id}" class="btn-action btn-edit">Sửa</a>
                             <a href="${pageContext.request.contextPath}/admin/category/delete?id=${cat.id}" class="btn-action btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">Xóa</a>
@@ -82,13 +77,7 @@
                     <input type="text" id="name" name="name" value="${editCategory.name}" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="status">Trạng thái</label>
-                    <select id="status" name="status">
-                        <option value="1" ${editCategory.status == 1 ? 'selected' : ''}>Đang hoạt động</option>
-                        <option value="0" ${editCategory.status == 0 ? 'selected' : ''}>Tạm ẩn</option>
-                    </select>
-                </div>
+
 
                 <div class="form-group">
                     <label for="description">Mô tả ngắn</label>

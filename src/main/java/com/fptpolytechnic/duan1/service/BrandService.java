@@ -1,6 +1,7 @@
 package com.fptpolytechnic.duan1.service;
 
 import com.fptpolytechnic.duan1.model.Brand;
+import com.fptpolytechnic.duan1.repository.BrandRepository;
 import com.fptpolytechnic.duan1.utils.DBContext;
 
 import java.sql.Connection;
@@ -10,42 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BrandService {
-    public List<Brand> getAll(){
-        List<Brand> list = new ArrayList<>();
-        String sql = "SELECT * FROM brands";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()){
-                list.add(new Brand(rs.getInt("id"), rs.getString("name"), rs.getString("description")));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private final BrandRepository repository = new BrandRepository();
+
+    public List<Brand> getAll() {
+        List<Brand> list = repository.getAll();
+        list.sort((b1, b2) -> Integer.compare(b2.getId(), b1.getId()));
         return list;
     }
+
     public void add(Brand b) {
-        String sql = "INSERT INTO brands (name, description) VALUES (? , ?)";
-        try (Connection con = DBContext.getConnection();
-        PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, b.getName());
-            ps.setString(2, b.getDescription());
-            ps.executeUpdate();
-
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+        repository.add(b);
     }
-
     public void delete(int id) {
-        String sql = "DELETE * FROM brands WHERE id = ?";
-        try (Connection con = DBContext.getConnection();
-        PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+        repository.delete(id);
     }
 
 }
