@@ -111,6 +111,13 @@ CREATE TABLE products (
     FOREIGN KEY (brand_id) REFERENCES brands(id)
 );
 
+
+CREATE TABLE product_images(
+    id INT PRIMARY KEY IDENTITY(1, 1),
+    product_id INT NOT NULL REFERENCES products(id),
+    image_url VARCHAR(255) NOT NULL
+)
+
 CREATE TABLE colors (
     id INT PRIMARY KEY IDENTITY(1, 1),
     name NVARCHAR(255) NOT NULL,
