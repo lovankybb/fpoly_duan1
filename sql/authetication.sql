@@ -136,14 +136,18 @@ create table product_images(
 
 
 INSERT INTO products (name, description, price, sale_price, status, category_id, brand_id) VALUES
-(N'Product 1', N'Description for Product 1', 100.00, 90.00, N'Đang bán', 1, 1),
-(N'Product 2', N'Description for Product 2', 150.00, NULL, N'inactive', 2, 2),
-(N'Product 3', N'Description for Product 3', 200.00, 180.00, N'active', 1, 1);
+(N'Product 1', N'Description for Product 1', 100.00, 90.00, N'ACTIVE', 1, 1),
+(N'Product 2', N'Description for Product 2', 150.00, NULL, N'INACTIVE', 2, 2),
+(N'Product 3', N'Description for Product 3', 200.00, 180.00, N'ACTIVE', 1, 1);
 
 
 select * from products;
 select * from product_images;
 
-select * from products
-order by created_at desc
-offset 0 rows fetch next 10 rows only;
+SELECT * FROM products ORDER BY created_at DESC OFFSET '0' ROWS FETCH NEXT 10 ROWS ONLY
+
+
+delete from products
+delete from product_images
+delete from products
+delete from product_images

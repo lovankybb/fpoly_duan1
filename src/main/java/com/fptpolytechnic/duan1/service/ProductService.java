@@ -1,0 +1,73 @@
+package com.fptpolytechnic.duan1.service;
+
+
+import com.fptpolytechnic.duan1.dto.response.SimpleProdResponse;
+import com.fptpolytechnic.duan1.model.Product;
+import com.fptpolytechnic.duan1.model.ProductImage;
+import com.fptpolytechnic.duan1.repository.ProductRepository;
+import jakarta.servlet.http.Part;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
+public class ProductService {
+
+
+    ProductRepository productRepository;
+    ProductImageService productImageService;
+
+    public ProductService() {
+        productRepository = new ProductRepository();
+        productImageService = new ProductImageService();
+    }
+
+    public Product create(Product product, Collection<Part> images) {
+        Product savedProduct = productRepository.create(product);
+
+        System.out.println("Created product with ID: " + savedProduct.getId());
+        System.out.println("Number of images to process: " + images.size());
+
+        images.forEach(img -> {
+            if ("image".equals(img.getName())) {
+                System.out.println("Info: Processing image: " + img.getSubmittedFileName());
+                try {
+                    productImageService.insert(savedProduct.getId(), img);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        return savedProduct;
+    }
+
+    public List<SimpleProdResponse> getAll(int offset) {
+        return productRepository.findAll(offset, 10).stream().map(this::toSimpleProdResponse).toList();
+    }
+
+    private SimpleProdResponse toSimpleProdResponse(Product product) {
+
+        List<ProductImage> productImages = productImageService.findByProdId(product.getId());
+
+        String mainImg = "";
+        if (!productImages.isEmpty()) {
+            mainImg = productImages.get(0).getImageUrl();
+        }
+
+        double salePrice = Objects.isNull(product.getSalePrice())
+                ? product.getPrice().doubleValue() : product.getSalePrice().doubleValue();
+
+        return SimpleProdResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .image(mainImg)
+                .price(product.getPrice().doubleValue())
+                .salePrice(salePrice)
+                .status(product.getStatus().getDisplayName())
+                .build();
+
+    }
+}

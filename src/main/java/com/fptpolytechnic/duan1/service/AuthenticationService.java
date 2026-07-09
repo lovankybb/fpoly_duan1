@@ -1,7 +1,6 @@
 package com.fptpolytechnic.duan1.service;
 
 
-import com.fptpolytechnic.duan1.model.Authentication;
 import com.fptpolytechnic.duan1.model.InvalidateToken;
 import com.fptpolytechnic.duan1.model.Role;
 import com.fptpolytechnic.duan1.model.User;
@@ -10,7 +9,9 @@ import com.fptpolytechnic.duan1.repository.RoleRepository;
 import com.fptpolytechnic.duan1.repository.UserRepository;
 import com.fptpolytechnic.duan1.utils.AppConfig;
 import com.fptpolytechnic.duan1.utils.PasswordEncoder;
-import com.nimbusds.jose.*;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;

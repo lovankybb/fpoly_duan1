@@ -27,16 +27,17 @@ public class InvalidateTokenRepository {
     }
 
 
-    public boolean isExist(String jwtId){
+    public boolean isExist(String jwtId) {
         String sql = "SELECT * FROM invalidated_tokens WHERE jwt_id = ?";
-        try(Connection conn = DBContext.getConnection();
-            var ps = conn.prepareStatement(sql);
+        try (Connection conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(sql);
+
+        ) {
+            ps.setString(1, jwtId);
             var rs = ps.executeQuery();
-        ){
-            if(rs.next()) return true;
+            if (rs.next()) return true;
             return false;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }

@@ -4,8 +4,8 @@ public enum ProductStatus {
 
 
     ACTIVE("Đang bán"),
-    INACTIVE("Ngưng bán"),
-    OUT_OF_STOCK("Hết hàng");
+    INACTIVE("Ngừng bán"),
+    DRAFT("Nháp");
 
     private final String displayName;
 
@@ -15,15 +15,6 @@ public enum ProductStatus {
 
     public String getDisplayName() {
         return displayName;
-    }
-
-    public static ProductStatus fromDisplayName(String displayName) {
-        for (ProductStatus status : ProductStatus.values()) {
-            if (status.getDisplayName().equals(displayName)) {
-                return status;
-            }
-        }
-        throw new IllegalArgumentException("Invalid product status: " + displayName);
     }
 
 }

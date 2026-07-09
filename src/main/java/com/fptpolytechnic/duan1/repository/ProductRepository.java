@@ -24,7 +24,7 @@ public class ProductRepository {
             ps.setString(2, product.getDescription());
             ps.setBigDecimal(3, product.getPrice());
             ps.setBigDecimal(4, product.getSalePrice());
-            ps.setString(5, product.getStatus().getDisplayName());
+            ps.setString(5, product.getStatus().toString());
             ps.setLong(6, product.getCategoryId());
             ps.setLong(7, product.getBrandId());
             ps.setObject(8, product.getCreatedAt());
@@ -58,7 +58,7 @@ public class ProductRepository {
                 product.setDescription(rs.getString("description"));
                 product.setPrice(rs.getBigDecimal("price"));
                 product.setSalePrice(rs.getBigDecimal("sale_price"));
-                product.setStatus(ProductStatus.fromDisplayName(rs.getString("status")));
+                product.setStatus(ProductStatus.valueOf(rs.getString("status")));
                 product.setCategoryId(rs.getLong("category_id"));
                 product.setBrandId(rs.getLong("brand_id"));
                 product.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
@@ -90,7 +90,7 @@ public class ProductRepository {
                 product.setDescription(rs.getString("description"));
                 product.setPrice(rs.getBigDecimal("price"));
                 product.setSalePrice(rs.getBigDecimal("sale_price"));
-                product.setStatus(ProductStatus.fromDisplayName(rs.getString("status")));
+                product.setStatus(ProductStatus.valueOf(rs.getString("status")));
                 product.setCategoryId(rs.getLong("category_id"));
                 product.setBrandId(rs.getLong("brand_id"));
                 product.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
@@ -122,7 +122,7 @@ public class ProductRepository {
                 product.setDescription(rs.getString("description"));
                 product.setPrice(rs.getBigDecimal("price"));
                 product.setSalePrice(rs.getBigDecimal("sale_price"));
-                product.setStatus(ProductStatus.fromDisplayName(rs.getString("status")));
+                product.setStatus(ProductStatus.valueOf(rs.getString("status")));
                 product.setCategoryId(rs.getLong("category_id"));
                 product.setBrandId(rs.getLong("brand_id"));
                 product.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
