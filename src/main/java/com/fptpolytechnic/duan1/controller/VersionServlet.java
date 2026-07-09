@@ -1,7 +1,7 @@
 package com.fptpolytechnic.duan1.controller;
 
 import com.fptpolytechnic.duan1.model.Version;
-import com.fptpolytechnic.duan1.service.VersionVervice;
+import com.fptpolytechnic.duan1.service.Versionervice;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @WebServlet("/admin/versions")
 public class VersionServlet  extends HttpServlet {
-    private  final VersionVervice service = new VersionVervice();
+    private  final Versionervice service = new Versionervice();
 
 
     @Override

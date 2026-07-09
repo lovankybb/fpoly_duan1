@@ -38,7 +38,7 @@ public class CategoryRepository {
        }
    }
    public  void delete(int id) {
-       String sql = "DELETE * FROM categories WHERE id = ?";
+       String sql = "DELETE FROM categories WHERE id = ?";
        try (Connection con = DBContext.getConnection();
        PreparedStatement ps = con.prepareStatement(sql)) {
            ps.setInt(1, id);

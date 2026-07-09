@@ -5,7 +5,7 @@ import com.fptpolytechnic.duan1.repository.VersionRepository;
 
 import java.util.List;
 
-public class VersionVervice {
+public class Versionervice {
     private final VersionRepository repository = new VersionRepository();
 
     public List<Version> getAll() {
