@@ -8,7 +8,6 @@ import com.fptpolytechnic.duan1.repository.ProductRepository;
 import jakarta.servlet.http.Part;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -27,12 +26,8 @@ public class ProductService {
     public Product create(Product product, Collection<Part> images) {
         Product savedProduct = productRepository.create(product);
 
-        System.out.println("Created product with ID: " + savedProduct.getId());
-        System.out.println("Number of images to process: " + images.size());
-
         images.forEach(img -> {
             if ("image".equals(img.getName())) {
-                System.out.println("Info: Processing image: " + img.getSubmittedFileName());
                 try {
                     productImageService.insert(savedProduct.getId(), img);
                 } catch (IOException e) {
@@ -43,8 +38,51 @@ public class ProductService {
         return savedProduct;
     }
 
+
+    public Product update(Product product, Collection<Part> images) throws IOException {
+
+
+        images.forEach(img -> {
+            System.out.println("Name: "+img.getName());
+            System.out.println("ContentType: "+img.getContentType());
+            System.out.println("SubmittedName: "+img.getSubmittedFileName());
+        });
+
+        System.out.println("image size: " + images.size());
+
+        if(images.size() > 0 && !images.isEmpty()) {
+            productImageService.delete(product.getId());
+            images.forEach(img -> {
+                if ("image".equals(img.getName())) {
+                    try {
+                        productImageService.insert(product.getId(), img);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        }
+
+        return productRepository.update(product);
+    }
+
     public List<SimpleProdResponse> getAll(int offset) {
+        if (offset < 0) {
+            offset = 0;
+        }
         return productRepository.findAll(offset, 10).stream().map(this::toSimpleProdResponse).toList();
+    }
+
+
+    public void delete(Long id) throws IOException {
+
+        productImageService.delete(id);
+        productRepository.delete(id);
+    }
+
+
+    public Product findById(Long id) {
+        return productRepository.findById(id);
     }
 
     private SimpleProdResponse toSimpleProdResponse(Product product) {
@@ -66,7 +104,7 @@ public class ProductService {
                 .image(mainImg)
                 .price(product.getPrice().doubleValue())
                 .salePrice(salePrice)
-                .status(product.getStatus().getDisplayName())
+                .status(product.getStatus().name())
                 .build();
 
     }

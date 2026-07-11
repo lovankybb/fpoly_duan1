@@ -11,13 +11,23 @@ public class StorageService {
 
 
     public String storage(Part file) throws IOException {
+
+        if(file == null || file.getSize() <= 0) {
+            return null;
+        }
+
         String path = AppConfig.getInstance().getProperty("app.static.image.path");
 
         String originalName = file.getSubmittedFileName();
 
-        System.out.println("Info: Storing " + originalName);
 
-        String extension = originalName.substring(originalName.lastIndexOf("."));
+        String extension = "";
+        if (originalName != null && !originalName.isEmpty()) {
+            int dotIndex = originalName.lastIndexOf(".");
+            if (dotIndex >= 0) {
+                extension = originalName.substring(dotIndex);
+            }
+        }
 
         String newName = UUID.randomUUID().toString() + extension;
 

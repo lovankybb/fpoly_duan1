@@ -149,8 +149,8 @@ public class ProductRepository {
         }
     }
 
-    public Product update(Long id, Product product){
-        String query = "UPDATE products SET name=?, description=? price=?, sale_price=?, status=?, updated_at=? WHERE id=?";
+    public Product update( Product product){
+        String query = "UPDATE products SET name=?, description=?, price=?, sale_price=?, status=?, updated_at=?, category_id=?, brand_id=? WHERE id=?";
 
         try(Connection conn = DBContext.getConnection();
         PreparedStatement ps = conn.prepareStatement(query);){
@@ -158,12 +158,14 @@ public class ProductRepository {
            ps.setString(2, product.getDescription());
            ps.setBigDecimal(3, product.getPrice());
            ps.setBigDecimal(4, product.getSalePrice());
-           ps.setString(5, product.getStatus().getDisplayName());
+           ps.setString(5, product.getStatus().name());
            ps.setObject(6, product.getUpdatedAt());
-           ps.setLong(7, id);
+           ps.setLong(7, product.getCategoryId());
+           ps.setLong(8, product.getBrandId());
+           ps.setLong(9, product.getId());
            ps.executeUpdate();
 
-           return this.findById(id);
+           return this.findById(product.getId());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -22,13 +22,13 @@ public class ProductImageService {
 
     public void insert(Long prodId, Part file) throws IOException {
 
-        System.out.println("Info: Inserting " + file.getSubmittedFileName());
-        String imagesUrl = storageService.storage(file);
-        System.out.println("Info: Image URL: " + imagesUrl);
-        ProductImage productImage = new ProductImage();
-        productImage.setProductId(prodId);
-        productImage.setImageUrl(imagesUrl);
-        productImageRepository.create(productImage);
+        String imageUrl = storageService.storage(file);
+        if(imageUrl != null){
+            ProductImage productImage = new ProductImage();
+            productImage.setProductId(prodId);
+            productImage.setImageUrl(imageUrl);
+            productImageRepository.create(productImage);
+        }
     }
 
     public void delete( Long productId) throws IOException {

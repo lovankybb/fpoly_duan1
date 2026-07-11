@@ -19,7 +19,7 @@
 
     <header class="page-header">
         <h1>Quản lý Sản phẩm</h1>
-        <a href="${pageContext.request.contextPath}/admin/products/add" class="btn-add">
+        <a href="${pageContext.request.contextPath}/admin/product/add" class="btn-add">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18"
                  height="18">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -28,8 +28,12 @@
         </a>
     </header>
 
-    <div class="card">
+    <c:if test="${not empty alertMsg}">
+        <div class="alert">${alertMsg}
+        </div>
+    </c:if>
 
+    <div class="card">
         <div class="toolbar">
             <div class="search-box">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -60,28 +64,40 @@
                 <tr class="product-row">
                     <td>
                         <div class="product-info">
-                            <img src="${pageContext.request.contextPath}/image?name=${prod.image}" alt="${prod.name}" class="product-img">
+                            <img src="${pageContext.request.contextPath}/image?name=${prod.image}" alt="${prod.name}"
+                                 class="product-img">
                             <div>
                                 <div class="product-name">${prod.name}</div>
-<%--                                <div class="product-brand">${prod.brandId}</div>--%>
                                 <div class="product-brand">Brand</div>
                             </div>
                         </div>
                     </td>
-<%--                    <td>${prod.category}</td>--%>
+                        <%--                    <td>${prod.category}</td>--%>
                     <td>Category</td>
                     <td class="price">
                         <div>
-                            ${prod.price}đ
+                                <del style="color: #e12b2b">${prod.price}đ</del>
                         </div>
                         <div>
-                            ${prod.salePrice}đ
+                            <span>${prod.salePrice}đ</span>
                         </div>
                     </td>
-<%--                    <td><span class="badge instock">${prod.status}</span></td>--%>
                     <td>
-                        <a href="${pageContext.request.contextPath}/admin/products/update?id=${prod.id}" class="btn-action btn-edit">Sửa</a>
-                        <a href="${pageContext.request.contextPath}/admin/products/delete?id=${prod.id}" class="btn-action btn-delete">Xóa</a>
+                        <c:if test="${prod.status == 'ACTIVE'}">
+                            <span class="badge instock">Đang bán</span>
+                        </c:if>
+                        <c:if test="${prod.status == 'INACTIVE'}">
+                            <span class="badge outstock">Ngừng bán</span>
+                        </c:if>
+                        <c:if test="${prod.status == 'DRAFT'}">
+                            <span class="badge draft">Nháp</span>
+                        </c:if>
+
+                    </td>
+                    <td>
+                        <a href="${pageContext.request.contextPath}/admin/product/update?id=${prod.id}"
+                           class="btn-action btn-edit">Sửa</a>
+                        <button class="btn-action btn-delete" value="${prod.id}">Xóa</button>
                     </td>
                 </tr>
             </c:forEach>
@@ -95,10 +111,11 @@
 
     </div>
 
-    <a href="${pageContext.request.contextPath}/admin/products?offset=${offSet + 10}">Tiếp theo</a>
-    <c:if test="${offSet >= 10}">
-        <a href="${pageContext.request.contextPath}/admin/products?offset=${offSet - 10}">Trước</a>
+    <c:if test="${offset gt 0}">
+        <a href="${pageContext.request.contextPath}/admin/products?offset=${offset - 10}">Trước</a>
     </c:if>
+    <br/>
+    <a href="${pageContext.request.contextPath}/admin/products?offset=${offset + 10}">Tiếp theo</a>
 </main>
 
 <script>
@@ -134,6 +151,21 @@
             noResultMessage.style.display = 'none';
         }
     });
+
+
+    const deleteButtons = document.querySelectorAll('.btn-delete');
+    deleteButtons.forEach(deleteButton => {
+        deleteButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            let rs = confirm('Bạn có chắc muốn xóa sản phẩm này?');
+
+            if (rs) {
+                window.location.href = "${pageContext.request.contextPath}/admin/product/delete?id=" + e.target.value;
+            }
+
+        })
+    })
+
 </script>
 </body>
 </html>

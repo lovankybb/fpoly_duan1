@@ -220,3 +220,50 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* CSS bổ sung để căn chỉnh các hộp select đẹp mắt, đồng bộ với thanh search */
+.shop-filter-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-select {
+    padding: 10px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    min-width: 150px;
+}
+
+.filter-select:focus {
+    border-color: #000;
+}
+
+@media (max-width: 768px) {
+    .shop-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .shop-filter-group {
+        width: 100%;
+    }
+
+    .shop-search {
+        width: 100%;
+    }
+
+    .filter-select {
+        flex: 1;
+    }
+}
