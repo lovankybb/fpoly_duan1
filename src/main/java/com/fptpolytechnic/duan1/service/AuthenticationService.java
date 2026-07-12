@@ -36,18 +36,19 @@ public class AuthenticationService {
     RoleRepository roleRepository;
     InvalidateTokenRepository invalidateTokenRepository;
 
-    public AuthenticationService(){
+    public AuthenticationService() {
         userRepository = new UserRepository();
         passwordEncoder = new PasswordEncoder();
         roleRepository = new RoleRepository();
         invalidateTokenRepository = new InvalidateTokenRepository();
     }
 
-    public User authenticate(String username, String password){
+    public User authenticate(String username, String password) {
 
         User user = userRepository.findByUsername(username);
-        System.out.println("User found: " + user);
-        if(Objects.isNull(user) || !passwordEncoder.matches(password, user.getPassword())) return null;
+
+        System.out.println("username : " + user.getUsername());
+        if (!passwordEncoder.matches(password, user.getPassword())) return null;
         return user;
     }
 
@@ -82,10 +83,10 @@ public class AuthenticationService {
 
     public void logout(HttpServletRequest request, HttpServletResponse response) throws ParseException {
 
-        Cookie [] cookies = request.getCookies();
-        if(!Objects.isNull(cookies)){
-            for(Cookie cookie : cookies){
-                if("token".equals(cookie.getName())){
+        Cookie[] cookies = request.getCookies();
+        if (!Objects.isNull(cookies)) {
+            for (Cookie cookie : cookies) {
+                if ("token".equals(cookie.getName())) {
 
                     String token = cookie.getValue();
                     try {

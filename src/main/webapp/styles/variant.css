@@ -63,37 +63,37 @@ body {
     margin-bottom: 20px;
 }
 
-.search-box {
-    position: relative;
-    width: 350px;
-}
+/*.search-box {*/
+/*    position: relative;*/
+/*    width: 350px;*/
+/*}*/
 
-.search-box input {
-    width: 100%;
-    padding: 12px 15px 12px 40px;
-    border: 1px solid #eaeaea;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 14px;
-    background-color: #fbfbfc;
-    transition: all 0.3s;
-}
+/*.search-box input {*/
+/*    width: 100%;*/
+/*    padding: 12px 15px 12px 40px;*/
+/*    border: 1px solid #eaeaea;*/
+/*    border-radius: 8px;*/
+/*    font-family: inherit;*/
+/*    font-size: 14px;*/
+/*    background-color: #fbfbfc;*/
+/*    transition: all 0.3s;*/
+/*}*/
 
-.search-box input:focus {
-    outline: none;
-    border-color: #1a1a1a;
-    background-color: #fff;
-}
+/*.search-box input:focus {*/
+/*    outline: none;*/
+/*    border-color: #1a1a1a;*/
+/*    background-color: #fff;*/
+/*}*/
 
-.search-box svg {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #888;
-    width: 18px;
-    height: 18px;
-}
+/*.search-box svg {*/
+/*    position: absolute;*/
+/*    left: 12px;*/
+/*    top: 50%;*/
+/*    transform: translateY(-50%);*/
+/*    color: #888;*/
+/*    width: 18px;*/
+/*    height: 18px;*/
+/*}*/
 
 /* Style Bảng Sản phẩm */
 table {
@@ -145,36 +145,21 @@ th {
 }
 
 .price {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
-    color: #717070;
+    color: #000;
 
-}.sale-price {
-     font-size: 14px;
-     font-weight: 700;
-     color: #cc2525;
 }
-
-.badge {
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
+.preview-color-container{
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    align-items: center;
 }
-
-.badge.instock {
-    background: #e8f5e9;
-    color: #2e7d32;
-}
-
-.badge.outstock {
-    background: #ffebee;
-    color: #c62828;
-}
-
-.badge.draft {
-    background: #ffebee;
-    color: #c6c328;
+.preview-color{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
 }
 
 .btn-action {
@@ -189,7 +174,7 @@ th {
 }
 
 .btn-manage {
-    color: #32b302;
+    color: #dbcd34;
 }
 
 .btn-delete {

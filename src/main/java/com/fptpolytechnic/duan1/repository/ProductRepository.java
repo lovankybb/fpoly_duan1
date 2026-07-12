@@ -170,4 +170,40 @@ public class ProductRepository {
             throw new RuntimeException(e);
         }
     }
+
+
+
+    public List<Product> findAllActiveProduct(int offset, int row){
+        String query = "SELECT * FROM products WHERE status='ACTIVE' ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try(Connection conn = DBContext.getConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+
+        ){
+            ps.setInt(1, offset);
+            ps.setInt(2, row);
+            var rs = ps.executeQuery();
+            List<Product> products = new java.util.ArrayList<>();
+            while (rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getLong("id"));
+                product.setName(rs.getString("name"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getBigDecimal("price"));
+                product.setSalePrice(rs.getBigDecimal("sale_price"));
+                product.setStatus(ProductStatus.valueOf(rs.getString("status")));
+                product.setCategoryId(rs.getLong("category_id"));
+                product.setBrandId(rs.getLong("brand_id"));
+                product.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                product.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+                products.add(product);
+            }
+            return products;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

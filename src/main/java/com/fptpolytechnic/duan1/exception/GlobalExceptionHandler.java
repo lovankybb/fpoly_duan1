@@ -1,26 +1,28 @@
 package com.fptpolytechnic.duan1.exception;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public class GlobalExceptionHandler {
+@WebServlet("/error")
+public class GlobalExceptionHandler extends HttpServlet {
 
-    public static GlobalExceptionHandler getInstance(){
-        return new GlobalExceptionHandler();
-    }
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-    public void responseErrorPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        ErrorCode errorCode = ErrorCode.valueOf(req.getParameter("code"));
+        int code = errorCode.getCode();
+        String message = errorCode.getMessage();
+        String description = errorCode.getDescription();
 
-        int errorCode = 500;
-        String errTitle = "Internal Server Error";
-        String errDesc = "Có lỗi trong khi thao tác vui lòng thử lại sau.";
-        req.setAttribute("errorCode", errorCode);
-        req.setAttribute("errorTitle", errTitle);
-        req.setAttribute("errorDesc", errDesc);
+        req.setAttribute("code", code);
+        req.setAttribute("message", message);
+        req.setAttribute("description", description);
+
         req.getRequestDispatcher("/views/error-page.jsp").forward(req, resp);
     }
-
 }

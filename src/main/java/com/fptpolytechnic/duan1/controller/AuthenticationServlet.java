@@ -1,7 +1,6 @@
 package com.fptpolytechnic.duan1.controller;
 
 
-import com.fptpolytechnic.duan1.exception.GlobalExceptionHandler;
 import com.fptpolytechnic.duan1.model.User;
 import com.fptpolytechnic.duan1.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
@@ -13,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 @WebServlet({"/sign-in", "/logout"})
 public class AuthenticationServlet extends HttpServlet {
@@ -82,17 +80,15 @@ public class AuthenticationServlet extends HttpServlet {
                     cookie.setSecure(false);
                     cookie.setPath("/");
 
-                    System.out.println("Token: " + token);
-                    System.out.println("Generate token and save cookie success ");
-
                     resp.addCookie(cookie);
                     resp.sendRedirect(req.getContextPath() + "/");
                 } catch (JOSEException | IOException e) {
-                    GlobalExceptionHandler.getInstance().responseErrorPage(req, resp);
+                    resp.sendRedirect(req.getContextPath() + "/error?code=UNAUTHENTICATED");
                 }
                 // Authentication successful
             } else {
-                req.setAttribute("loginError", "Tên đăng nhập hoặc mật khẩu không đúng");
+                req.setAttribute("alertMsg", "Thông tin đăng nhập không chính xác!");
+                req.getRequestDispatcher("/views/sign-in.jsp").forward(req, resp);
             }
         }
     }
@@ -103,7 +99,7 @@ public class AuthenticationServlet extends HttpServlet {
             authenticationService.logout(request, response);
             response.sendRedirect("/");
         }catch ( Exception e) {
-            GlobalExceptionHandler.getInstance().responseErrorPage(request, response);
+           response.sendRedirect(request.getContextPath() + "/error?code=UNCATEGORIZED");
         }
     }
 }

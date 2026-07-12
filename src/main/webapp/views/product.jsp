@@ -50,93 +50,66 @@
 
     <div class="product-grid" id="productGrid">
 
-        <a href="${pageContext.request.contextPath}/product/iphone-17-pro-max" class="product-card" data-category="điện thoại">
-            <div class="product-img-wrap">
-                <span class="badge-new">Mới</span>
-                <img src="${pageContext.request.contextPath}/resources/imgs/iphone17-promax.png"
-                     alt="iPhone 17 Pro Max">
-            </div>
-            <div class="product-info">
-                <div class="product-brand">Apple</div>
-                <h3 class="product-title">iPhone 17 Pro Max 256GB</h3>
-                <div class="product-bottom">
-                    <span class="product-price">34.990.000 ₫</span>
-                    <div class="btn-view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"
-                             stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                        </svg>
+        <c:forEach var="prod" items="${products}">
+            <a href="${pageContext.request.contextPath}/product?id=${prod.id}" class="product-card"
+               data-category="điện thoại">
+                <div class="product-img-wrap">
+                    <span class="badge-new">Mới</span>
+                    <img src="${pageContext.request.contextPath}/image?name=${prod.image}"
+                         alt="${prod.name}">
+                </div>
+                <div class="product-info">
+                    <div class="product-brand">Apple</div>
+                    <h3 class="product-title">${prod.name}</h3>
+                    <div class="product-bottom">
+                        <div class="price-box">
+                            <!-- Thêm class dùng chung và data-price chứa số gốc -->
+                            <p class="product-sale-price js-format-price" data-price="${prod.salePrice}"></p>
+                            <del class="product-price js-format-price" data-price="${prod.price}"></del>
+                        </div>
+                        <div class="btn-view">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        </c:forEach>
 
-        <a href="#" class="product-card" data-category="điện thoại">
-            <div class="product-img-wrap">
-                <img src="${pageContext.request.contextPath}/resources/imgs/zfold6.png" alt="Galaxy Z Fold6">
-            </div>
-            <div class="product-info">
-                <div class="product-brand">Samsung</div>
-                <h3 class="product-title">Samsung Galaxy Z Fold6</h3>
-                <div class="product-bottom">
-                    <span class="product-price">43.990.000 ₫</span>
-                    <div class="btn-view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"
-                             stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </a>
-
-        <a href="#" class="product-card" data-category="tablet">
-            <div class="product-img-wrap">
-                <img src="${pageContext.request.contextPath}/resources/imgs/ipad-pro.png" alt="iPad Pro">
-            </div>
-            <div class="product-info">
-                <div class="product-brand">Apple</div>
-                <h3 class="product-title">iPad Pro M4 11-inch (2026)</h3>
-                <div class="product-bottom">
-                    <span class="product-price">28.500.000 ₫</span>
-                    <div class="btn-view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"
-                             stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </a>
-
-        <a href="#" class="product-card" data-category="sạc">
-            <div class="product-img-wrap">
-                <img src="${pageContext.request.contextPath}/resources/imgs/anker.png" alt="Sạc Anker">
-            </div>
-            <div class="product-info">
-                <div class="product-brand">Phụ kiện</div>
-                <h3 class="product-title">Sạc nhanh Anker Nano II 65W</h3>
-                <div class="product-bottom">
-                    <span class="product-price">990.000 ₫</span>
-                    <div class="btn-view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"
-                             stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </a>
 
         <div id="noResult" class="no-result-msg">
             Rất tiếc, chúng tôi không tìm thấy sản phẩm nào khớp với tìm kiếm của bạn.
         </div>
 
     </div>
+
+
+    <c:if test="${offset >= 20}">
+        <a href="${pageContext.request.contextPath}/products?offset=${offset - 20}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 class="lucide lucide-circle-arrow-left-icon lucide-circle-arrow-left">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="m12 8-4 4 4 4"/>
+                <path d="M16 12H8"/>
+            </svg>
+        </a>
+    </c:if>
+    <c:if test="${not empty offset}">
+        <a href="${pageContext.request.contextPath}/products?offset=${offset + 20}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 class="lucide lucide-circle-arrow-right-icon lucide-circle-arrow-right">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="m12 16 4-4-4-4"/>
+                <path d="M8 12h8"/>
+            </svg>
+        </a>
+    </c:if>
 </main>
 
 <%@ include file="/views/fragments/footer.jsp" %>
@@ -189,6 +162,21 @@
         searchInput.addEventListener('input', filterProducts);
         brandSelect.addEventListener('change', filterProducts);
         categorySelect.addEventListener('change', filterProducts);
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Tìm tất cả các thẻ có class js-format-price
+        const priceElements = document.querySelectorAll('.js-format-price');
+
+        priceElements.forEach(function (el) {
+            // Lấy con số từ data-price
+            const rawPrice = Number(el.getAttribute('data-price'));
+
+            // Nếu có giá trị hợp lệ thì format và gán lại
+            if (!isNaN(rawPrice) && rawPrice > 0) {
+                el.innerText = rawPrice.toLocaleString('vi-VN') + ' ₫';
+            }
+        });
     });
 </script>
 

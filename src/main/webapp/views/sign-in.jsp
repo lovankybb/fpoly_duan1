@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!doctype html>
 <html lang="en">
@@ -112,12 +113,28 @@
             margin-top: 4px;
         }
 
+        .alert {
+            padding: 14px 16px;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            background-color: #edbcbc;
+            color: #b30202;
+            border: 1px solid #875959;
+        }
+
     </style>
 </head>
 <body>
     <div class="login-container">
         <h1>Đăng nhập</h1>
+        <c:if test="${not empty alertMsg}">
+            <div class="alert">${alertMsg}
+            </div>
+        </c:if>
         <form action="sign-in" method="post">
+
             <div class="form-group">
                 <label>Tên đăng nhập</label>
                 <input type="text" name="username" value="${oldUsername}" placeholder="Nhập tên đăng nhập"/>

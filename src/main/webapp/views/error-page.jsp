@@ -76,12 +76,12 @@
 
 <main>
     <div class="error-container">
-        <div class="error-code">${errorCode}</div>
+        <div class="error-code">${code}</div>
 
         <div class="error-message">
-            <div class="error-title">${errorTitle}</div>
+            <div class="error-title">${message}</div>
             <div class="error-description">
-                ${errorDesc}
+                ${description}
             </div>
         </div>
 

@@ -9,6 +9,7 @@ public class PasswordEncoder {
     }
 
     public boolean matches( String rawPassword, String encodedPassword){
+        if (encodedPassword == null) { return false; }
         return BCrypt.checkpw(rawPassword, encodedPassword);
     }
 }

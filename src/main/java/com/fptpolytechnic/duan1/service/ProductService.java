@@ -17,10 +17,12 @@ public class ProductService {
 
     ProductRepository productRepository;
     ProductImageService productImageService;
+    ProductVariantService productVariantService;
 
     public ProductService() {
         productRepository = new ProductRepository();
         productImageService = new ProductImageService();
+        productVariantService = new ProductVariantService();
     }
 
     public Product create(Product product, Collection<Part> images) {
@@ -77,12 +79,28 @@ public class ProductService {
     public void delete(Long id) throws IOException {
 
         productImageService.delete(id);
+        productVariantService.deleteByProductId(id);
         productRepository.delete(id);
     }
 
 
     public Product findById(Long id) {
         return productRepository.findById(id);
+    }
+
+
+    public SimpleProdResponse getSimpleProdResponse(Long id) {
+        return this.toSimpleProdResponse(productRepository.findById(id));
+    }
+
+    public List<SimpleProdResponse> findAllActiveProduct(int offSet) {
+
+
+        if(offSet < 0){
+            offSet = 0;
+        }
+
+        return productRepository.findAllActiveProduct(offSet, 20).stream().map(this::toSimpleProdResponse).toList();
     }
 
     private SimpleProdResponse toSimpleProdResponse(Product product) {

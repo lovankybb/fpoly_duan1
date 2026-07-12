@@ -76,10 +76,12 @@
                     <td>Category</td>
                     <td class="price">
                         <div>
-                                <del style="color: #e12b2b">${prod.price}đ</del>
-                        </div>
-                        <div>
-                            <span>${prod.salePrice}đ</span>
+
+                            <div class="price-box">
+                                <!-- Thêm class dùng chung và data-price chứa số gốc -->
+                                <p class="sale-price js-format-price" data-price="${prod.salePrice}"></p>
+                                <del class="price js-format-price" data-price="${prod.price}"></del>
+                            </div>
                         </div>
                     </td>
                     <td>
@@ -95,9 +97,12 @@
 
                     </td>
                     <td>
+                        <a href="${pageContext.request.contextPath}/admin/variants?productId=${prod.id}&offset=0"
+                           class="btn-action btn-manage">Biến thể</a>
                         <a href="${pageContext.request.contextPath}/admin/product/update?id=${prod.id}"
                            class="btn-action btn-edit">Sửa</a>
                         <button class="btn-action btn-delete" value="${prod.id}">Xóa</button>
+
                     </td>
                 </tr>
             </c:forEach>
@@ -112,10 +117,25 @@
     </div>
 
     <c:if test="${offset gt 0}">
-        <a href="${pageContext.request.contextPath}/admin/products?offset=${offset - 10}">Trước</a>
+        <a href="${pageContext.request.contextPath}/admin/products?offset=${offset - 10}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 class="lucide lucide-circle-arrow-left-icon lucide-circle-arrow-left">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="m12 8-4 4 4 4"/>
+                <path d="M16 12H8"/>
+            </svg>
+        </a>
     </c:if>
-    <br/>
-    <a href="${pageContext.request.contextPath}/admin/products?offset=${offset + 10}">Tiếp theo</a>
+    <a href="${pageContext.request.contextPath}/admin/products?offset=${offset + 10}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="lucide lucide-circle-arrow-right-icon lucide-circle-arrow-right">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="m12 16 4-4-4-4"/>
+            <path d="M8 12h8"/>
+        </svg>
+    </a>
 </main>
 
 <script>
@@ -164,7 +184,23 @@
             }
 
         })
-    })
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Tìm tất cả các thẻ có class js-format-price
+        const priceElements = document.querySelectorAll('.js-format-price');
+
+        priceElements.forEach(function (el) {
+            // Lấy con số từ data-price
+            const rawPrice = Number(el.getAttribute('data-price'));
+
+            // Nếu có giá trị hợp lệ thì format và gán lại
+            if (!isNaN(rawPrice) && rawPrice > 0) {
+                el.innerText = rawPrice.toLocaleString('vi-VN') + ' ₫';
+            }
+        });
+    });
 
 </script>
 </body>

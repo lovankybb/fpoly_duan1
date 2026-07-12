@@ -58,7 +58,7 @@ public class ProductServlet extends HttpServlet {
                 responseProductManagement(req, resp);
                 break;
             case "/products":
-                returnProducts(req, resp);
+                responseProducts(req, resp);
                 break;
 
             case "/admin/product/add":
@@ -92,7 +92,10 @@ public class ProductServlet extends HttpServlet {
         }
     }
 
-    public void responseUpdateProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+
+
+    private void responseUpdateProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String message = req.getParameter("message");
 
@@ -255,7 +258,21 @@ public class ProductServlet extends HttpServlet {
         request.getRequestDispatcher("/views/admin/product.jsp").forward(request, response);
     }
 
-    private void returnProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void responseProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+//        String offSet = request.getParameter("offset");
+//        String categoryId = request.getParameter("categoryId");
+//        String brandId = request.getParameter("brandId");
+//        String price = request.getParameter("price");
+
+
+        int offset = Integer.parseInt(request.getParameter("offset"));
+        request.setAttribute("offset", offset);
+
+
+        List<SimpleProdResponse> products = productService.findAllActiveProduct(offset);
+        request.setAttribute("products", products);
+
         request.getRequestDispatcher("/views/product.jsp").forward(request, response);
     }
 
@@ -355,5 +372,6 @@ public class ProductServlet extends HttpServlet {
 
         request.getRequestDispatcher("/views/admin/create-product.jsp").forward(request, response);
     }
+
 
 }
