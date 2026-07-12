@@ -6,6 +6,7 @@ import com.fptpolytechnic.duan1.utils.DBContext;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.sql.*;
 
@@ -14,6 +15,10 @@ public class CategoryService {
 
     public List<Category> getAll() {
         List<Category> list = repository.getAll();
+
+        if (list == null || list.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         list.sort((c1, c2) -> Long.compare(c2.getId(), c1.getId()));
         return list;

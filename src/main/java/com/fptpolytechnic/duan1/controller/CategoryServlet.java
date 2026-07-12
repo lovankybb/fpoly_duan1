@@ -37,11 +37,13 @@ public class CategoryServlet extends HttpServlet {
             String name = req.getParameter("name");
             String description = req.getParameter("description");
             Category c = new Category();
-            c.getName();
-            c.getName();
+            c.setName(name);
+            c.setDescription(description);
             service.add(c);
 
             resp.sendRedirect(req.getContextPath() + "/admin/categories");
+
+
         }
 
 

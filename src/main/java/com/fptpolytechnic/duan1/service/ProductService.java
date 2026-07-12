@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ProductService {
 
@@ -70,7 +71,7 @@ public class ProductService {
         if (offset < 0) {
             offset = 0;
         }
-        return productRepository.findAll(offset, 10).stream().map(this::toSimpleProdResponse).toList();
+        return productRepository.findAll(offset, 10).stream().map(this::toSimpleProdResponse).collect(Collectors.toList());
     }
 
 
