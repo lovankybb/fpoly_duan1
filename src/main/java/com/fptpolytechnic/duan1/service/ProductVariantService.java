@@ -17,13 +17,13 @@ public class ProductVariantService {
         productVariantRepository = new ProductVariantRepository();
     }
 
-    public List<ProductVariantResponse> getProductVariantsByProductId(Long productId, int offset) {
+    public List<ProductVariantResponse> getProductVariantsByProductId(Long productId, int offset, int limit) {
 
         if(offset < 0) {
             offset = 0;
         }
 
-        return this.productVariantRepository.findAll(productId, offset, 10)
+        return this.productVariantRepository.findAll(productId, offset, limit )
                 .stream()
                 .map(this::toProductVariantResponse)
                 .toList();

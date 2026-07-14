@@ -8,6 +8,7 @@ import com.fptpolytechnic.duan1.utils.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductRepository {
@@ -16,10 +17,10 @@ public class ProductRepository {
 
         String query = "INSERT INTO products (name, description, price, sale_price, status, category_id, brand_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try(Connection conn = DBContext.getConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
 
-        ){
+        ) {
             ps.setString(1, product.getName());
             ps.setString(2, product.getDescription());
             ps.setBigDecimal(3, product.getPrice());
@@ -33,8 +34,7 @@ public class ProductRepository {
 
             return this.findByName(product.getName());
 
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
 
             e.printStackTrace();
         }
@@ -42,13 +42,13 @@ public class ProductRepository {
     }
 
 
-    public Product findByName( String name){
+    public Product findByName(String name) {
         String query = "SELECT * FROM products WHERE name=?";
 
-        try(Connection conn = DBContext.getConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
 
-        ){
+        ) {
             ps.setString(1, name);
             var rs = ps.executeQuery();
             if (rs.next()) {
@@ -65,20 +65,19 @@ public class ProductRepository {
                 product.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
                 return product;
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public List<Product> findAll(int offset, int row){
+    public List<Product> findAll(int offset, int row) {
         String query = "SELECT * FROM products ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
-        try(Connection conn = DBContext.getConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
 
-        ){
+        ) {
             ps.setInt(1, offset);
             ps.setInt(2, row);
             var rs = ps.executeQuery();
@@ -98,21 +97,20 @@ public class ProductRepository {
                 products.add(product);
             }
             return products;
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
 
-    public Product findById( Long id){
+    public Product findById(Long id) {
 
         String query = "SELECT * FROM products WHERE id=?";
 
-        try(Connection conn = DBContext.getConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
-        ){
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+        ) {
             ps.setLong(1, id);
             var rs = ps.executeQuery();
             if (rs.next()) {
@@ -129,19 +127,18 @@ public class ProductRepository {
                 product.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
                 return product;
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
 
-    public void delete( Long id){
+    public void delete(Long id) {
         String query = "DELETE FROM products WHERE id=?";
 
-        try(Connection connection = DBContext.getConnection();
-        PreparedStatement ps = connection.prepareStatement(query)){
+        try (Connection connection = DBContext.getConnection();
+             PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setLong(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -149,41 +146,40 @@ public class ProductRepository {
         }
     }
 
-    public Product update( Product product){
+    public Product update(Product product) {
         String query = "UPDATE products SET name=?, description=?, price=?, sale_price=?, status=?, updated_at=?, category_id=?, brand_id=? WHERE id=?";
 
-        try(Connection conn = DBContext.getConnection();
-        PreparedStatement ps = conn.prepareStatement(query);){
-           ps.setString(1, product.getName());
-           ps.setString(2, product.getDescription());
-           ps.setBigDecimal(3, product.getPrice());
-           ps.setBigDecimal(4, product.getSalePrice());
-           ps.setString(5, product.getStatus().name());
-           ps.setObject(6, product.getUpdatedAt());
-           ps.setLong(7, product.getCategoryId());
-           ps.setLong(8, product.getBrandId());
-           ps.setLong(9, product.getId());
-           ps.executeUpdate();
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);) {
+            ps.setString(1, product.getName());
+            ps.setString(2, product.getDescription());
+            ps.setBigDecimal(3, product.getPrice());
+            ps.setBigDecimal(4, product.getSalePrice());
+            ps.setString(5, product.getStatus().name());
+            ps.setObject(6, product.getUpdatedAt());
+            ps.setLong(7, product.getCategoryId());
+            ps.setLong(8, product.getBrandId());
+            ps.setLong(9, product.getId());
+            ps.executeUpdate();
 
-           return this.findById(product.getId());
+            return this.findById(product.getId());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
 
-
-    public List<Product> findAllActiveProduct(int offset, int row){
+    public List<Product> findAllActiveProduct(int offset, int row) {
         String query = "SELECT * FROM products WHERE status='ACTIVE' ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
-        try(Connection conn = DBContext.getConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
+        List<Product> products = new ArrayList<>();
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
 
-        ){
+        ) {
             ps.setInt(1, offset);
             ps.setInt(2, row);
             var rs = ps.executeQuery();
-            List<Product> products = new java.util.ArrayList<>();
             while (rs.next()) {
                 Product product = new Product();
                 product.setId(rs.getLong("id"));
@@ -199,8 +195,37 @@ public class ProductRepository {
                 products.add(product);
             }
             return products;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        catch (SQLException e) {
+        return null;
+    }
+
+
+    public List<Product> findNewestProducts() {
+        String query = "SELECT TOP 5 * FROM products WHERE status='ACTIVE' ORDER BY updated_at DESC";
+        List<Product> products = new java.util.ArrayList<>();
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+        ) {
+            var rs = ps.executeQuery();
+            while (rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getLong("id"));
+                product.setName(rs.getString("name"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getBigDecimal("price"));
+                product.setSalePrice(rs.getBigDecimal("sale_price"));
+                product.setStatus(ProductStatus.valueOf(rs.getString("status")));
+                product.setCategoryId(rs.getLong("category_id"));
+                product.setBrandId(rs.getLong("brand_id"));
+                product.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                product.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+                products.add(product);
+            }
+            return products;
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;

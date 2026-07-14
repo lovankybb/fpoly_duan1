@@ -43,6 +43,7 @@
                         <div class="form-group full-width">
                             <label>Tên sản phẩm</label>
                             <input type="text" name="name" value="${product.name}" placeholder="VD: iPhone 17 Pro Max 256GB" required>
+                            <span class="error-msg">${nameError}</span>
                         </div>
 
                         <div class="form-group">
@@ -53,6 +54,7 @@
                                     <option value="${cat.id}" ${cat.id == product.categoryId ? 'selected' : ''}>${cat.name}</option>
                                 </c:forEach>
                             </select>
+                            <span class="error-msg">${catError}</span>
                         </div>
 
                         <div class="form-group">
@@ -63,11 +65,13 @@
                                     <option value="${brand.id}" ${brand.id == product.brandId ? 'selected' : ''}>${brand.name}</option>
                                 </c:forEach>
                             </select>
+                            <span class="error-msg">${brandError}</span>
                         </div>
 
                         <div class="form-group">
-                            <label>Giá nhập (VNĐ)</label>
+                            <label>Giá (VNĐ)</label>
                             <input type="number" name="price" value="${product.price}" placeholder="VD: 1400000" min="0" required>
+                            <span class="error-msg">${priceError}</span>
                         </div>
 
                         <div class="form-group">
@@ -82,6 +86,7 @@
                                 <option value="INACTIVE" ${product.status == 'INACTIVE' ? 'selected' : ''}>Ngừng bán</option>
                                 <option value="DRAFT" ${product.status == 'DRAFT' ? 'selected' : ''}>Nháp</option>
                             </select>
+                            <span class="error-msg">${statusError}</span>
                         </div>
 
                         <!-- Khu vực hiển thị ảnh cũ -->
@@ -114,6 +119,7 @@
                         <div class="form-group full-width">
                             <label>Mô tả chi tiết</label>
                             <textarea name="description" rows="5" placeholder="Nhập mô tả sản phẩm...">${product.description}</textarea>
+                            <span class="error-msg">${descError}</span>
                         </div>
 
                     </div>
