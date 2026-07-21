@@ -122,7 +122,7 @@
         <nav class="header-nav">
             <ul>
                 <li><a href="${pageContext.request.contextPath}/">Trang chủ</a></li>
-                <li><a href="${pageContext.request.contextPath}/products">Cửa hàng</a></li>
+                <li><a href="${pageContext.request.contextPath}/products?offset=0">Cửa hàng</a></li>
                 <li><a href="${pageContext.request.contextPath}/about">Về chúng tôi</a></li>
                 <li><a href="${pageContext.request.contextPath}/contact">Liên hệ</a></li>
                 <c:if test="${authentication.roles.contains('ADMIN')}">
@@ -153,15 +153,6 @@
                         <path d="M20 21a8 8 0 0 0-16 0"/>
                     </svg>
                 </a>
-<%--                <a href="${pageContext.request.contextPath}/logout">--%>
-<%--                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"--%>
-<%--                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"--%>
-<%--                         class="lucide lucide-log-out-icon lucide-log-out">--%>
-<%--                        <path d="m16 17 5-5-5-5"/>--%>
-<%--                        <path d="M21 12H9"/>--%>
-<%--                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>--%>
-<%--                    </svg>--%>
-<%--                </a>--%>
             </c:if>
             <c:if test="${authentication.username == null}">
                 <a href="${pageContext.request.contextPath}/sign-in" class="btn-login">Đăng nhập</a>

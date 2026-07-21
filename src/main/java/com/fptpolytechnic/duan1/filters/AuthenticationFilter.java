@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.text.ParseException;
 
 
@@ -20,7 +21,7 @@ public class AuthenticationFilter implements Filter {
 
     IntrospectService introspectService;
 
-    public AuthenticationFilter(){
+    public AuthenticationFilter() {
         introspectService = new IntrospectService();
     }
 
@@ -29,8 +30,8 @@ public class AuthenticationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
 
-
         HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
 
         String uri = req.getRequestURI();
 //        ignore if they are static files
@@ -42,11 +43,11 @@ public class AuthenticationFilter implements Filter {
         Cookie[] cookies = req.getCookies();
 
         if (cookies != null) {
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals("token")) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("token")) {
                     String token = cookie.getValue();
                     try {
-                        if(introspectService.verifyToken(token)){
+                        if (introspectService.verifyToken(token)) {
 
                             SignedJWT signedJWT = SignedJWT.parse(token);
                             String username = signedJWT.getJWTClaimsSet().getSubject();
@@ -60,9 +61,9 @@ public class AuthenticationFilter implements Filter {
                         }
 
                     } catch (ParseException e) {
-                        GlobalExceptionHandler.getInstance().responseErrorPage(req, (HttpServletResponse) response);
+                        resp.sendRedirect(req.getContextPath() + "/error?code=UNAUTHORIZED");
                     } catch (JOSEException e) {
-                        GlobalExceptionHandler.getInstance().responseErrorPage(req, (HttpServletResponse) response);
+                        resp.sendRedirect(req.getContextPath() + "/error?code=UNAUTHORIZED");
                     }
                 }
             }

@@ -1,17 +1,21 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Atelier</title>
     <!-- Nhúng Font chữ hiện đại -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
     <link href="styles/index.css" rel="stylesheet">
 </head>
 <body>
 
 <!-- 1. Đầu trang (Sử dụng file header của bạn) -->
- <%@ include file="views/fragments/header.jsp" %>
+<%@ include file="views/fragments/header.jsp" %>
 
 
 <!-- 2. PHẦN NỘI DUNG CHÍNH CỦA TRANG CHỦ -->
@@ -23,7 +27,7 @@
             <div class="hero-text">
                 <h1>Iphone 17 Promax</h1>
                 <p>Mở ra thế giới giải trí và năng suất mới. Thiết kế tinh tế, hiệu năng đỉnh cao. Đặt hàng ngay.</p>
-                <a href="${pageContext.request.contextPath}/products" class="btn-hero">KHÁM PHÁ NGAY</a>
+                <a href="${pageContext.request.contextPath}/products?offset=0" class="btn-hero">KHÁM PHÁ NGAY</a>
             </div>
             <div class="hero-image">
                 <!-- Thay thế bằng đường dẫn ảnh thật của bạn -->
@@ -68,77 +72,46 @@
             <h2 class="section-title">Hàng Mới Về</h2>
             <div class="products-grid">
 
-                <!-- Sản phẩm 1 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="path/to/apple_watch_image.png" alt="Apple Watch">
-                    </div>
-                    <div class="product-details">
-                        <h3>Apple Watch Series 10</h3>
-                        <p>(Midnight aluminum case)</p>
-                        <div class="price-row">
-                            <span class="product-price">Từ 12.990.000đ</span>
+                <c:forEach var="p" items="${products}">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="${pageContext.request.contextPath}/image?name=${p.image}" alt="${p.name}">
                         </div>
-                        <a href="#" class="btn-view">Xem chi tiết</a>
-                    </div>
-                </div>
-
-                <!-- Sản phẩm 2 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="path/to/pixel_image.png" alt="Google Pixel">
-                    </div>
-                    <div class="product-details">
-                        <h3>Google Pixel 9 Pro (hazel)</h3>
-                        <p>(128GB, Bản quốc tế)</p>
-                        <div class="price-row">
-                            <span class="product-price">Từ 26.500.000đ</span>
+                        <div class="product-details">
+                            <h3>${p.name}</h3>
+                            <p>Brand</p>
+                            <div class="price-row">
+                                <span class="product-price">
+                                     Từ <fmt:formatNumber value="${p.salePrice}" type="currency" currencySymbol=""
+                                                          maxFractionDigits="0"/> ₫
+                                </span>
+                            </div>
+                            <a href="${pageContext.request.contextPath}/product/detail?id=${p.id}"
+                               class="btn-view">Xem chi tiết</a>
                         </div>
-                        <a href="#" class="btn-view">Xem chi tiết</a>
                     </div>
-                </div>
-
-                <!-- Sản phẩm 3 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="path/to/ipad_image.png" alt="iPad Air">
-                    </div>
-                    <div class="product-details">
-                        <h3>iPad Air M2 (starlight)</h3>
-                        <p>(11-inch, Wi-Fi, 128GB)</p>
-                        <div class="price-row">
-                            <span class="product-price">Từ 16.990.000đ</span>
-                        </div>
-                        <a href="#" class="btn-view">Xem chi tiết</a>
-                    </div>
-                </div>
-
-                <!-- Sản phẩm 4 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="path/to/charger_image.png" alt="Sạc Anker">
-                    </div>
-                    <div class="product-details">
-                        <h3>Sạc Anker Nano II (black)</h3>
-                        <p>(65W, USB-C, GaN)</p>
-                        <div class="price-row">
-                            <span class="product-price">990.000đ</span>
-                        </div>
-                        <a href="#" class="btn-view">Xem chi tiết</a>
-                    </div>
-                </div>
-
+                </c:forEach>
             </div>
         </section>
 
     </div>
 </main>
-
-<!-- 3. Cuối trang (Sử dụng file footer thanh lịch bạn đã tạo) -->
-<%-- <%@ include file="footer.jsp" %> --%>
-
-<!-- Giả lập Footer tối giản để hoàn thiện giao diện -->
-<%@include file="views/fragments/footer.jsp"%>>
-
+<%@include file="views/fragments/footer.jsp" %>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Tìm tất cả các thẻ có class js-format-price
+        const priceElements = document.querySelectorAll('.js-format-price');
+
+        priceElements.forEach(function (el) {
+            // Lấy con số từ data-price
+            const rawPrice = Number(el.getAttribute('data-price'));
+
+            // Nếu có giá trị hợp lệ thì format và gán lại
+            if (!isNaN(rawPrice) && rawPrice > 0) {
+                el.innerText = rawPrice.toLocaleString('vi-VN') + ' ₫';
+            }
+        });
+    });
+</script>
 </html>

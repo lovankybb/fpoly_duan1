@@ -160,9 +160,15 @@ body {
 }
 
 .product-price {
-    font-size: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #717070;
+}
+
+.product-sale-price {
+    font-size: 18px;
     font-weight: 700;
-    color: #1a1a1a;
+    color: #cc2525;
 }
 
 .btn-view {
