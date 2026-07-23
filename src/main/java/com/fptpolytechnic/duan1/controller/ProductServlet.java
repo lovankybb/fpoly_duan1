@@ -1,5 +1,7 @@
 package com.fptpolytechnic.duan1.controller;
 
+import com.fptpolytechnic.duan1.dto.ProductFormDTO;
+import com.fptpolytechnic.duan1.dto.response.ProductDetailResponse;
 import com.fptpolytechnic.duan1.dto.response.SimpleProdResponse;
 import com.fptpolytechnic.duan1.enums.ProductStatus;
 import com.fptpolytechnic.duan1.model.Brand;
@@ -27,7 +29,8 @@ import java.util.stream.Collectors;
         "/admin/product/add",
         "/admin/product/update",
         "/admin/product/delete",
-        "/products"
+        "/products",
+        "/product/detail",
 })
 
 @MultipartConfig(
@@ -70,6 +73,10 @@ public class ProductServlet extends HttpServlet {
             case "/admin/product/update":
                 responseUpdateProduct(req, resp);
                 break;
+            case "/product/detail":
+                responseProductDetail(req, resp);
+                break;
+
             default:
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
                 break;
@@ -80,36 +87,63 @@ public class ProductServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String path = req.getServletPath();
+        try {
+            String path = req.getServletPath();
 
-        switch (path) {
-            case "/admin/product/add":
-                handleProductCreation(req, resp);
-                break;
-            case "/admin/product/update":
-                handleUpdate(req, resp);
-                break;
+            switch (path) {
+                case "/admin/product/add":
+                    handleProductCreation(req, resp);
+                    break;
+                case "/admin/product/update":
+                    handleUpdate(req, resp);
+                    break;
+            }
+        } catch (Exception e) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
         }
     }
 
 
-
-
     private void responseUpdateProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String message = req.getParameter("message");
+        String alertMsg = req.getParameter("alertMsg");
+        if (alertMsg != null) {
+            switch (alertMsg) {
+                case "success":
+                    req.setAttribute("successMsg", "Thêm sản phẩm mới thành công!");
+                    break;
 
-        if ("errorMsg".equals(message)) {
-            req.setAttribute("errorMsg", "Cập nhập sản phẩm thất bại!");
-        }
-        if ("successMsg".equals(message)) {
-            req.setAttribute("successMsg", "Cập nhật sản phẩm thành công!");
+                case "error":
+                    req.setAttribute("errorMsg", "Thêm sản phẩm mới thất bại!");
+                    break;
+            }
         }
 
-        String id = req.getParameter("id");
-        Product product = productService.findById(Long.parseLong(id));
-        List<ProductImage> productImages = productImageService.findByProdId(Long.parseLong(id));
-        req.setAttribute("productImages", productImages);
+
+        if (req.getParameter("nameError") != null) {
+            req.setAttribute("nameError", "Tên sản phẩm không hợp lệ");
+        }
+
+        if (req.getParameter("descError") != null) {
+            req.setAttribute("descError", "Mô tả sản phẩm không hợp lệ");
+        }
+
+        if (req.getParameter("statusError") != null) {
+            req.setAttribute("statusError", "Trạng thái sản phẩm không hợp lệ");
+        }
+
+        if (req.getParameter("priceError") != null) {
+            req.setAttribute("priceError", "Giá sản phẩm không hợp lệ");
+        }
+
+        if (req.getParameter("catError") != null) {
+            req.setAttribute("catError", "Danh mục không hợp lệ");
+        }
+
+        if (req.getParameter("brandError") != null) {
+            req.setAttribute("brandError", "Thương hiệu không hợp lệ");
+        }
+
 
         List<Category> categories = new ArrayList<>();
         categories.add(new Category(1l, "Điện thoại", ""));
@@ -122,10 +156,17 @@ public class ProductServlet extends HttpServlet {
         brands.add(new Brand(2, "Oppo", ""));
         brands.add(new Brand(3, "Samsung", ""));
 
-        req.setAttribute("product", product);
 
         req.setAttribute("categories", categories);
         req.setAttribute("brands", brands);
+
+
+        String id = req.getParameter("id");
+        SimpleProdResponse product = productService.findById(Long.parseLong(id));
+        List<ProductImage> productImages = productImageService.findByProdId(Long.parseLong(id));
+        req.setAttribute("productImages", productImages);
+
+        req.setAttribute("product", product);
 
         req.getRequestDispatcher("/views/admin/update-product.jsp").forward(req, resp);
 
@@ -134,101 +175,77 @@ public class ProductServlet extends HttpServlet {
 
     private void handleUpdate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        System.out.println("INFO: Start handleUpdate");
-        boolean hasErrors = false;
+        String productId = request.getParameter("id");
 
-        String id = request.getParameter("id");
-        String name = request.getParameter("name");
-        String description = request.getParameter("description");
-        ProductStatus status = ProductStatus.valueOf(request.getParameter("status"));
-        BigDecimal price = null;
-        BigDecimal salePrice = null;
-        try {
-            price = BigDecimal.valueOf(Double.parseDouble(request.getParameter("price")));
-            salePrice = BigDecimal.valueOf(Double.parseDouble(request.getParameter("salePrice")));
-        } catch (Exception e) {
-            hasErrors = true;
-            request.setAttribute("priceError", "Giá không hợp lệ");
-        }
-        Long categoryId = Long.valueOf(request.getParameter("categoryId"));
-        Long brandId = Long.valueOf(request.getParameter("brandId"));
-        LocalDateTime updatedAt = LocalDateTime.now();
-
-//        validate
-        if (name == null || name.trim().equals("")) {
-            hasErrors = true;
-            request.setAttribute("nameError", "Tên sản phẩm không được để trống.");
-        }
-        if (status == null) {
-            hasErrors = true;
-            request.setAttribute("statusError", "Trạng thái đang trống.");
+        if (productId == null || productId.trim().isEmpty()) {
+            response.sendRedirect("/error?code=UNCATEGORIZED");
         }
 
-        if (categoryId == null) {
-            hasErrors = true;
-            request.setAttribute("categoryError", "Danh mục đang trống.");
-        }
+        ProductFormDTO form = ProductFormDTO.builder()
+                .id(productId)
+                .name(request.getParameter("name"))
+                .description(request.getParameter("description"))
+                .categoryId(request.getParameter("categoryId"))
+                .brandId(request.getParameter("brandId"))
+                .status(request.getParameter("status"))
+                .price(request.getParameter("price"))
+                .build();
 
-        if (brandId == null) {
-            hasErrors = true;
-            request.setAttribute("brandError", "Thương hiệu đang trống");
-        }
+        StringBuilder url = new StringBuilder("/admin/product/update?id=").append(productId).append("&");
+        Map<String, String> errors = this.validate(form, true);
+        if (!errors.isEmpty()) {
+            errors.forEach((key, value) -> url.append(key).append("=").append(value).append("&"));
+        } else {
 
-        if (price == null || price.compareTo(BigDecimal.ZERO) <= 0 || salePrice == null || salePrice.compareTo(BigDecimal.ZERO) <= 0) {
-            hasErrors = true;
-            request.setAttribute("priceError", "Giá không hợp lệ");
-        }
+            Collection<Part> parts = request.getParts();
 
-        if (hasErrors) {
-            request.getRequestDispatcher("/views/admin/create-product.jsp").forward(request, response);
-            return;
-        }
-
-
-        Collection<Part> parts = request.getParts();
-
-        parts.stream()
-                .filter(p ->
-                             "image".equals(p.getName())
+            parts.stream()
+                    .filter(p ->
+                            "image".equals(p.getName())
                                     && p.getSubmittedFileName() != null
                                     && !p.getSubmittedFileName().trim().isEmpty()
                                     && p.getSize() > 1
 
-                ).forEach(p -> {
-                    System.out.println("p.getName(): " + p.getName());
-                    System.out.println("p.getContentType(): " + p.getContentType());
-                    System.out.println("p.getSize(): " + p.getContentType());
-                    System.out.println("p.getSubmittedName(): " + p.getSubmittedFileName());
-                });
+                    ).forEach(p -> {
+                        System.out.println("p.getName(): " + p.getName());
+                        System.out.println("p.getContentType(): " + p.getContentType());
+                        System.out.println("p.getSize(): " + p.getContentType());
+                        System.out.println("p.getSubmittedName(): " + p.getSubmittedFileName());
+                    });
 
-        Set<Part> images = parts.stream()
-                .filter(p -> "image".equals(p.getName())
-                        && p.getSubmittedFileName() != null
-                        && !p.getSubmittedFileName().trim().isEmpty()
-                        && p.getSize() > 1
-                ).collect(Collectors.toSet());
+            Set<Part> images = parts.stream()
+                    .filter(p -> "image".equals(p.getName())
+                            && p.getSubmittedFileName() != null
+                            && !p.getSubmittedFileName().trim().isEmpty()
+                            && p.getSize() > 1
+                    ).collect(Collectors.toSet());
 
-        System.out.println("INFO: Validate update product successful!");
+            System.out.println("INFO: Validate update product successful!");
 
-        Product product = Product.builder()
-                .id(Long.parseLong(id))
-                .name(name)
-                .description(description)
-                .price(price)
-                .salePrice(salePrice)
-                .categoryId(categoryId)
-                .brandId(brandId)
-                .status(ProductStatus.valueOf(request.getParameter("status")))
-                .updatedAt(updatedAt)
-                .build();
+            BigDecimal price = new BigDecimal(request.getParameter("price"));
+            BigDecimal salePrice = request.getParameter("salePrice") == null ? price : new BigDecimal(request.getParameter("salePrice"));
+
+            Product product = Product.builder()
+                    .id(Long.parseLong(request.getParameter("id")))
+                    .name(request.getParameter("name"))
+                    .description(request.getParameter("description"))
+                    .price(price)
+                    .salePrice(salePrice)
+                    .categoryId(Long.parseLong(request.getParameter("categoryId")))
+                    .brandId(Long.parseLong(request.getParameter("brandId")))
+                    .status(ProductStatus.valueOf(request.getParameter("status")))
+                    .updatedAt(LocalDateTime.now())
+                    .build();
 
 
-        Product updateProd = productService.update(product, images);
-        if (updateProd == null) {
-            response.sendRedirect("/admin/product/update?id=" + updateProd.getId() + "&message=errorMsg");
+            if (productService.update(product, images) == null) {
+                url.append("alertMsg=error&");
+            } else {
+                url.append("alertMsg=success&");
+            }
+
+            response.sendRedirect(request.getContextPath() + url.toString());
         }
-
-        response.sendRedirect("/admin/product/update?id=" + updateProd.getId() + "&message=successMsg");
     }
 
     private void handleDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -258,6 +275,22 @@ public class ProductServlet extends HttpServlet {
         request.getRequestDispatcher("/views/admin/product.jsp").forward(request, response);
     }
 
+    private void responseProductDetail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+
+        String id = request.getParameter("id");
+        if(id == null || id.trim().isEmpty()) {
+            response.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+
+        ProductDetailResponse product = this.productService.getProductDetail(Long.parseLong(id));
+        request.setAttribute("product", product);
+
+
+        request.getRequestDispatcher("/views/prod-detail.jsp").forward(request, response);
+    }
+
     private void responseProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 //        String offSet = request.getParameter("offset");
@@ -277,6 +310,46 @@ public class ProductServlet extends HttpServlet {
     }
 
     private void responseProductCreation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String alertMsg = request.getParameter("alertMsg");
+        if (alertMsg != null) {
+            switch (alertMsg) {
+                case "success":
+                    request.setAttribute("successMsg", "Thêm sản phẩm mới thành công!");
+                    break;
+
+                case "error":
+                    request.setAttribute("errorMsg", "Thêm sản phẩm mới thất bại!");
+                    break;
+            }
+        }
+
+
+        if (request.getParameter("nameError") != null) {
+            request.setAttribute("nameError", "Tên sản phẩm không hợp lệ");
+        }
+
+        if (request.getParameter("descError") != null) {
+            request.setAttribute("descError", "Mô tả sản phẩm không hợp lệ");
+        }
+
+        if (request.getParameter("statusError") != null) {
+            request.setAttribute("statusError", "Trạng thái sản phẩm không hợp lệ");
+        }
+
+        if (request.getParameter("priceError") != null) {
+            request.setAttribute("priceError", "Giá sản phẩm không hợp lệ");
+        }
+
+        if (request.getParameter("catError") != null) {
+            request.setAttribute("catError", "Danh mục không hợp lệ");
+        }
+
+        if (request.getParameter("brandError") != null) {
+            request.setAttribute("brandError", "Thương hiệu không hợp lệ");
+        }
+
+
         List<Category> categories = new ArrayList<>();
         categories.add(new Category(1l, "Điện thoại", ""));
         categories.add(new Category(2l, "Máy tính", ""));
@@ -298,80 +371,91 @@ public class ProductServlet extends HttpServlet {
 
     private void handleProductCreation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-
-        boolean hasErrors = false;
-
-        String name = request.getParameter("name");
-        String description = request.getParameter("description");
-        ProductStatus status = ProductStatus.valueOf(request.getParameter("status"));
-        BigDecimal price = null;
-        BigDecimal salePrice = null;
-        try {
-            price = BigDecimal.valueOf(Double.parseDouble(request.getParameter("price")));
-            salePrice = BigDecimal.valueOf(Double.parseDouble(request.getParameter("salePrice")));
-        } catch (Exception e) {
-            hasErrors = true;
-            request.setAttribute("priceError", "Giá không hợp lệ");
-        }
-        Long categoryId = Long.valueOf(request.getParameter("categoryId"));
-        Long brandId = Long.valueOf(request.getParameter("brandId"));
-        LocalDateTime createdAt = LocalDateTime.now();
-        LocalDateTime updatedAt = LocalDateTime.now();
-
-//        validate
-        if (name == null || name.trim().equals("")) {
-            hasErrors = true;
-            request.setAttribute("nameError", "Tên sản phẩm không được để trống.");
-        }
-        if (status == null) {
-            hasErrors = true;
-            request.setAttribute("statusError", "Trạng thái đang trống.");
-        }
-
-        if (categoryId == null) {
-            hasErrors = true;
-            request.setAttribute("categoryError", "Danh mục đang trống.");
-        }
-
-        if (brandId == null) {
-            hasErrors = true;
-            request.setAttribute("brandError", "Thương hiệu đang trống");
-        }
-
-        if (price == null || price.compareTo(BigDecimal.ZERO) <= 0 || salePrice == null || salePrice.compareTo(BigDecimal.ZERO) <= 0) {
-            hasErrors = true;
-            request.setAttribute("priceError", "Giá không hợp lệ");
-        }
-
-        if (hasErrors) {
-            request.getRequestDispatcher("/views/admin/create-product.jsp").forward(request, response);
-            return;
-        }
-
-
-        Product prod = Product.builder()
-                .name(name)
-                .description(description)
-                .status(status)
-                .price(price)
-                .salePrice(salePrice)
-                .categoryId(categoryId)
-                .brandId(brandId)
-                .createdAt(createdAt)
-                .updatedAt(updatedAt)
+        ProductFormDTO form = ProductFormDTO.builder()
+                .name(request.getParameter("name"))
+                .description(request.getParameter("description"))
+                .categoryId(request.getParameter("categoryId"))
+                .brandId(request.getParameter("brandId"))
+                .status(request.getParameter("status"))
+                .price(request.getParameter("price"))
                 .build();
 
-        Collection<Part> parts = request.getParts();
-
-        Product creationProd = productService.create(prod, parts);
-        if (!Objects.isNull(creationProd)) {
-            request.setAttribute("successMsg", "Tạo sản phẩm thành công!");
+        StringBuilder url = new StringBuilder("/admin/product/add?");
+        Map<String, String> errors = this.validate(form, false);
+        if (!errors.isEmpty()) {
+            errors.forEach((key, value) -> url.append(key).append("=").append(value).append("&"));
         } else {
-            request.setAttribute("errorMsg", "Tạo sản phẩm mới thất bại");
-        }
 
-        request.getRequestDispatcher("/views/admin/create-product.jsp").forward(request, response);
+            BigDecimal price = new BigDecimal(request.getParameter("price"));
+            BigDecimal salePrice = request.getParameter("salePrice") == null
+                    ? price
+                    : BigDecimal.valueOf(Double.parseDouble(request.getParameter("salePrice")));
+
+            Product prod = Product.builder()
+                    .name(request.getParameter("name"))
+                    .description(request.getParameter("description"))
+                    .status(ProductStatus.valueOf(request.getParameter("status")))
+                    .price(price)
+                    .salePrice(salePrice)
+                    .categoryId(Long.parseLong(request.getParameter("categoryId")))
+                    .brandId(Long.parseLong(request.getParameter("brandId")))
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+
+            Collection<Part> parts = request.getParts();
+
+            Product creationProd = productService.create(prod, parts);
+            if (!Objects.isNull(creationProd)) {
+                url.append("alertMsg=success&");
+            } else {
+                url.append("alertMsg=error&");
+            }
+
+            response.sendRedirect(request.getContextPath() + url.toString());
+        }
     }
 
+    private Map<String, String> validate(ProductFormDTO form, boolean isUpdate) {
+        Map<String, String> errors = new HashMap<>();
+        if (isUpdate) {
+            if (form.getId() == null || form.getId().trim().isEmpty()) {
+                errors.put("idError", "true");
+            }
+        }
 
+        if (form.getName() == null || form.getName().trim().isEmpty()) {
+            errors.put("nameError", "true");
+        }
+
+        if (form.getDescription() == null || form.getDescription().trim().isEmpty()) {
+            errors.put("descError", "true");
+        }
+
+        if (form.getCategoryId() == null || form.getCategoryId().trim().isEmpty()) {
+            errors.put("catError", "true");
+        }
+
+        if (form.getBrandId() == null || form.getBrandId().trim().isEmpty()) {
+            errors.put("brandError", "true");
+        }
+
+        try {
+            ProductStatus status = ProductStatus.valueOf(form.getStatus());
+        } catch (Exception e) {
+            errors.put("statusError", "true");
+        }
+
+        try {
+            BigDecimal price = BigDecimal.valueOf(Double.parseDouble(form.getPrice()));
+            if (price.compareTo(BigDecimal.ZERO) <= 0) {
+                errors.put("priceError", "true");
+            }
+        } catch (Exception e) {
+            errors.put("priceError", "true");
+        }
+
+
+        return errors;
+    }
 }

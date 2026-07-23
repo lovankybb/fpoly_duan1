@@ -232,7 +232,7 @@ public class ProductVariantServlet extends HttpServlet {
         }
 
 
-        List<ProductVariantResponse> variants = productVariantService.getProductVariantsByProductId(Long.parseLong(productId), offset);
+        List<ProductVariantResponse> variants = productVariantService.getProductVariantsByProductId(Long.parseLong(productId), offset, 10);
         req.setAttribute("variants", variants);
 
 

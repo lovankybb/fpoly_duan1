@@ -1,11 +1,10 @@
 package com.fptpolytechnic.duan1.dto.response;
 
-import com.fptpolytechnic.duan1.enums.ProductStatus;
+import com.fptpolytechnic.duan1.model.ProductImage;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,11 +17,9 @@ public class ProductDetailResponse {
     Long id;
     String name;
     String description;
-    BigDecimal price;
-    BigDecimal salePrice;
-    ProductStatus status;
-    Long categoryId;
-    Long brandId;
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
+    List<ProductImage> images;
+    List<ProductVariantResponse> variants;
+    String status;
+    String category;
+    String brand;
 }

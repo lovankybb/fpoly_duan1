@@ -17,7 +17,6 @@ public class ProductFormDTO {
     String categoryId;
     String brandId;
     String price;
-    String salePrice;
     String status;
 
 }

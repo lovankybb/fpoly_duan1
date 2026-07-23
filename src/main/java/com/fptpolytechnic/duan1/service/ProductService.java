@@ -1,13 +1,17 @@
 package com.fptpolytechnic.duan1.service;
 
 
+import com.fptpolytechnic.duan1.dto.response.ProductDetailResponse;
+import com.fptpolytechnic.duan1.dto.response.ProductVariantResponse;
 import com.fptpolytechnic.duan1.dto.response.SimpleProdResponse;
 import com.fptpolytechnic.duan1.model.Product;
 import com.fptpolytechnic.duan1.model.ProductImage;
+import com.fptpolytechnic.duan1.model.ProductVariant;
 import com.fptpolytechnic.duan1.repository.ProductRepository;
 import jakarta.servlet.http.Part;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -45,14 +49,14 @@ public class ProductService {
 
 
         images.forEach(img -> {
-            System.out.println("Name: "+img.getName());
-            System.out.println("ContentType: "+img.getContentType());
-            System.out.println("SubmittedName: "+img.getSubmittedFileName());
+            System.out.println("Name: " + img.getName());
+            System.out.println("ContentType: " + img.getContentType());
+            System.out.println("SubmittedName: " + img.getSubmittedFileName());
         });
 
         System.out.println("image size: " + images.size());
 
-        if(images.size() > 0 && !images.isEmpty()) {
+        if (images.size() > 0 && !images.isEmpty()) {
             productImageService.delete(product.getId());
             images.forEach(img -> {
                 if ("image".equals(img.getName())) {
@@ -84,8 +88,8 @@ public class ProductService {
     }
 
 
-    public Product findById(Long id) {
-        return productRepository.findById(id);
+    public SimpleProdResponse findById(Long id) {
+        return this.toSimpleProdResponse(productRepository.findById(id));
     }
 
 
@@ -96,12 +100,48 @@ public class ProductService {
     public List<SimpleProdResponse> findAllActiveProduct(int offSet) {
 
 
-        if(offSet < 0){
+        if (offSet < 0) {
             offSet = 0;
         }
 
         return productRepository.findAllActiveProduct(offSet, 20).stream().map(this::toSimpleProdResponse).toList();
     }
+
+
+    public List<SimpleProdResponse> findNewestProducts() {
+        return this.productRepository.findNewestProducts().stream().map(this::toSimpleProdResponse).toList();
+    }
+
+
+    public ProductDetailResponse getProductDetail(Long id) {
+        return this.toProductDetailResponse(productRepository.findById(id));
+    }
+
+
+    public SimpleProdResponse findByProductVariantId(Long productVariantId) {
+        return this.toSimpleProdResponse(this.productRepository.findProductByVariantId(productVariantId));
+    }
+
+
+    private ProductDetailResponse toProductDetailResponse(Product product) {
+
+        ProductDetailResponse productDetailResponse = new ProductDetailResponse();
+        productDetailResponse.setId(product.getId());
+        productDetailResponse.setName(product.getName());
+        productDetailResponse.setDescription(product.getDescription());
+
+        productDetailResponse.setBrand("Brand");
+        productDetailResponse.setCategory("Category");
+
+        List<ProductImage> images = productImageService.findByProdId(product.getId());
+        productDetailResponse.setImages(images);
+
+        List<ProductVariantResponse> variants = productVariantService.getProductVariantsByProductId(product.getId(), 0, 100);
+        productDetailResponse.setVariants(variants);
+
+        return productDetailResponse;
+    }
+
 
     private SimpleProdResponse toSimpleProdResponse(Product product) {
 

@@ -290,3 +290,8 @@ input[type="file"]::file-selector-button:hover {
     color: #32b302;
     border: 1px solid #598759;
 }
+
+.error-msg{
+    color: var(--error-text);
+    font-size: 12px;
+}

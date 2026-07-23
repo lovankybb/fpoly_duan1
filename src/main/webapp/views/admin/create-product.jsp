@@ -44,7 +44,7 @@
                             <option value="${cat.id}">${cat.name}</option>
                         </c:forEach>
                     </select>
-                    <span class="error">${categoryError}</span>
+                    <span class="error">${catError}</span>
                 </div>
 
                 <div class="form-group">
@@ -66,7 +66,6 @@
                 <div class="form-group">
                     <label>Giá bán ra(VNĐ)</label>
                     <input type="number" name="salePrice" placeholder="VD: 830000" min="0" required>
-                    <span class="error">${priceError}</span>
                 </div>
 
                 <div class="form-group">
@@ -91,6 +90,7 @@
                 <div class="form-group full-width">
                     <label>Mô tả chi tiết</label>
                     <textarea name="description" rows="5" placeholder="Nhập mô tả sản phẩm..."></textarea>
+                    <span class="error">${descError}</span>
                 </div>
 
             </div>

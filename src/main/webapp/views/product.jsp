@@ -51,7 +51,7 @@
     <div class="product-grid" id="productGrid">
 
         <c:forEach var="prod" items="${products}">
-            <a href="${pageContext.request.contextPath}/product?id=${prod.id}" class="product-card"
+            <a href="${pageContext.request.contextPath}/product/detail?id=${prod.id}" class="product-card"
                data-category="điện thoại">
                 <div class="product-img-wrap">
                     <span class="badge-new">Mới</span>
