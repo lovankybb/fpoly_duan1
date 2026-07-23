@@ -8,7 +8,8 @@ import lombok.experimental.FieldDefaults;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Getter @Setter @Builder
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults( level = AccessLevel.PRIVATE)

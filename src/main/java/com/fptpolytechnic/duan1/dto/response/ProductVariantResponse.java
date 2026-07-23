@@ -1,6 +1,7 @@
 package com.fptpolytechnic.duan1.dto.response;
 
 
+
 import com.fptpolytechnic.duan1.model.Color;
 import com.fptpolytechnic.duan1.model.Version;
 import lombok.*;
@@ -8,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 
-@Getter @Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

@@ -32,15 +32,21 @@ public class BrandServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
       String uri = req.getRequestURI();
       if (uri.contains("add")) {
-          String name = req.getParameter("name");
-          String description = req.getParameter("description");
-
-          Brand b = new Brand();
-          b.setName(name);
-          b.setDescription(description);
-          service.add(b);
-          resp.sendRedirect(req.getContextPath() + "/admin/brands");
+         handleAddBrand(req, resp);
       }
 
+    }
+
+
+
+    private void handleAddBrand(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String name = req.getParameter("name");
+        String description = req.getParameter("description");
+
+        Brand b = new Brand();
+        b.setName(name);
+        b.setDescription(description);
+        service.add(b);
+        resp.sendRedirect(req.getContextPath() + "/admin/brands");
     }
 }
