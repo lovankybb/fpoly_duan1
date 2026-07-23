@@ -7,6 +7,7 @@ import com.fptpolytechnic.duan1.utils.DBContext;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,18 +53,7 @@ public class ProductRepository {
             ps.setString(1, name);
             var rs = ps.executeQuery();
             if (rs.next()) {
-                Product product = new Product();
-                product.setId(rs.getLong("id"));
-                product.setName(rs.getString("name"));
-                product.setDescription(rs.getString("description"));
-                product.setPrice(rs.getBigDecimal("price"));
-                product.setSalePrice(rs.getBigDecimal("sale_price"));
-                product.setStatus(ProductStatus.valueOf(rs.getString("status")));
-                product.setCategoryId(rs.getLong("category_id"));
-                product.setBrandId(rs.getLong("brand_id"));
-                product.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                product.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-                return product;
+                return this.mapToProduct(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -83,18 +73,7 @@ public class ProductRepository {
             var rs = ps.executeQuery();
             List<Product> products = new java.util.ArrayList<>();
             while (rs.next()) {
-                Product product = new Product();
-                product.setId(rs.getLong("id"));
-                product.setName(rs.getString("name"));
-                product.setDescription(rs.getString("description"));
-                product.setPrice(rs.getBigDecimal("price"));
-                product.setSalePrice(rs.getBigDecimal("sale_price"));
-                product.setStatus(ProductStatus.valueOf(rs.getString("status")));
-                product.setCategoryId(rs.getLong("category_id"));
-                product.setBrandId(rs.getLong("brand_id"));
-                product.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                product.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-                products.add(product);
+                products.add(this.mapToProduct(rs));
             }
             return products;
         } catch (SQLException e) {
@@ -114,18 +93,7 @@ public class ProductRepository {
             ps.setLong(1, id);
             var rs = ps.executeQuery();
             if (rs.next()) {
-                Product product = new Product();
-                product.setId(rs.getLong("id"));
-                product.setName(rs.getString("name"));
-                product.setDescription(rs.getString("description"));
-                product.setPrice(rs.getBigDecimal("price"));
-                product.setSalePrice(rs.getBigDecimal("sale_price"));
-                product.setStatus(ProductStatus.valueOf(rs.getString("status")));
-                product.setCategoryId(rs.getLong("category_id"));
-                product.setBrandId(rs.getLong("brand_id"));
-                product.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                product.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-                return product;
+                return this.mapToProduct(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -181,18 +149,7 @@ public class ProductRepository {
             ps.setInt(2, row);
             var rs = ps.executeQuery();
             while (rs.next()) {
-                Product product = new Product();
-                product.setId(rs.getLong("id"));
-                product.setName(rs.getString("name"));
-                product.setDescription(rs.getString("description"));
-                product.setPrice(rs.getBigDecimal("price"));
-                product.setSalePrice(rs.getBigDecimal("sale_price"));
-                product.setStatus(ProductStatus.valueOf(rs.getString("status")));
-                product.setCategoryId(rs.getLong("category_id"));
-                product.setBrandId(rs.getLong("brand_id"));
-                product.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                product.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-                products.add(product);
+                products.add(this.mapToProduct(rs));
             }
             return products;
         } catch (SQLException e) {
@@ -211,18 +168,7 @@ public class ProductRepository {
         ) {
             var rs = ps.executeQuery();
             while (rs.next()) {
-                Product product = new Product();
-                product.setId(rs.getLong("id"));
-                product.setName(rs.getString("name"));
-                product.setDescription(rs.getString("description"));
-                product.setPrice(rs.getBigDecimal("price"));
-                product.setSalePrice(rs.getBigDecimal("sale_price"));
-                product.setStatus(ProductStatus.valueOf(rs.getString("status")));
-                product.setCategoryId(rs.getLong("category_id"));
-                product.setBrandId(rs.getLong("brand_id"));
-                product.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                product.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-                products.add(product);
+                products.add(this.mapToProduct(rs));
             }
             return products;
         } catch (SQLException e) {
@@ -231,4 +177,47 @@ public class ProductRepository {
         return null;
     }
 
+
+    public Product findProductByVariantId(Long variantId) {
+        String query = """
+                SELECT p.id, p.name, p.description, p.price, p.sale_price,
+                    p.status, p.category_id, p.brand_id, p.created_at, p.updated_at
+                FROM products p
+                JOIN product_variants v ON v.product_id = p.id
+                WHERE v.id = ?
+                """;
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ) {
+            ps.setLong(1, variantId);
+            var rs = ps.executeQuery();
+            if (rs.next()) {
+                return this.mapToProduct(rs);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    private Product mapToProduct(ResultSet rs) throws SQLException {
+
+        return Product.builder()
+                .id(rs.getLong("id"))
+                .name(rs.getString("name"))
+                .description(rs.getString("description"))
+                .price(rs.getBigDecimal("price"))
+                .salePrice(rs.getBigDecimal("sale_price"))
+                .status(ProductStatus.valueOf(rs.getString("status")))
+                .categoryId(rs.getLong("category_id"))
+                .brandId(rs.getLong("brand_id"))
+                .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                .updatedAt(rs.getTimestamp("updated_at").toLocalDateTime())
+                .build();
+
+    }
+
 }
+

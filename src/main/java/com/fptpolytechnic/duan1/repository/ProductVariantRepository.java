@@ -185,4 +185,21 @@ public class ProductVariantRepository {
             e.printStackTrace();
         }
     }
+
+
+    public void updateStock(Long variantId, Integer stock) {
+
+        String query = "UPDATE product_variants SET stock = stock - ? WHERE id = ?";
+
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ) {
+            ps.setLong(1, variantId);
+            ps.setInt(2, stock );
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -3,13 +3,20 @@ package com.fptpolytechnic.duan1.model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
+
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Authentication {
+public class OrderDetail {
 
-    String username;
-    String roles;
+    Long id;
+    Long orderId;
+    Long variantId;
+    int quantity;
+    BigDecimal price;
 }

@@ -141,6 +141,16 @@ CREATE TABLE product_variants (
 );
 
 
+-- CART
+
+    CREATE TABLE carts(
+        id INT IDENTITY(1, 1),
+        variant_id INT NOT NULL REFERENCES product_variants(id),
+        user_id VARCHAR(255) NOT NULL REFERENCES users(id),
+        quantity INT NOT NULL
+    )
+
+
 -- ORDER
 CREATE TABLE orders(
     id BIGINT PRIMARY KEY IDENTITY(1001, 1),
@@ -149,13 +159,11 @@ CREATE TABLE orders(
     customer_name NVARCHAR(255) NOT NULL,
     customer_address NVARCHAR(255) NOT NULL,
     customer_phone NVARCHAR(255) NOT NULL,
-    customer_note NVARCHAR(255) NOT NULL,
+    customer_note NVARCHAR(255),
 
-    user_id NVARCHAR(255),
+    user_id VARCHAR(255)  REFERENCES users(id),
 
-    sub_total DECIMAL(10, 2),
-    tax_amount DECIMAL(10, 2),
-    total_amount DECIMAL(10, 2),
+    total_amount DECIMAL(12, 2),
 
     order_status VARCHAR(255) NOT NULL,
     payment_status VARCHAR(255) NOT NULL,
@@ -167,18 +175,17 @@ CREATE TABLE orders(
     updated_at DATETIME,
 
     canceled_at DATETIME,
-    cancel_reason DATETIME,
+    cancel_reason NVARCHAR(255),
 );
 
 
 CREATE TABLE order_details (
     id BIGINT PRIMARY KEY IDENTITY(1, 1),
-    order_id INT NOT NULL REFERENCES orders(id),
-    prod_id INT NOT NULL REFERENCES products(id),
-    price DECIMAL(10, 2) NOT NULL,
+    order_id BIGINT NOT NULL REFERENCES orders(id),
+    variant_id INT NOT NULL REFERENCES product_variants(id),
+    price DECIMAL(12, 2) NOT NULL,
     quantity int NOT NULL
 );
-
 
 
 -- PAYMENT
