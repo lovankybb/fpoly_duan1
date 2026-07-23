@@ -89,8 +89,8 @@ public class ProductService {
     }
 
 
-    public Product findById(Long id) {
-        return productRepository.findById(id);
+    public SimpleProdResponse findById(Long id) {
+        return this.toSimpleProdResponse(productRepository.findById(id));
     }
 
 
@@ -114,8 +114,13 @@ public class ProductService {
     }
 
 
-    public ProductDetailResponse getProductDetail(Long id ){
+    public ProductDetailResponse getProductDetail(Long id) {
         return this.toProductDetailResponse(productRepository.findById(id));
+    }
+
+
+    public SimpleProdResponse findByProductVariantId(Long productVariantId) {
+        return this.toSimpleProdResponse(this.productRepository.findProductByVariantId(productVariantId));
     }
 
 

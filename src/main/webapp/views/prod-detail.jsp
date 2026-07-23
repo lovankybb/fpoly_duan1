@@ -15,81 +15,6 @@
 
     <link href="${pageContext.request.contextPath}/styles/prod-detail.css" rel="stylesheet">
 
-    <style>
-        .purchase-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 24px;
-        }
-        .actions-row {
-            display: flex;
-            gap: 12px;
-            align-items: stretch;
-        }
-        .quantity-box {
-            display: flex;
-            align-items: center;
-            border: 1px solid #E5E7EB;
-            border-radius: 9999px;
-            background-color: #F9FAFB;
-            padding: 4px 16px;
-            flex-shrink: 0;
-        }
-        .qty-btn { color: #6B7280; padding: 8px; font-size: 0.75rem; transition: color 0.2s; }
-        .qty-btn:hover { color: #000000; }
-        .qty-input {
-            width: 40px;
-            text-align: center;
-            background: transparent;
-            border: none;
-            font-weight: 600;
-            font-size: 1rem;
-            outline: none;
-            pointer-events: none;
-        }
-        /* Nút Thêm vào giỏ (Style Outline viền đen thanh lịch) */
-        .btn-add-cart {
-            flex-grow: 1;
-            background-color: transparent;
-            color: #111111;
-            border: 1.5px solid #111111;
-            font-weight: 600;
-            font-size: 0.95rem;
-            padding: 14px 24px;
-            border-radius: 9999px;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            transition: all 0.2s ease;
-        }
-        .btn-add-cart:hover {
-            background-color: #F3F4F6;
-        }
-        /* Nút Mua Ngay (Style Solid khối đen nổi bật) */
-        .btn-buy-now {
-            width: 100%;
-            background-color: #111111;
-            color: #FFFFFF;
-            border: 1.5px solid #111111;
-            font-weight: 600;
-            font-size: 1rem;
-            padding: 16px 24px;
-            border-radius: 9999px;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        .btn-buy-now:hover {
-            background-color: #333333;
-            border-color: #333333;
-            transform: translateY(-1px);
-        }
-        /* Trạng thái Disable khi hết hàng */
-        .btn-disabled {
-            opacity: 0.4 !important;
-            cursor: not-allowed !important;
-            pointer-events: none;
-        }
-    </style>
 </head>
 <body>
 
@@ -127,7 +52,7 @@
                     <span id="displayPrice" class="current-price">0 ₫</span>
                 </div>
 
-                <form method="POST" id="purchaseForm">
+                <form method="GET" id="purchaseForm">
                     <input type="hidden" name="productId" value="${product.id}">
                     <input type="hidden" name="productVariantId" id="selectedVariantId" value="">
 
@@ -164,8 +89,7 @@
                                 <span>Thêm vào giỏ</span>
                             </button>
                         </div>
-
-                        <button type="submit" formaction="${pageContext.request.contextPath}/buy-now" id="buyNowBtn" class="btn-buy-now">
+                        <button type="submit" formaction="${pageContext.request.contextPath}/checkout" id="buyNowBtn" class="btn-buy-now">
                             <span>Mua ngay</span>
                             <i class="fa-solid fa-arrow-right"></i>
                         </button>
