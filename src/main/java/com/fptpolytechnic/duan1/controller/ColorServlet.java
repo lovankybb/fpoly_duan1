@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/admin/colors")
 public class ColorServlet extends HttpServlet {
@@ -16,13 +17,15 @@ public class ColorServlet extends HttpServlet {
 
     @Override
     protected void doGet(jakarta.servlet.http.HttpServletRequest req, jakarta.servlet.http.HttpServletResponse resp) throws jakarta.servlet.ServletException, java.io.IOException {
+        List<Color> colors = service.getAll();
+        req.setAttribute("color", colors);
         String uri = req.getRequestURI();
         if (uri.contains("delete")) {
             int id = Integer.parseInt(req.getParameter("id"));
             service.delete(id);
             resp.sendRedirect(req.getContextPath() + "/admin/colors");
         } else {
-            req.setAttribute("colors", service.getAll());
+
             req.getRequestDispatcher("/views/admin/color.jsp").forward(req, resp);
         }
 
@@ -32,15 +35,18 @@ public class ColorServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
        String uri = req.getRequestURI();
        if (uri.contains("add")) {
-           String name = req.getParameter("name");
-           String hex = req.getParameter("hex");
-
-           Color c = new Color();
-           c.setName(name);
-           c.setHex(hex);
-
-           service.add(c);
-           resp.sendRedirect(req.getContextPath() + "/admin/colors");
+            handleAddColor(req, resp);
        }
+    }
+    private void handleAddColor(HttpServletRequest req, HttpServletResponse resp) throws IOException{
+        String name = req.getParameter("name");
+        String hex = req.getParameter("hex");
+
+        Color c = new Color();
+        c.setName(name);
+        c.setHex(hex);
+
+        service.add(c);
+        resp.sendRedirect(req.getContextPath() + "/admin/colors");
     }
 }

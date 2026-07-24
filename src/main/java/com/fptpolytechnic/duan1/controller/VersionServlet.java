@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/admin/versions")
 public class VersionServlet  extends HttpServlet {
@@ -17,13 +18,15 @@ public class VersionServlet  extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<Version> versions = service.getAll();
+        req.setAttribute("versions", versions);
         String uri = req.getRequestURI();
         if (uri.contains("delete")) {
             int id = Integer.parseInt(req.getParameter("id"));
             service.delete(id);
             resp.sendRedirect(req.getContextPath() + "/admin/version");
         } else {
-            req.setAttribute("version", service.getAll());
+
             req.getRequestDispatcher("/views/admin/version.jsp").forward(req, resp);
         }
 
@@ -33,13 +36,17 @@ public class VersionServlet  extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uri = req.getRequestURI();
         if (uri.contains("add")) {
-            String name = req.getParameter("name");
-
-            Version v = new Version();
-            v.setName(name);
-
-            service.add(v);
-            resp.sendRedirect(req.getContextPath() + "/admin/version");
+         handleAddVersion(req, resp);
         }
+    }
+
+    private void handleAddVersion(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String name = req.getParameter("name");
+
+        Version v = new Version();
+        v.setName(name);
+
+        service.add(v);
+        resp.sendRedirect(req.getContextPath() + "/admin/version");
     }
 }
