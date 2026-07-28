@@ -1,14 +1,18 @@
 package com.fptpolytechnic.duan1.dto.response;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 @Builder
-public record CheckoutItem(
-        String imageUrl,
-        String productName,
-        String colorName,
-        String versionName,
-        int quantity,
-        double price
-) {
+@Getter
+@Setter
+public class CheckoutItem {
+    Long variantId;
+    String imageUrl;
+    String productName;
+    String colorName;
+    String versionName;
+    int quantity;
+    double price;
 }

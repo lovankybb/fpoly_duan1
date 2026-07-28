@@ -7,10 +7,12 @@ import com.fptpolytechnic.duan1.enums.PaymentStatus;
 import com.fptpolytechnic.duan1.model.Order;
 import com.fptpolytechnic.duan1.utils.DBContext;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.math.BigDecimal;
+import java.sql.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,25 +52,91 @@ public class OrderRepository {
     public Order create(Order order) {
 
         String query = """
-                INSERT INTO orders(customer_name, customer_address, customer_phone, customer_note, user_id, total_amount, order_status, payment_status, payment_method, paid_at, created_at,
-                updated_at, canceled_at, cancel_reason
+                INSERT INTO orders( 
+                    order_code, user_id,
+                    customer_name, customer_address, customer_phone, customer_note,
+                    order_status, 
+                    payment_status, payment_method,
+                    created_at, updated_at )
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
 
+            ps.setString(1, order.getOrderCode());
+            ps.setString(2, order.getUserId());
+            ps.setString(3, order.getCustomerName());
+            ps.setString(4, order.getCustomerAddress());
+            ps.setString(5, order.getCustomerPhone());
+            ps.setString(6, order.getCustomerNote());
+            ps.setString(7, order.getOrderStatus().name());
+            ps.setString(8, order.getPaymentStatus().name());
+            ps.setString(9, order.getPaymentMethod().name());
+            ps.setTimestamp(10, Timestamp.valueOf(order.getCreatedAt()));
+            ps.setTimestamp(11, Timestamp.valueOf(LocalDateTime.now()));
+
+            ps.executeUpdate();
+            return this.returnOrder(order.getOrderCode());
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Order updateTotalAmount(Long orderId, BigDecimal totalAmount) {
+        String query = """
+                UPDATE orders
+                SET total_amount = ?, updated_at=?
+                WHERE id= =?
+                """;
+
+        try (Connection connection = DBContext.getConnection();
+             PreparedStatement ps = connection.prepareStatement(query);) {
+            ps.setBigDecimal(1, totalAmount);
+            ps.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setLong(3, orderId);
+            ps.executeUpdate();
+            return this.returnOrder(orderId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
-
-    public Order returnOrder(String orderId) {
+    public Order returnOrder(String orderCode) {
 
         String query = """
-                SELECT * FROM ORDER WHERE order_code=?
+                SELECT * FROM orders WHERE order_code=?
                 """;
 
         try (var conn = DBContext.getConnection();
              var ps = conn.prepareStatement(query);
         ) {
-            ps.setString(1, orderId);
+            ps.setString(1, orderCode);
+            var rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return this.mapToOrder(rs);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public Order returnOrder(Long orderId) {
+
+        String query = """
+                SELECT * FROM orders WHERE id=?
+                """;
+
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ) {
+            ps.setLong(1, orderId);
             var rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -111,14 +179,13 @@ public class OrderRepository {
                 SET order_status=?
                 WHERE id=?
                 """;
-        try(var conn = DBContext.getConnection();
-            var ps = conn.prepareStatement(query);
-        ){
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ) {
             ps.setString(1, orderStatus.name());
             ps.setLong(2, orderId);
             ps.executeUpdate();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -133,18 +200,16 @@ public class OrderRepository {
                 """;
 
 
-        try(var conn = DBContext.getConnection();
-            var ps = conn.prepareStatement(query);
-        ){
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ) {
             ps.setString(1, paymentStatus.name());
             ps.setLong(2, orderId);
             ps.executeUpdate();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
 
 
     private Order mapToOrder(ResultSet rs) throws SQLException {
@@ -168,17 +233,18 @@ public class OrderRepository {
 
         PaymentStatus paymentStatus = PaymentStatus.valueOf(rs.getString("payment_status"));
         order.setPaymentStatus(paymentStatus);
-        order.setPaidAt(LocalDateTime.ofInstant(rs.getDate("paid_at").toInstant(), ZoneId.systemDefault()));
+        order.setPaidAt(rs.getTimestamp("paid_at").toLocalDateTime());
 
 //                Time
-        order.setCreatedAt(LocalDateTime.ofInstant(rs.getDate("created_at").toInstant(), ZoneId.systemDefault()));
-        order.setUpdateAt(LocalDateTime.ofInstant(rs.getDate("updated_at").toInstant(), ZoneId.systemDefault()));
+        order.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        order.setUpdateAt(rs.getTimestamp("updated_at").toLocalDateTime());
 
 //                Cancel
-        order.setCancelledAt(LocalDateTime.ofInstant(rs.getDate("canceled_at").toInstant(), ZoneId.systemDefault()));
-        order.setCancelReason(rs.getString("cancel_reason"));
+        order.setCancelledAt(rs.getTimestamp("cancelled_at").toLocalDateTime());
+        order.setCancelReason(rs.getString("cancel_reason") == null ? "" : rs.getString("cancel_reason"));
         return order;
     }
 
+    
 }
 

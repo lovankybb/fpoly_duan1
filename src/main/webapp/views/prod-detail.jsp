@@ -52,7 +52,7 @@
                     <span id="displayPrice" class="current-price">0 ₫</span>
                 </div>
 
-                <form method="GET" id="purchaseForm">
+                <form method="POST" id="purchaseForm">
                     <input type="hidden" name="productId" value="${product.id}">
                     <input type="hidden" name="productVariantId" id="selectedVariantId" value="">
 
@@ -89,7 +89,7 @@
                                 <span>Thêm vào giỏ</span>
                             </button>
                         </div>
-                        <button type="submit" formaction="${pageContext.request.contextPath}/checkout" id="buyNowBtn" class="btn-buy-now">
+                        <button type="submit" formaction="${pageContext.request.contextPath}/checkout?checkoutType=BUY_NOW" id="buyNowBtn" class="btn-buy-now">
                             <span>Mua ngay</span>
                             <i class="fa-solid fa-arrow-right"></i>
                         </button>

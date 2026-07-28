@@ -183,7 +183,7 @@ public class ProductRepository {
                 SELECT p.id, p.name, p.description, p.price, p.sale_price,
                     p.status, p.category_id, p.brand_id, p.created_at, p.updated_at
                 FROM products p
-                JOIN product_variants v ON v.product_id = p.id
+                JOIN product_variants v ON v.prod_id = p.id
                 WHERE v.id = ?
                 """;
         try (var conn = DBContext.getConnection();
