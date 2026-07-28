@@ -10,7 +10,7 @@
     <!-- Nhúng Font chữ hiện đại -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
-    <link href="styles/index.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/styles/index.css" rel="stylesheet">
 </head>
 <body>
 

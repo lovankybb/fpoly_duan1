@@ -4,6 +4,7 @@ public class Brand {
     private int id;
     private String name;
     private String description;
+    private String imageUrl;
 
     public Brand() {
     }

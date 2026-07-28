@@ -40,7 +40,7 @@ public class ColorServlet extends HttpServlet {
     }
     private void handleAddColor(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         String name = req.getParameter("name");
-        String hex = req.getParameter("hex");
+        String hex = req.getParameter("hexCode");
 
         Color c = new Color();
         c.setName(name);

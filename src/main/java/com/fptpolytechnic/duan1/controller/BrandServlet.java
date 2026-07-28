@@ -2,11 +2,13 @@ package com.fptpolytechnic.duan1.controller;
 
 import com.fptpolytechnic.duan1.model.Brand;
 import com.fptpolytechnic.duan1.service.BrandService;
+import com.fptpolytechnic.duan1.utils.StorageService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 
 import java.io.IOException;
 
@@ -39,14 +41,9 @@ public class BrandServlet extends HttpServlet {
 
 
 
-    private void handleAddBrand(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String name = req.getParameter("name");
-        String description = req.getParameter("description");
+    private void handleAddBrand(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 
-        Brand b = new Brand();
-        b.setName(name);
-        b.setDescription(description);
-        service.add(b);
         resp.sendRedirect(req.getContextPath() + "/admin/brands");
+
     }
 }
