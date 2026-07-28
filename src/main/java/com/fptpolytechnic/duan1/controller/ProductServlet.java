@@ -162,7 +162,7 @@ public class ProductServlet extends HttpServlet {
 
 
         String id = req.getParameter("id");
-        Product product = productService.findById(Long.parseLong(id));
+        SimpleProdResponse product = productService.findById(Long.parseLong(id));
         List<ProductImage> productImages = productImageService.findByProdId(Long.parseLong(id));
         req.setAttribute("productImages", productImages);
 
@@ -287,9 +287,6 @@ public class ProductServlet extends HttpServlet {
         ProductDetailResponse product = this.productService.getProductDetail(Long.parseLong(id));
         request.setAttribute("product", product);
 
-        product.getVariants().forEach(variant -> {
-            System.out.println(variant.toString());
-        });
 
         request.getRequestDispatcher("/views/prod-detail.jsp").forward(request, response);
     }

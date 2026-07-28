@@ -227,20 +227,20 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="customerName">Họ và tên *</label>
-            <input type="text" id="customerName" name="customerName" class="form-control"
+            <input type="text" id="customerName" name="customerName" class="form-control" value="${customerName}"
                    placeholder="VD: Nguyễn Văn A" required value="${sessionScope.user.name}">
           </div>
 
           <div class="form-group">
             <label class="form-label" for="phone">Số điện thoại *</label>
-            <input type="tel" id="phone" name="phone" class="form-control"
+            <input type="tel" id="phone" name="phone" class="form-control" value="${customerPhone}"
                    placeholder="VD: 0912345678" required pattern="[0-9]{9,11}" value="${sessionScope.user.phone}">
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label" for="address">Địa chỉ nhận hàng *</label>
-          <input type="text" id="address" name="address" class="form-control"
+          <input type="text" id="address" name="address" class="form-control" value="${customerAddress}"
                  placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố..." required>
         </div>
 
