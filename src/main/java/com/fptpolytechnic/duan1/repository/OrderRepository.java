@@ -89,7 +89,7 @@ public class OrderRepository {
         String query = """
                 UPDATE orders
                 SET total_amount = ?, updated_at=?
-                WHERE id= =?
+                WHERE id=?
                 """;
 
         try (Connection connection = DBContext.getConnection();
@@ -233,14 +233,16 @@ public class OrderRepository {
 
         PaymentStatus paymentStatus = PaymentStatus.valueOf(rs.getString("payment_status"));
         order.setPaymentStatus(paymentStatus);
-        order.setPaidAt(rs.getTimestamp("paid_at").toLocalDateTime());
+        order.setTotalAmount(rs.getBigDecimal("total_amount") == null ? BigDecimal.ZERO : rs.getBigDecimal("total_amount"));
+
+        order.setPaidAt(rs.getTimestamp("paid_at") == null ? null : rs.getTimestamp("paid_at").toLocalDateTime());
 
 //                Time
-        order.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-        order.setUpdateAt(rs.getTimestamp("updated_at").toLocalDateTime());
+        order.setCreatedAt(rs.getTimestamp("created_at") == null ? null : rs.getTimestamp("created_at").toLocalDateTime());
+        order.setUpdateAt(rs.getTimestamp("updated_at") == null ? null : rs.getTimestamp("updated_at").toLocalDateTime());
 
 //                Cancel
-        order.setCancelledAt(rs.getTimestamp("cancelled_at").toLocalDateTime());
+        order.setCancelledAt(rs.getTimestamp("canceled_at") == null ? null : rs.getTimestamp("canceled_at").toLocalDateTime());
         order.setCancelReason(rs.getString("cancel_reason") == null ? "" : rs.getString("cancel_reason"));
         return order;
     }

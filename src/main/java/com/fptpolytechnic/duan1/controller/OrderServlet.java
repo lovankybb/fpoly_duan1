@@ -28,7 +28,8 @@ import java.util.*;
         "/checkout",
         "/place-order",
         "/admin/orders",
-        "/orders-success"
+        "/orders-success",
+        "/orders-failed"
 })
 public class OrderServlet extends HttpServlet {
 
@@ -54,6 +55,10 @@ public class OrderServlet extends HttpServlet {
             case "/orders-success":
                 this.responseOrderSuccess(req, resp);
                 break;
+            case "/orders-failed":
+                this.responseOrderFailed(req, resp);
+                break;
+
             default:
                 break;
         }
@@ -73,7 +78,35 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
+    private void responseOrderFailed(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        req.getRequestDispatcher("/views/order-failed.jsp").forward(req, resp);
+    }
+
+
+
     private void responseOrderSuccess(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String orderCode = req.getParameter("orderCode");
+
+        if (orderCode == null || orderCode.trim().isEmpty()) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+        req.setAttribute("orderCode", orderCode);
+
+        Order order = null;
+        try {
+            order = orderService.getOrderByOrderCode(orderCode);
+        } catch (SQLException e) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+        if (order == null) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+        req.setAttribute("paymentMethod", order.getPaymentMethod().name());
+        req.setAttribute("totalAmount", order.getTotalAmount().doubleValue());
         req.getRequestDispatcher("/views/order-success.jsp").forward(req, resp);
     }
 
@@ -103,8 +136,7 @@ public class OrderServlet extends HttpServlet {
 
         if ("BUY_NOW".equals(checkoutType)) {
             this.handleBuyNowOrder(req, resp, session);
-        }
-        else{
+        } else {
 //            Handle default ch
         }
 
@@ -162,7 +194,8 @@ public class OrderServlet extends HttpServlet {
                     e.printStackTrace();
                 }
 
-            }resp.sendRedirect(req.getContextPath() + "/order-success");
+            }
+            resp.sendRedirect(req.getContextPath() + "/orders-success" + "?orderCode=" + order.getOrderCode());
 
         }
     }

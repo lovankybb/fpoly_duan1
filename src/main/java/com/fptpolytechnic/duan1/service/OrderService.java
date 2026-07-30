@@ -80,12 +80,17 @@ public class OrderService {
     }
 
 
+    public Order getOrderByOrderCode(String orderCode) throws SQLException {
+        return this.orderRepository.returnOrder(orderCode);
+    }
+
     public Order updateTotalAmount(Long orderId, BigDecimal totalAmount) throws SQLException {
         return this.orderRepository.updateTotalAmount(orderId, totalAmount);
     }
     public Order checkout(Long orderId) {
-
-
         return null;
     }
+
+
+
 }
