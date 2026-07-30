@@ -32,16 +32,16 @@
         <div class="order-info-box">
             <div class="info-row">
                 <span class="info-label">Mã đơn hàng:</span>
-                <span class="info-value">#${orderCode != null ? orderCode : 'ATL-8892'}</span>
+                <span class="info-value">#${orderCode}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Phương thức thanh toán:</span>
-                <span class="info-value">${paymentMethod != null ? paymentMethod : 'COD (Thanh toán khi nhận hàng)'}</span>
+                <span class="info-value">${paymentMethod}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Tổng thanh toán:</span>
                 <span class="info-value" style="color: #d32f2f;">
-          <fmt:formatNumber value="${totalAmount != null ? totalAmount : subTotal}" type="currency" currencySymbol="₫" maxFractionDigits="0"/>
+          <fmt:formatNumber value="${totalAmount != null ? totalAmount : subTotal}" type="currency" currencySymbol="" maxFractionDigits="0"/> ₫
         </span>
             </div>
         </div>
@@ -50,7 +50,7 @@
             <a href="${pageContext.request.contextPath}/home" class="btn btn-secondary">
                 <i class="fa-solid fa-house"></i> Trang chủ
             </a>
-            <a href="${pageContext.request.contextPath}/products" class="btn btn-primary">
+            <a href="${pageContext.request.contextPath}/products?offset=0" class="btn btn-primary">
                 Tiếp tục mua sắm <i class="fa-solid fa-arrow-right"></i>
             </a>
         </div>
