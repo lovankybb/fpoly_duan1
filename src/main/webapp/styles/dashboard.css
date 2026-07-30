@@ -1,0 +1,170 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #f4f6f9;
+    color: #1a1a1a;
+}
+
+/* Chừa khoảng trống 260px bên trái cho Sidebar */
+.admin-main-content {
+    margin-left: 260px;
+    padding: 30px 40px;
+    min-height: 100vh;
+}
+
+/* Header của Dashboard (Thanh tìm kiếm & Avatar) */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.dashboard-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.admin-profile span {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.admin-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #1a1a1a;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* 4 Thẻ Thống kê (Cards) */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-card .title {
+    font-size: 13px;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+}
+
+.stat-card .value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.stat-card .trend {
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.trend.up {
+    color: #2e7d32;
+}
+
+.trend.down {
+    color: #c62828;
+}
+
+/* Bảng dữ liệu Đơn hàng gần đây */
+.recent-orders {
+    background-color: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    padding: 25px;
+}
+
+.recent-orders h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 15px 10px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+th {
+    color: #888;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+td {
+    color: #1a1a1a;
+    font-weight: 500;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge.pending {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+.badge.success {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.btn-action {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.btn-action:hover {
+    text-decoration: underline;
+}
