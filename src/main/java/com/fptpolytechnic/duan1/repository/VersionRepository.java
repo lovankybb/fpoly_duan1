@@ -12,7 +12,7 @@ import java.util.List;
 public class VersionRepository {
     public List<Version> getAll() {
         List<Version> list = new ArrayList<>();
-        String sql = "SELECT * FROM version";
+        String sql = "SELECT * FROM versions";
         try (Connection con = DBContext.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {

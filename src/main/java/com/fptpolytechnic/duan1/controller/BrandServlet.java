@@ -9,10 +9,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import jakarta.servlet.annotation.MultipartConfig;
 
+import java.io.File;
 import java.io.IOException;
 
 @WebServlet({"/admin/brands", "/admin/brand/add", "/admin/brand/delete"})
+@MultipartConfig
 public class BrandServlet extends HttpServlet {
     private final  BrandService service = new BrandService();
 
@@ -42,6 +45,28 @@ public class BrandServlet extends HttpServlet {
 
 
     private void handleAddBrand(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+
+        String name = req.getParameter("name");
+        String description = req.getParameter("description");
+
+        Part filePart = req.getPart("image");
+
+        if (filePart != null && filePart.getSubmittedFileName() != null) {
+            String fileName = filePart.getSubmittedFileName();
+
+            if (!fileName.trim().isEmpty()) {
+                String uploadPath = "D:/du_an1/images";
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
+                String safeFileName = new File(fileName).getName();
+                filePart.write(uploadPath + File.separator + safeFileName);
+            }
+
+
+
+        }
 
         resp.sendRedirect(req.getContextPath() + "/admin/brands");
 

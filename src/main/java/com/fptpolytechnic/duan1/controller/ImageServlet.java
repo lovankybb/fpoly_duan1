@@ -18,7 +18,7 @@ public class ImageServlet extends HttpServlet {
         String path = AppConfig.getInstance().getProperty("app.static.image.path");
         String name = req.getParameter("name");
 
-        File file = new File(path + name);
+        File file = new File(path, name);
 
         String contentType = getServletContext().getMimeType(file.getName());
         resp.setContentType(contentType != null ? contentType : "image/jpeg");
