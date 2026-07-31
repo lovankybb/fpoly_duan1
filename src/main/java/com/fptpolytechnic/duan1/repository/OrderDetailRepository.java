@@ -1,11 +1,8 @@
 package com.fptpolytechnic.duan1.repository;
 
-import com.fptpolytechnic.duan1.model.Order;
 import com.fptpolytechnic.duan1.model.OrderDetail;
 import com.fptpolytechnic.duan1.utils.DBContext;
 
-import javax.sql.rowset.JdbcRowSet;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +38,7 @@ public class OrderDetailRepository {
 
         var conn = DBContext.getConnection();
         try (
-             var ps = conn.prepareStatement(query);
+                var ps = conn.prepareStatement(query);
         ) {
             conn.setAutoCommit(false);
 
@@ -58,8 +55,7 @@ public class OrderDetailRepository {
             conn.commit();
         } catch (SQLException e) {
             conn.rollback();
-        }
-        finally {
+        } finally {
             conn.close();
         }
 
@@ -69,17 +65,17 @@ public class OrderDetailRepository {
     public List<OrderDetail> findByOrderId(Long orderId) throws SQLException {
 
         String query = """
-                SELECT * FROM order_details WHERE order_id = ?;
-        """;
+                        SELECT * FROM order_details WHERE order_id = ?;
+                """;
 
-        try(var conn  = DBContext.getConnection();
-            var ps = conn.prepareStatement(query);
-        ){
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ) {
 
             ps.setLong(1, orderId);
             var rs = ps.executeQuery();
             List<OrderDetail> orderDetails = new ArrayList<>();
-            while(rs.next()) {
+            while (rs.next()) {
                 OrderDetail orderDetail = new OrderDetail();
                 orderDetail.setOrderId(rs.getLong("order_id"));
                 orderDetail.setVariantId(rs.getLong("variant_id"));
@@ -88,7 +84,7 @@ public class OrderDetailRepository {
                 orderDetails.add(orderDetail);
             }
             return orderDetails;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
