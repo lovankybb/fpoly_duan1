@@ -7,7 +7,8 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class CheckoutItem {
+public class OrderItemResponse {
+    Long id;
     Long variantId;
     String imageUrl;
     String productName;

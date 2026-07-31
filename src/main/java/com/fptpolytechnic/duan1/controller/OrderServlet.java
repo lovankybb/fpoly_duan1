@@ -1,7 +1,7 @@
 package com.fptpolytechnic.duan1.controller;
 
 import com.fptpolytechnic.duan1.dto.CheckoutFormDTO;
-import com.fptpolytechnic.duan1.dto.response.CheckoutItem;
+import com.fptpolytechnic.duan1.dto.response.OrderItemResponse;
 import com.fptpolytechnic.duan1.dto.response.ProductVariantResponse;
 import com.fptpolytechnic.duan1.dto.response.SimpleProdResponse;
 import com.fptpolytechnic.duan1.model.Authentication;
@@ -25,11 +25,13 @@ import java.sql.SQLException;
 import java.util.*;
 
 @WebServlet({
+        "/admin/orders",
+        "/admin/order/detail",
+        "/admin/order/cancel",
         "/checkout",
         "/place-order",
-        "/admin/orders",
         "/orders-success",
-        "/orders-failed"
+        "/orders-failed",
 })
 public class OrderServlet extends HttpServlet {
 
@@ -51,12 +53,25 @@ public class OrderServlet extends HttpServlet {
         String path = req.getServletPath();
 
         switch (path) {
-
             case "/orders-success":
                 this.responseOrderSuccess(req, resp);
                 break;
             case "/orders-failed":
                 this.responseOrderFailed(req, resp);
+                break;
+            case "/admin/orders":
+                this.responseOderManagement(req, resp);
+                break;
+            case "/admin/order/detail":
+                try {
+                    this.responseOrderDetailManagement(req, resp);
+                } catch (SQLException e) {
+                    resp.sendRedirect("/error?code=UNCATEGORIZED");
+                }
+                break;
+
+            case "/admin/order/cancel":
+                this.handleCancelOrder(req, resp);
                 break;
 
             default:
@@ -78,10 +93,61 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
+
+    private void handleCancelOrder(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String orderId = req.getParameter("orderId");
+
+        if (orderId == null || orderId.trim().isEmpty()) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+    }
+
+
+    private void responseOrderDetailManagement(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+        String orderId = req.getParameter("id");
+
+        if (orderId == null || orderId.trim().isEmpty()) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+        Order order = this.orderService.getOrderById(Long.parseLong(orderId));
+
+        List<OrderItemResponse> orderItems = this.orderService.getOrderItems(order.getId());
+
+        orderItems.forEach(item -> {
+            System.out.println(item.getProductName());
+            System.out.println(item.getVersionName());
+            System.out.println(item.getColorName());
+            System.out.println(item.getPrice());
+            System.out.println(item.getQuantity());
+            System.out.println(item.getImageUrl());
+        });
+        req.setAttribute("order", order);
+        req.setAttribute("orderItems", orderItems);
+
+        req.getRequestDispatcher("/views/admin/order-detail.jsp").forward(req, resp);
+    }
+
+
+    private void responseOderManagement(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String offset = req.getParameter("offset");
+
+        if (offset == null || offset.trim().isEmpty()) {
+            offset = "0";
+        }
+
+        List<Order> orders = this.orderService.findAll(Integer.parseInt(offset));
+
+        req.setAttribute("orders", orders);
+
+        req.getRequestDispatcher("/views/admin/order.jsp").forward(req, resp);
+    }
+
     private void responseOrderFailed(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         req.getRequestDispatcher("/views/order-failed.jsp").forward(req, resp);
     }
-
 
 
     private void responseOrderSuccess(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -146,7 +212,7 @@ public class OrderServlet extends HttpServlet {
 
 
         System.out.println("INFO: Processing order......");
-        List<CheckoutItem> checkoutItems = (List<CheckoutItem>) session.getAttribute("CHECKOUT_ITEMS");
+        List<OrderItemResponse> checkoutItems = (List<OrderItemResponse>) session.getAttribute("CHECKOUT_ITEMS");
 
         CheckoutFormDTO form = CheckoutFormDTO.builder()
                 .customerName(req.getParameter("customerName"))
@@ -176,7 +242,7 @@ public class OrderServlet extends HttpServlet {
 
                 List<OrderDetail> orderDetails = new ArrayList<>();
                 BigDecimal totalAmount = BigDecimal.ZERO;
-                for (CheckoutItem item : checkoutItems) {
+                for (OrderItemResponse item : checkoutItems) {
                     orderDetails.add(OrderDetail.builder()
                             .orderId(order.getId())
                             .price(BigDecimal.valueOf(item.getPrice()))
@@ -228,9 +294,9 @@ public class OrderServlet extends HttpServlet {
         SimpleProdResponse product = this.productService.findByProductVariantId(Long.valueOf(variantId));
         ProductVariantResponse variant = this.productVariantService.findById(Long.valueOf(variantId));
 
-        List<CheckoutItem> checkoutItems = new ArrayList<>();
+        List<OrderItemResponse> checkoutItems = new ArrayList<>();
 
-        checkoutItems.add(CheckoutItem.builder()
+        checkoutItems.add(OrderItemResponse.builder()
                 .variantId(variant.getId())
                 .productName(product.getName())
                 .colorName(variant.getColor().getName())
@@ -242,7 +308,7 @@ public class OrderServlet extends HttpServlet {
 
         BigDecimal subTotal = BigDecimal.ZERO;
 
-        for (CheckoutItem item : checkoutItems) {
+        for (OrderItemResponse item : checkoutItems) {
             subTotal = subTotal.add(BigDecimal.valueOf(item.getPrice()).multiply(BigDecimal.valueOf(item.getQuantity())));
         }
 
