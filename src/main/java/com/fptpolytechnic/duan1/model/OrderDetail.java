@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderDetail {
-
     Long id;
     Long orderId;
     Long variantId;

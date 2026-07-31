@@ -105,6 +105,7 @@ public class OrderRepository {
         return null;
     }
 
+
     public Order returnOrder(String orderCode) {
 
         String query = """
@@ -152,12 +153,14 @@ public class OrderRepository {
     public List<Order> findAll(int offset, int limit) {
 
         String query = """
-                       SELECT * FROM orders ORDER BY updated DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                       SELECT * FROM orders ORDER BY updated_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
                 """;
 
         try (var conn = DBContext.getConnection();
              var ps = conn.prepareStatement(query);
         ) {
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
             var rs = ps.executeQuery();
             List<Order> orders = new ArrayList<>();
             while (rs.next()) {
@@ -221,6 +224,7 @@ public class OrderRepository {
         order.setCustomerName(rs.getString("customer_name"));
         order.setCustomerPhone(rs.getString("customer_phone"));
         order.setCustomerAddress(rs.getString("customer_address"));
+        order.setCustomerNote(rs.getString("customer_note"));
         order.setUserId(rs.getString("user_id") != null ? rs.getString("user_id") : "Anonymous");
 
 
