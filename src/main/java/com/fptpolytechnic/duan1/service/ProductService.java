@@ -6,12 +6,10 @@ import com.fptpolytechnic.duan1.dto.response.ProductVariantResponse;
 import com.fptpolytechnic.duan1.dto.response.SimpleProdResponse;
 import com.fptpolytechnic.duan1.model.Product;
 import com.fptpolytechnic.duan1.model.ProductImage;
-import com.fptpolytechnic.duan1.model.ProductVariant;
 import com.fptpolytechnic.duan1.repository.ProductRepository;
 import jakarta.servlet.http.Part;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -47,15 +45,6 @@ public class ProductService {
 
 
     public Product update(Product product, Collection<Part> images) throws IOException {
-
-
-        images.forEach(img -> {
-            System.out.println("Name: " + img.getName());
-            System.out.println("ContentType: " + img.getContentType());
-            System.out.println("SubmittedName: " + img.getSubmittedFileName());
-        });
-
-        System.out.println("image size: " + images.size());
 
         if (images.size() > 0 && !images.isEmpty()) {
             productImageService.delete(product.getId());

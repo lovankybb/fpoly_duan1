@@ -98,6 +98,8 @@ public class UserServlet  extends HttpServlet {
             response.sendRedirect("/sign-in");
         }
         else {
+
+
             request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
         }
     }

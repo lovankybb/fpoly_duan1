@@ -143,12 +143,12 @@ CREATE TABLE product_variants (
 
 -- CART
 
-    CREATE TABLE carts(
-        id INT IDENTITY(1, 1),
-        variant_id INT NOT NULL REFERENCES product_variants(id),
-        user_id VARCHAR(255) NOT NULL REFERENCES users(id),
-        quantity INT NOT NULL
-    )
+CREATE TABLE carts(
+    id INT IDENTITY(1, 1),
+    variant_id INT NOT NULL REFERENCES product_variants(id),
+    user_id VARCHAR(255) NOT NULL REFERENCES users(id),
+    quantity INT NOT NULL
+)
 
 
 -- ORDER
@@ -192,7 +192,7 @@ CREATE TABLE order_details (
 CREATE TABLE payment_attempts(
 
   id INT PRIMARY KEY IDENTITY,
-  order_id INT NOT NULL REFERENCES orders(id),
+  order_id BIGINT NOT NULL REFERENCES orders(id),
   amount DECIMAL(10, 2) NOT NULL,
   currency VARCHAR(255),
   payment_status VARCHAR(255),
