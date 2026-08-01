@@ -15,6 +15,7 @@ import com.fptpolytechnic.duan1.repository.OrderDetailRepository;
 import com.fptpolytechnic.duan1.repository.OrderRepository;
 import com.fptpolytechnic.duan1.repository.ProductVariantRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -83,6 +84,7 @@ public class OrderService {
 
     public void persistOrderDetail(List<OrderDetail> orderDetails) throws SQLException {
         this.orderDetailRepository.insert(orderDetails);
+        orderDetails.forEach(detail -> productVariantRepository.updateStock(detail.getVariantId(), detail.getQuantity(), true));
     }
 
     public Order getOrderById(Long orderId) throws SQLException {
@@ -119,6 +121,35 @@ public class OrderService {
         return orderItemResponses;
     }
 
+
+    public void cancelOrder(Long orderId, String cancelReason) throws SQLException {
+
+        List<OrderDetail> orderDetails = this.orderDetailRepository.findByOrderId(orderId);
+        for (OrderDetail orderDetail : orderDetails) {
+            this.productVariantRepository.updateStock(orderDetail.getVariantId(), orderDetail.getQuantity(), false);
+        }
+        this.orderRepository.updateCancelInfo(orderId, OrderStatus.CANCELLED, LocalDateTime.now(), cancelReason);
+    }
+
+
+    public void completeOrder(Long orderId) throws SQLException {
+        this.orderRepository.updateCompleteInfo(orderId, OrderStatus.COMPLETED, PaymentStatus.PAID, LocalDateTime.now());
+    }
+
+
+    public void updateOrderStatus(Long orderId, OrderStatus orderStatus) throws SQLException {
+        switch (orderStatus) {
+            case CANCELLED -> this.cancelOrder(orderId, "Cancelled by admin");
+            case COMPLETED -> this.completeOrder(orderId);
+            default -> this.orderRepository.updateOrderStatus(orderId, orderStatus);
+        }
+
+    }
+
+
+    public void updatePaymentStatus(Long orderId, PaymentStatus paymentStatus) throws SQLException {
+        this.orderRepository.updatePaymentStatus(orderId, paymentStatus);
+    }
 
     public List<Order> findAll(int offset) {
 

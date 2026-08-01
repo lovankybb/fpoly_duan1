@@ -2,6 +2,7 @@ package com.fptpolytechnic.duan1.service;
 
 import com.fptpolytechnic.duan1.model.Role;
 import com.fptpolytechnic.duan1.model.User;
+import com.fptpolytechnic.duan1.repository.OrderRepository;
 import com.fptpolytechnic.duan1.repository.RoleRepository;
 import com.fptpolytechnic.duan1.repository.UserRepository;
 import com.fptpolytechnic.duan1.utils.PasswordEncoder;
@@ -12,14 +13,16 @@ import java.util.UUID;
 
 public class UserService {
 
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final OrderRepository orderRepository;
 
     public UserService(){
         userRepository = new UserRepository();
         roleRepository = new RoleRepository();
         passwordEncoder = new PasswordEncoder();
+        orderRepository = new OrderRepository();
     }
 
 
@@ -54,6 +57,7 @@ public class UserService {
     public List<User> findAll(){
         return userRepository.findAll();
     }
+
 
     public User findByUsername(String username){
         return userRepository.findByUsername(username);

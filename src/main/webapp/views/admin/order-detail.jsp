@@ -7,7 +7,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Chi tiết Đơn hàng #${order.orderCode} - Atelier</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
     <link href="${pageContext.request.contextPath}/styles/order-detail-management.css" rel="stylesheet">
 </head>
 <body>
@@ -19,7 +20,8 @@
     <header class="page-header">
         <div class="header-title-group">
             <a href="${pageContext.request.contextPath}/admin/orders" class="btn-back">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
@@ -29,8 +31,10 @@
 
             <!-- Badge Order Status -->
             <c:if test="${order.orderStatus.name() == 'PENDING'}"><span class="badge pending">Chờ xác nhận</span></c:if>
-            <c:if test="${order.orderStatus.name() == 'SHIPPING'}"><span class="badge shipping">Đang giao hàng</span></c:if>
-            <c:if test="${order.orderStatus.name() == 'COMPLETED'}"><span class="badge completed">Hoàn thành</span></c:if>
+            <c:if test="${order.orderStatus.name() == 'SHIPPING'}"><span
+                    class="badge shipping">Đang giao hàng</span></c:if>
+            <c:if test="${order.orderStatus.name() == 'COMPLETED'}"><span
+                    class="badge completed">Hoàn thành</span></c:if>
             <c:if test="${order.orderStatus.name() == 'CANCELLED'}"><span class="badge cancelled">Đã hủy</span></c:if>
         </div>
     </header>
@@ -44,7 +48,11 @@
         <!-- Khách hàng -->
         <div class="info-card">
             <h3>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
                 Thông tin khách hàng
             </h3>
             <div class="info-row">
@@ -64,7 +72,11 @@
         <!-- Giao hàng -->
         <div class="info-card">
             <h3>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                </svg>
                 Địa chỉ giao hàng
             </h3>
             <div class="info-row">
@@ -77,12 +89,24 @@
                     ${order.customerNote != null && order.customerNote != '' ? order.customerNote : 'Không có ghi chú'}
                 </span>
             </div>
+            <c:if test="${order.orderStatus.name() == 'CANCELLED'}">
+                <div class="info-row">
+                    <span class="info-label">Lý do hủy đơn: [ ${order.cancelledAt != null ? order.cancelledAt : 'Không có'} ]</span>
+                    <span class="info-value" style="color: #c62828;">
+                            ${order.cancelReason != null && order.cancelReason != '' ? order.cancelReason : 'Không có lý do hủy'}
+                    </span>
+                </div>
+            </c:if>
         </div>
 
         <!-- Thanh toán & Đơn hàng -->
         <div class="info-card">
             <h3>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                </svg>
                 Thanh toán
             </h3>
             <div class="info-row">
@@ -124,7 +148,8 @@
                 <tr>
                     <td>
                         <div class="product-info">
-                            <img src="${pageContext.request.contextPath}/image?name=${item.imageUrl}" alt="${item.productName}" class="product-img">
+                            <img src="${pageContext.request.contextPath}/image?name=${item.imageUrl}"
+                                 alt="${item.productName}" class="product-img">
                             <div>
                                 <div class="product-name">${item.productName}</div>
                                 <div class="product-variant">${item.colorName} ${item.versionName}</div>
@@ -133,7 +158,8 @@
                     </td>
                     <td style="text-align: center;" class="js-format-price" data-price="${item.price}"></td>
                     <td style="text-align: center;">x${item.quantity}</td>
-                    <td style="text-align: right; font-weight: 600;" class="js-format-price" data-price="${item.price * item.quantity}"></td>
+                    <td style="text-align: right; font-weight: 600;" class="js-format-price"
+                        data-price="${item.price * item.quantity}"></td>
                 </tr>
             </c:forEach>
             </tbody>
@@ -157,38 +183,54 @@
             </div>
         </div>
 
-        <!-- ================= HAI FORM CẬP NHẬT TRẠNG THÁI ================= -->
-        <div class="admin-actions-container">
+        <c:if test="${order.orderStatus.name() != 'CANCELLED' && order.orderStatus.name() != 'COMPLETED'}">
+            <!-- ================= HAI FORM CẬP NHẬT TRẠNG THÁI ================= -->
+            <div class="admin-actions-container">
 
-            <!-- FORM 1: CẬP NHẬT TRẠNG THÁI THANH TOÁN -->
-            <div class="action-box">
-                <h4>Trạng thái thanh toán</h4>
-                <form action="${pageContext.request.contextPath}/admin/order/update-payment" method="POST" class="action-form">
-                    <input type="hidden" name="id" value="${order.id}">
-                    <select name="paymentStatus" class="form-select">
-                        <option value="UNPAID" ${order.paymentStatus.name() == 'UNPAID' ? 'selected' : ''}>Chưa thanh toán</option>
-                        <option value="PAID" ${order.paymentStatus.name() == 'PAID' ? 'selected' : ''}>Đã thanh toán</option>
-                    </select>
-                    <button type="submit" class="btn btn-outline">Lưu</button>
-                </form>
+                <!-- FORM 1: CẬP NHẬT TRẠNG THÁI THANH TOÁN -->
+                <div class="action-box">
+                    <h4>Trạng thái thanh toán</h4>
+                    <form action="${pageContext.request.contextPath}/admin/order/update-payment" method="POST"
+                          class="action-form">
+                        <input type="hidden" name="id" value="${order.id}">
+                        <select name="paymentStatus" class="form-select">
+                            <option value="UNPAID" ${order.paymentStatus.name() == 'UNPAID' ? 'selected' : ''}>Chưa
+                                thanh toán
+                            </option>
+                            <option value="PAID" ${order.paymentStatus.name() == 'PAID' ? 'selected' : ''}>Đã thanh
+                                toán
+                            </option>
+                        </select>
+                        <button type="submit" class="btn btn-outline">Lưu</button>
+                    </form>
+                </div>
+
+                <!-- FORM 2: CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG -->
+                <div class="action-box">
+                    <h4>Trạng thái đơn hàng</h4>
+                    <form action="${pageContext.request.contextPath}/admin/order/update-status" method="POST"
+                          class="action-form">
+                        <input type="hidden" name="id" value="${order.id}">
+                        <select name="orderStatus" class="form-select">
+                            <option value="PENDING" ${order.orderStatus.name() == 'PENDING' ? 'selected' : ''}>Chờ xác
+                                nhận
+                            </option>
+                            <option value="SHIPPING" ${order.orderStatus.name() == 'SHIPPING' ? 'selected' : ''}>Đang
+                                giao hàng
+                            </option>
+                            <option value="COMPLETED" ${order.orderStatus.name() == 'COMPLETED' ? 'selected' : ''}>Hoàn
+                                thành
+                            </option>
+                            <option value="CANCELLED" ${order.orderStatus.name() == 'CANCELLED' ? 'selected' : ''}>Đã
+                                hủy
+                            </option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </form>
+                </div>
+
             </div>
-
-            <!-- FORM 2: CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG -->
-            <div class="action-box">
-                <h4>Trạng thái đơn hàng</h4>
-                <form action="${pageContext.request.contextPath}/admin/order/update-status" method="POST" class="action-form">
-                    <input type="hidden" name="id" value="${order.id}">
-                    <select name="status" class="form-select">
-                        <option value="PENDING" ${order.orderStatus.name() == 'PENDING' ? 'selected' : ''}>Chờ xác nhận</option>
-                        <option value="SHIPPING" ${order.orderStatus.name() == 'SHIPPING' ? 'selected' : ''}>Đang giao hàng</option>
-                        <option value="COMPLETED" ${order.orderStatus.name() == 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
-                        <option value="CANCELLED" ${order.orderStatus.name() == 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
-                    </select>
-                    <button type="submit" class="btn btn-primary">Lưu</button>
-                </form>
-            </div>
-
-        </div>
+        </c:if>
     </div>
 </main>
 

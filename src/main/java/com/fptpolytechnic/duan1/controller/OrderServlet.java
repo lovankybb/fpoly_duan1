@@ -4,6 +4,8 @@ import com.fptpolytechnic.duan1.dto.CheckoutFormDTO;
 import com.fptpolytechnic.duan1.dto.response.OrderItemResponse;
 import com.fptpolytechnic.duan1.dto.response.ProductVariantResponse;
 import com.fptpolytechnic.duan1.dto.response.SimpleProdResponse;
+import com.fptpolytechnic.duan1.enums.OrderStatus;
+import com.fptpolytechnic.duan1.enums.PaymentStatus;
 import com.fptpolytechnic.duan1.model.Authentication;
 import com.fptpolytechnic.duan1.model.Order;
 import com.fptpolytechnic.duan1.model.OrderDetail;
@@ -28,6 +30,8 @@ import java.util.*;
         "/admin/orders",
         "/admin/order/detail",
         "/admin/order/cancel",
+        "/admin/order/update-payment",
+        "/admin/order/update-status",
         "/checkout",
         "/place-order",
         "/orders-success",
@@ -73,7 +77,6 @@ public class OrderServlet extends HttpServlet {
             case "/admin/order/cancel":
                 this.handleCancelOrder(req, resp);
                 break;
-
             default:
                 break;
         }
@@ -90,6 +93,12 @@ public class OrderServlet extends HttpServlet {
             case "/place-order":
                 handleOrder(req, resp);
                 break;
+            case "/admin/order/update-payment":
+                this.handleUpdatePaymentStatus(req, resp);
+                break;
+            case "/admin/order/update-status":
+                this.handleUpdateOrderStatus(req, resp);
+                break;
         }
     }
 
@@ -97,10 +106,64 @@ public class OrderServlet extends HttpServlet {
     private void handleCancelOrder(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String orderId = req.getParameter("orderId");
 
+        String cancelReason = req.getParameter("reason");
         if (orderId == null || orderId.trim().isEmpty()) {
             resp.sendRedirect("/error?code=UNCATEGORIZED");
         }
 
+        if (cancelReason == null || cancelReason.trim().isEmpty()) {
+            cancelReason = "";
+        }
+
+        try {
+            orderService.cancelOrder(Long.parseLong(orderId), cancelReason);
+            resp.sendRedirect("/admin/orders");
+        } catch (SQLException e) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+    }
+
+
+    private void handleUpdatePaymentStatus(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String orderId = req.getParameter("id");
+        String paymentStatus = req.getParameter("paymentStatus");
+
+        if (orderId == null || orderId.trim().isEmpty()) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+        if (paymentStatus == null || paymentStatus.trim().isEmpty()) {
+            paymentStatus = PaymentStatus.UNPAID.name();
+        }
+
+        try {
+            orderService.updatePaymentStatus(Long.parseLong(orderId), PaymentStatus.valueOf(paymentStatus));
+            resp.sendRedirect("/admin/order/detail?id=" + orderId);
+        } catch (SQLException e) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+    }
+
+
+    private void handleUpdateOrderStatus(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String orderId = req.getParameter("id");
+        String orderStatus = req.getParameter("orderStatus");
+
+        if (orderId == null || orderId.trim().isEmpty()) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+        if (orderStatus == null || orderStatus.trim().isEmpty()) {
+            orderStatus = "PENDING";
+        }
+
+        try {
+            orderService.updateOrderStatus(Long.parseLong(orderId), OrderStatus.valueOf(orderStatus));
+            resp.sendRedirect("/admin/order/detail?id=" + orderId);
+        } catch (SQLException e) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
     }
 
 
@@ -114,15 +177,6 @@ public class OrderServlet extends HttpServlet {
         Order order = this.orderService.getOrderById(Long.parseLong(orderId));
 
         List<OrderItemResponse> orderItems = this.orderService.getOrderItems(order.getId());
-
-        orderItems.forEach(item -> {
-            System.out.println(item.getProductName());
-            System.out.println(item.getVersionName());
-            System.out.println(item.getColorName());
-            System.out.println(item.getPrice());
-            System.out.println(item.getQuantity());
-            System.out.println(item.getImageUrl());
-        });
         req.setAttribute("order", order);
         req.setAttribute("orderItems", orderItems);
 
@@ -141,6 +195,7 @@ public class OrderServlet extends HttpServlet {
         List<Order> orders = this.orderService.findAll(Integer.parseInt(offset));
 
         req.setAttribute("orders", orders);
+        req.setAttribute("offset", offset);
 
         req.getRequestDispatcher("/views/admin/order.jsp").forward(req, resp);
     }
@@ -243,6 +298,8 @@ public class OrderServlet extends HttpServlet {
                 List<OrderDetail> orderDetails = new ArrayList<>();
                 BigDecimal totalAmount = BigDecimal.ZERO;
                 for (OrderItemResponse item : checkoutItems) {
+
+
                     orderDetails.add(OrderDetail.builder()
                             .orderId(order.getId())
                             .price(BigDecimal.valueOf(item.getPrice()))
@@ -296,6 +353,9 @@ public class OrderServlet extends HttpServlet {
 
         List<OrderItemResponse> checkoutItems = new ArrayList<>();
 
+        if (Integer.parseInt(quantity) > variant.getStock()) {
+            this.responseOrderFailed(req, resp);
+        }
         checkoutItems.add(OrderItemResponse.builder()
                 .variantId(variant.getId())
                 .productName(product.getName())

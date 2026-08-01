@@ -192,10 +192,23 @@
     cancelButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            let rs = confirm('Bạn có chắc chắn muốn hủy đơn hàng này không? Hành động này không thể hoàn tác.');
 
-            if (rs) {
-                window.location.href = "${pageContext.request.contextPath}/admin/order/cancel?id=" + e.target.value;
+            // Hiện popup nhập lý do
+            let reason = prompt('Vui lòng nhập lý do hủy đơn hàng:');
+
+            // Kiểm tra người dùng có bấm OK và có nhập nội dung không (tránh trường hợp để trống)
+            if (reason !== null) {
+                reason = reason.trim();
+                if (reason === "") {
+                    alert("Bạn phải nhập lý do mới có thể hủy đơn!");
+                    return;
+                }
+
+                // Lấy orderId (dùng currentTarget để tránh lỗi click trúng thẻ con bên trong button)
+                const orderId = e.currentTarget.value;
+
+                // Chuyển hướng kèm thêm query parameter 'reason'
+                window.location.href ="${pageContext.request.contextPath}/admin/order/cancel?orderId=" + orderId + "&reason=" + encodeURIComponent(reason);
             }
         });
     });
