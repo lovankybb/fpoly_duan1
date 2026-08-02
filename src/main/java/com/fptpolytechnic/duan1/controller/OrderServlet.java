@@ -5,15 +5,14 @@ import com.fptpolytechnic.duan1.dto.response.OrderItemResponse;
 import com.fptpolytechnic.duan1.dto.response.ProductVariantResponse;
 import com.fptpolytechnic.duan1.dto.response.SimpleProdResponse;
 import com.fptpolytechnic.duan1.enums.OrderStatus;
+import com.fptpolytechnic.duan1.enums.PaymentMethod;
 import com.fptpolytechnic.duan1.enums.PaymentStatus;
 import com.fptpolytechnic.duan1.model.Authentication;
 import com.fptpolytechnic.duan1.model.Order;
 import com.fptpolytechnic.duan1.model.OrderDetail;
 import com.fptpolytechnic.duan1.model.User;
-import com.fptpolytechnic.duan1.service.OrderService;
-import com.fptpolytechnic.duan1.service.ProductService;
-import com.fptpolytechnic.duan1.service.ProductVariantService;
-import com.fptpolytechnic.duan1.service.UserService;
+import com.fptpolytechnic.duan1.service.*;
+import com.fptpolytechnic.duan1.service.impl.VNPayService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -58,7 +57,11 @@ public class OrderServlet extends HttpServlet {
 
         switch (path) {
             case "/orders-success":
-                this.responseOrderSuccess(req, resp);
+                try {
+                    this.responseOrderSuccess(req, resp);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             case "/orders-failed":
                 this.responseOrderFailed(req, resp);
@@ -205,29 +208,37 @@ public class OrderServlet extends HttpServlet {
     }
 
 
-    private void responseOrderSuccess(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void responseOrderSuccess(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, InterruptedException {
 
         String orderCode = req.getParameter("orderCode");
 
         if (orderCode == null || orderCode.trim().isEmpty()) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
+            orderCode = req.getParameter("vnp_TxnRef");
         }
 
-        req.setAttribute("orderCode", orderCode);
+        req.setAttribute("orderCode", orderCode == null ? "OrderCode" : orderCode);
 
+        Thread.sleep(2000); // Wait for 2 seconds to ensure the order is updated in the database
         Order order = null;
         try {
             order = orderService.getOrderByOrderCode(orderCode);
         } catch (SQLException e) {
             resp.sendRedirect("/error?code=UNCATEGORIZED");
+            return;
         }
 
-        if (order == null) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
-        }
 
-        req.setAttribute("paymentMethod", order.getPaymentMethod().name());
-        req.setAttribute("totalAmount", order.getTotalAmount().doubleValue());
+        System.out.println("INFO: Payment status: " + (order != null ? order.getPaymentStatus().name() : "UNKNOWN"));
+        if (order != null) {
+            req.setAttribute("paymentMethod", order.getPaymentMethod().name());
+            req.setAttribute("totalAmount", order.getTotalAmount().doubleValue());
+            req.setAttribute("paymentStatus", order.getPaymentStatus().name());
+        }
+        else {
+            req.setAttribute("paymentMethod", "UNKNOWN");
+            req.setAttribute("totalAmount", "UNKNOWN");
+            req.setAttribute("paymentStatus", "UNKNOWN");
+        }
         req.getRequestDispatcher("/views/order-success.jsp").forward(req, resp);
     }
 
@@ -283,9 +294,7 @@ public class OrderServlet extends HttpServlet {
         if (!errors.isEmpty()) {
 
             System.out.println("ERROR: Validation Failed");
-            errors.forEach((key, value) -> {
-                url.append("&").append(key).append("=").append(value);
-            });
+            errors.forEach((key, value) -> url.append("&").append(key).append("=").append(value));
             resp.sendRedirect(url.toString());
         } else {
             System.out.println("INFO: Validation Successful!");
@@ -298,8 +307,6 @@ public class OrderServlet extends HttpServlet {
                 List<OrderDetail> orderDetails = new ArrayList<>();
                 BigDecimal totalAmount = BigDecimal.ZERO;
                 for (OrderItemResponse item : checkoutItems) {
-
-
                     orderDetails.add(OrderDetail.builder()
                             .orderId(order.getId())
                             .price(BigDecimal.valueOf(item.getPrice()))
@@ -313,14 +320,31 @@ public class OrderServlet extends HttpServlet {
                     orderService.persistOrderDetail(orderDetails);
                     orderService.updateTotalAmount(order.getId(), totalAmount);
                     System.out.println("INFO: Persist order detail and updated total amount successfully! ");
+
+                    if (order.getPaymentMethod() == PaymentMethod.VNPAY && order.getPaymentStatus() != PaymentStatus.PAID) {
+                        responseVnpayPayment( order.getId(), req, resp);
+                    } else {
+                        resp.sendRedirect(req.getContextPath() + "/orders-success" + "?orderCode=" + order.getOrderCode());
+                    }
+
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
 
             }
-            resp.sendRedirect(req.getContextPath() + "/orders-success" + "?orderCode=" + order.getOrderCode());
-
         }
+    }
+
+    private void responseVnpayPayment(Long orderId, HttpServletRequest req, HttpServletResponse resp) throws IOException, SQLException {
+
+        PaymentService paymentService = new VNPayService();
+
+        Order order = orderService.getOrderById(orderId);
+        long totalAmount = order.getTotalAmount().longValue();
+        String url = paymentService.getUrl(req, totalAmount, order.getOrderCode());
+
+        System.out.println("Redirecting to VNPay URL: " + url);
+        resp.sendRedirect(url);
     }
 
     private void responseByNowCheckoutForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
