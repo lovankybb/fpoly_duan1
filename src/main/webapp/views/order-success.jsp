@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -9,13 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đặt hàng thành công — Atelier.</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap"
+          rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="${pageContext.request.contextPath}/styles/order-success.css" rel="stylesheet">
 </head>
 <body>
 
-<%@include file="fragments/header.jsp"%>
+<%@include file="fragments/header.jsp" %>
 
 <main class="success-container">
     <div class="success-card">
@@ -25,7 +26,8 @@
 
         <h1 class="success-title">Cảm ơn bạn đã đặt hàng!</h1>
         <p class="success-desc">
-            Đơn hàng của bạn đã được tiếp nhận và đang trong quá trình xử lý. Chúng tôi sẽ liên hệ với bạn sớm nhất để xác nhận đơn hàng.
+            Đơn hàng của bạn đã được tiếp nhận và đang trong quá trình xử lý. Chúng tôi sẽ liên hệ với bạn sớm nhất để
+            xác nhận đơn hàng.
         </p>
 
         <!-- Khối thông tin tóm tắt đơn hàng -->
@@ -39,9 +41,21 @@
                 <span class="info-value">${paymentMethod}</span>
             </div>
             <div class="info-row">
+                <span class="info-label">Trạng thái thanh toán:</span>
+                <c:choose>
+                    <c:when test="${paymentStatus == 'PAID'}">
+                        <span class="info-value" style="color: #4caf50;">Đã thanh toán</span>
+                    </c:when>
+                    <c:otherwise>
+                        <span class="info-value" style="color: #d32f2f;">Chưa thanh toán</span>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+            <div class="info-row">
                 <span class="info-label">Tổng thanh toán:</span>
                 <span class="info-value" style="color: #d32f2f;">
-          <fmt:formatNumber value="${totalAmount != null ? totalAmount : subTotal}" type="currency" currencySymbol="" maxFractionDigits="0"/> ₫
+          <fmt:formatNumber value="${totalAmount != null ? totalAmount : subTotal}" type="currency" currencySymbol=""
+                            maxFractionDigits="0"/> ₫
         </span>
             </div>
         </div>

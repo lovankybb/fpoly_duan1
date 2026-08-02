@@ -187,15 +187,15 @@ public class ProductVariantRepository {
     }
 
 
-    public void updateStock(Long variantId, Integer stock) {
+    public void updateStock(Long variantId, int stock, boolean isDecrease) {
 
-        String query = "UPDATE product_variants SET stock = stock - ? WHERE id = ?";
+        String query = "UPDATE product_variants SET stock = stock " + (isDecrease ? "-" : "+") + " ? WHERE id = ?";
 
         try (var conn = DBContext.getConnection();
              var ps = conn.prepareStatement(query);
         ) {
-            ps.setLong(1, variantId);
-            ps.setInt(2, stock );
+            ps.setLong(1, stock);
+            ps.setLong(2, variantId);
             ps.executeUpdate();
 
         } catch (SQLException e) {

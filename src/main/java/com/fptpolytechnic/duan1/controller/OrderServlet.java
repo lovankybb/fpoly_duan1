@@ -1,17 +1,18 @@
 package com.fptpolytechnic.duan1.controller;
 
 import com.fptpolytechnic.duan1.dto.CheckoutFormDTO;
-import com.fptpolytechnic.duan1.dto.response.CheckoutItem;
+import com.fptpolytechnic.duan1.dto.response.OrderItemResponse;
 import com.fptpolytechnic.duan1.dto.response.ProductVariantResponse;
 import com.fptpolytechnic.duan1.dto.response.SimpleProdResponse;
+import com.fptpolytechnic.duan1.enums.OrderStatus;
+import com.fptpolytechnic.duan1.enums.PaymentMethod;
+import com.fptpolytechnic.duan1.enums.PaymentStatus;
 import com.fptpolytechnic.duan1.model.Authentication;
 import com.fptpolytechnic.duan1.model.Order;
 import com.fptpolytechnic.duan1.model.OrderDetail;
 import com.fptpolytechnic.duan1.model.User;
-import com.fptpolytechnic.duan1.service.OrderService;
-import com.fptpolytechnic.duan1.service.ProductService;
-import com.fptpolytechnic.duan1.service.ProductVariantService;
-import com.fptpolytechnic.duan1.service.UserService;
+import com.fptpolytechnic.duan1.service.*;
+import com.fptpolytechnic.duan1.service.impl.VNPayService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -25,11 +26,15 @@ import java.sql.SQLException;
 import java.util.*;
 
 @WebServlet({
+        "/admin/orders",
+        "/admin/order/detail",
+        "/admin/order/cancel",
+        "/admin/order/update-payment",
+        "/admin/order/update-status",
         "/checkout",
         "/place-order",
-        "/admin/orders",
         "/orders-success",
-        "/orders-failed"
+        "/orders-failed",
 })
 public class OrderServlet extends HttpServlet {
 
@@ -51,14 +56,30 @@ public class OrderServlet extends HttpServlet {
         String path = req.getServletPath();
 
         switch (path) {
-
             case "/orders-success":
-                this.responseOrderSuccess(req, resp);
+                try {
+                    this.responseOrderSuccess(req, resp);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             case "/orders-failed":
                 this.responseOrderFailed(req, resp);
                 break;
+            case "/admin/orders":
+                this.responseOderManagement(req, resp);
+                break;
+            case "/admin/order/detail":
+                try {
+                    this.responseOrderDetailManagement(req, resp);
+                } catch (SQLException e) {
+                    resp.sendRedirect("/error?code=UNCATEGORIZED");
+                }
+                break;
 
+            case "/admin/order/cancel":
+                this.handleCancelOrder(req, resp);
+                break;
             default:
                 break;
         }
@@ -75,7 +96,111 @@ public class OrderServlet extends HttpServlet {
             case "/place-order":
                 handleOrder(req, resp);
                 break;
+            case "/admin/order/update-payment":
+                this.handleUpdatePaymentStatus(req, resp);
+                break;
+            case "/admin/order/update-status":
+                this.handleUpdateOrderStatus(req, resp);
+                break;
         }
+    }
+
+
+    private void handleCancelOrder(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String orderId = req.getParameter("orderId");
+
+        String cancelReason = req.getParameter("reason");
+        if (orderId == null || orderId.trim().isEmpty()) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+        if (cancelReason == null || cancelReason.trim().isEmpty()) {
+            cancelReason = "";
+        }
+
+        try {
+            orderService.cancelOrder(Long.parseLong(orderId), cancelReason);
+            resp.sendRedirect("/admin/orders");
+        } catch (SQLException e) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+    }
+
+
+    private void handleUpdatePaymentStatus(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String orderId = req.getParameter("id");
+        String paymentStatus = req.getParameter("paymentStatus");
+
+        if (orderId == null || orderId.trim().isEmpty()) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+        if (paymentStatus == null || paymentStatus.trim().isEmpty()) {
+            paymentStatus = PaymentStatus.UNPAID.name();
+        }
+
+        try {
+            orderService.updatePaymentStatus(Long.parseLong(orderId), PaymentStatus.valueOf(paymentStatus));
+            resp.sendRedirect("/admin/order/detail?id=" + orderId);
+        } catch (SQLException e) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+    }
+
+
+    private void handleUpdateOrderStatus(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String orderId = req.getParameter("id");
+        String orderStatus = req.getParameter("orderStatus");
+
+        if (orderId == null || orderId.trim().isEmpty()) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+        if (orderStatus == null || orderStatus.trim().isEmpty()) {
+            orderStatus = "PENDING";
+        }
+
+        try {
+            orderService.updateOrderStatus(Long.parseLong(orderId), OrderStatus.valueOf(orderStatus));
+            resp.sendRedirect("/admin/order/detail?id=" + orderId);
+        } catch (SQLException e) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+    }
+
+
+    private void responseOrderDetailManagement(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+        String orderId = req.getParameter("id");
+
+        if (orderId == null || orderId.trim().isEmpty()) {
+            resp.sendRedirect("/error?code=UNCATEGORIZED");
+        }
+
+        Order order = this.orderService.getOrderById(Long.parseLong(orderId));
+
+        List<OrderItemResponse> orderItems = this.orderService.getOrderItems(order.getId());
+        req.setAttribute("order", order);
+        req.setAttribute("orderItems", orderItems);
+
+        req.getRequestDispatcher("/views/admin/order-detail.jsp").forward(req, resp);
+    }
+
+
+    private void responseOderManagement(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String offset = req.getParameter("offset");
+
+        if (offset == null || offset.trim().isEmpty()) {
+            offset = "0";
+        }
+
+        List<Order> orders = this.orderService.findAll(Integer.parseInt(offset));
+
+        req.setAttribute("orders", orders);
+        req.setAttribute("offset", offset);
+
+        req.getRequestDispatcher("/views/admin/order.jsp").forward(req, resp);
     }
 
     private void responseOrderFailed(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
@@ -83,30 +208,37 @@ public class OrderServlet extends HttpServlet {
     }
 
 
-
-    private void responseOrderSuccess(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void responseOrderSuccess(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, InterruptedException {
 
         String orderCode = req.getParameter("orderCode");
 
         if (orderCode == null || orderCode.trim().isEmpty()) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
+            orderCode = req.getParameter("vnp_TxnRef");
         }
 
-        req.setAttribute("orderCode", orderCode);
+        req.setAttribute("orderCode", orderCode == null ? "OrderCode" : orderCode);
 
+        Thread.sleep(2000); // Wait for 2 seconds to ensure the order is updated in the database
         Order order = null;
         try {
             order = orderService.getOrderByOrderCode(orderCode);
         } catch (SQLException e) {
             resp.sendRedirect("/error?code=UNCATEGORIZED");
+            return;
         }
 
-        if (order == null) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
-        }
 
-        req.setAttribute("paymentMethod", order.getPaymentMethod().name());
-        req.setAttribute("totalAmount", order.getTotalAmount().doubleValue());
+        System.out.println("INFO: Payment status: " + (order != null ? order.getPaymentStatus().name() : "UNKNOWN"));
+        if (order != null) {
+            req.setAttribute("paymentMethod", order.getPaymentMethod().name());
+            req.setAttribute("totalAmount", order.getTotalAmount().doubleValue());
+            req.setAttribute("paymentStatus", order.getPaymentStatus().name());
+        }
+        else {
+            req.setAttribute("paymentMethod", "UNKNOWN");
+            req.setAttribute("totalAmount", "UNKNOWN");
+            req.setAttribute("paymentStatus", "UNKNOWN");
+        }
         req.getRequestDispatcher("/views/order-success.jsp").forward(req, resp);
     }
 
@@ -146,7 +278,7 @@ public class OrderServlet extends HttpServlet {
 
 
         System.out.println("INFO: Processing order......");
-        List<CheckoutItem> checkoutItems = (List<CheckoutItem>) session.getAttribute("CHECKOUT_ITEMS");
+        List<OrderItemResponse> checkoutItems = (List<OrderItemResponse>) session.getAttribute("CHECKOUT_ITEMS");
 
         CheckoutFormDTO form = CheckoutFormDTO.builder()
                 .customerName(req.getParameter("customerName"))
@@ -162,9 +294,7 @@ public class OrderServlet extends HttpServlet {
         if (!errors.isEmpty()) {
 
             System.out.println("ERROR: Validation Failed");
-            errors.forEach((key, value) -> {
-                url.append("&").append(key).append("=").append(value);
-            });
+            errors.forEach((key, value) -> url.append("&").append(key).append("=").append(value));
             resp.sendRedirect(url.toString());
         } else {
             System.out.println("INFO: Validation Successful!");
@@ -176,7 +306,7 @@ public class OrderServlet extends HttpServlet {
 
                 List<OrderDetail> orderDetails = new ArrayList<>();
                 BigDecimal totalAmount = BigDecimal.ZERO;
-                for (CheckoutItem item : checkoutItems) {
+                for (OrderItemResponse item : checkoutItems) {
                     orderDetails.add(OrderDetail.builder()
                             .orderId(order.getId())
                             .price(BigDecimal.valueOf(item.getPrice()))
@@ -190,14 +320,31 @@ public class OrderServlet extends HttpServlet {
                     orderService.persistOrderDetail(orderDetails);
                     orderService.updateTotalAmount(order.getId(), totalAmount);
                     System.out.println("INFO: Persist order detail and updated total amount successfully! ");
+
+                    if (order.getPaymentMethod() == PaymentMethod.VNPAY && order.getPaymentStatus() != PaymentStatus.PAID) {
+                        responseVnpayPayment( order.getId(), req, resp);
+                    } else {
+                        resp.sendRedirect(req.getContextPath() + "/orders-success" + "?orderCode=" + order.getOrderCode());
+                    }
+
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
 
             }
-            resp.sendRedirect(req.getContextPath() + "/orders-success" + "?orderCode=" + order.getOrderCode());
-
         }
+    }
+
+    private void responseVnpayPayment(Long orderId, HttpServletRequest req, HttpServletResponse resp) throws IOException, SQLException {
+
+        PaymentService paymentService = new VNPayService();
+
+        Order order = orderService.getOrderById(orderId);
+        long totalAmount = order.getTotalAmount().longValue();
+        String url = paymentService.getUrl(req, totalAmount, order.getOrderCode());
+
+        System.out.println("Redirecting to VNPay URL: " + url);
+        resp.sendRedirect(url);
     }
 
     private void responseByNowCheckoutForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -228,9 +375,12 @@ public class OrderServlet extends HttpServlet {
         SimpleProdResponse product = this.productService.findByProductVariantId(Long.valueOf(variantId));
         ProductVariantResponse variant = this.productVariantService.findById(Long.valueOf(variantId));
 
-        List<CheckoutItem> checkoutItems = new ArrayList<>();
+        List<OrderItemResponse> checkoutItems = new ArrayList<>();
 
-        checkoutItems.add(CheckoutItem.builder()
+        if (Integer.parseInt(quantity) > variant.getStock()) {
+            this.responseOrderFailed(req, resp);
+        }
+        checkoutItems.add(OrderItemResponse.builder()
                 .variantId(variant.getId())
                 .productName(product.getName())
                 .colorName(variant.getColor().getName())
@@ -242,7 +392,7 @@ public class OrderServlet extends HttpServlet {
 
         BigDecimal subTotal = BigDecimal.ZERO;
 
-        for (CheckoutItem item : checkoutItems) {
+        for (OrderItemResponse item : checkoutItems) {
             subTotal = subTotal.add(BigDecimal.valueOf(item.getPrice()).multiply(BigDecimal.valueOf(item.getQuantity())));
         }
 

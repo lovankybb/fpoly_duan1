@@ -1,0 +1,224 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #f4f6f9;
+    color: #1a1a1a;
+}
+
+.admin-main-content {
+    margin-left: 260px;
+    padding: 30px 40px;
+    min-height: 100vh;
+}
+
+/* Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.btn-add {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s;
+}
+
+.btn-add:hover {
+    background-color: #333;
+}
+
+/* Card và Thanh tìm kiếm */
+.card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    padding: 25px;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-box {
+    position: relative;
+    width: 380px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    background-color: #fbfbfc;
+    transition: all 0.3s;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #1a1a1a;
+    background-color: #fff;
+}
+
+.search-box svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    width: 18px;
+    height: 18px;
+}
+
+/* Style Bảng Khách hàng */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 15px 10px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid #eaeaea;
+    vertical-align: middle;
+}
+
+th {
+    color: #888;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+/* User Info (Avatar + Tên) */
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    margin-right: 15px;
+    border: 1px solid #eaeaea;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.user-email {
+    font-size: 12px;
+    color: #888;
+}
+
+.user-phone {
+    font-weight: 500;
+    color: #1a1a1a;
+}
+
+.join-date {
+    font-size: 13px;
+    color: #555;
+}
+
+/* Badges trạng thái */
+.badge {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge.active { background: #e8f5e9; color: #2e7d32; }
+.badge.locked { background: #ffebee; color: #c62828; }
+
+/* Nút hành động */
+.btn-action {
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    margin-right: 12px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+.btn-view { color: #3498db; }
+.btn-lock { color: #e67e22; }
+.btn-unlock { color: #2ecc71; }
+.btn-delete { color: #e74c3c; }
+
+.no-result {
+    text-align: center;
+    padding: 40px;
+    color: #888;
+    display: none;
+}
+
+.alert {
+    padding: 14px 16px;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    background-color: #bcedbc;
+    color: #32b302;
+    border: 1px solid #598759;
+}
+
+/* Phân trang */
+.pagination-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.pagination-container a {
+    color: #1a1a1a;
+    transition: 0.2s;
+}
+.pagination-container a:hover {
+    color: #3498db;
+}

@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <title>Quản lý Đơn hàng - Atelier</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <link href="${pageContext.request.contextPath}/styles/order.css" rel="stylesheet">
 
 </head>
 <body>
@@ -64,28 +64,28 @@
                 <tr class="order-row">
                     <!-- Cột Mã đơn -->
                     <td>
-                        <div class="order-code search-target">#${order.code}</div>
-                        <div class="order-date">${order.createdDate}</div>
+                        <div class="order-code search-target">#${order.orderCode}</div>
+                        <div class="order-date">${order.createdAt}</div>
                     </td>
 
                     <!-- Cột Khách hàng -->
                     <td>
                         <div class="customer-name search-target">${order.customerName}</div>
-                        <div class="customer-contact">${order.phone}</div>
+                        <div class="customer-contact">${order.customerPhone}</div>
                     </td>
 
                     <!-- Cột Giá trị -->
                     <td>
                         <div class="total-price js-format-price" data-price="${order.totalAmount}"></div>
-                        <div style="font-size: 12px; color: #888; margin-top: 4px;">${order.totalItems} sản phẩm</div>
+<%--                        <div style="font-size: 12px; color: #888; margin-top: 4px;">${order.totalItems} sản phẩm</div>--%>
                     </td>
 
-                    <!-- Cột Thanh toán -->
+<%--                    <!-- Cột Thanh toán -->--%>
                     <td>
-                        <div style="font-size: 13px; font-weight: 500;">${order.paymentMethod}</div>
+                        <div style="font-size: 13px; font-weight: 500;">${order.paymentMethod.name()}</div>
                         <div class="payment-method">
                             <c:choose>
-                                <c:when test="${order.paymentStatus == 'PAID'}">
+                                <c:when test="${order.paymentStatus.name() == 'PAID'}">
                                     <span style="color: #2e7d32;">Đã thanh toán</span>
                                 </c:when>
                                 <c:otherwise>
@@ -97,25 +97,25 @@
 
                     <!-- Cột Trạng thái -->
                     <td>
-                        <c:if test="${order.status == 'PENDING'}">
+                        <c:if test="${order.orderStatus.name() == 'PENDING'}">
                             <span class="badge pending">Chờ xác nhận</span>
                         </c:if>
-                        <c:if test="${order.status == 'SHIPPING'}">
+                        <c:if test="${order.orderStatus.name() == 'SHIPPING'}">
                             <span class="badge shipping">Đang giao hàng</span>
                         </c:if>
-                        <c:if test="${order.status == 'COMPLETED'}">
+                        <c:if test="${order.orderStatus.name() == 'COMPLETED'}">
                             <span class="badge completed">Hoàn thành</span>
                         </c:if>
-                        <c:if test="${order.status == 'CANCELLED'}">
+                        <c:if test="${order.orderStatus.name() == 'CANCELLED'}">
                             <span class="badge cancelled">Đã hủy</span>
                         </c:if>
                     </td>
 
-                    <!-- Cột Thao tác -->
+<%--                    <!-- Cột Thao tác -->--%>
                     <td>
                         <a href="${pageContext.request.contextPath}/admin/order/detail?id=${order.id}" class="btn-action btn-view">Chi tiết</a>
 
-                        <c:if test="${order.status != 'CANCELLED' && order.status != 'COMPLETED'}">
+                        <c:if test="${order.orderStatus.name() != 'CANCELLED' && order.orderStatus.name() != 'COMPLETED'}">
                             <button class="btn-action btn-cancel" value="${order.id}">Hủy</button>
                         </c:if>
                     </td>
@@ -128,7 +128,6 @@
         <div id="noResultMessage" class="no-result">
             Không tìm thấy đơn hàng nào phù hợp với từ khóa của bạn.
         </div>
-
     </div>
 
     <!-- Phân trang -->
@@ -193,10 +192,23 @@
     cancelButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            let rs = confirm('Bạn có chắc chắn muốn hủy đơn hàng này không? Hành động này không thể hoàn tác.');
 
-            if (rs) {
-                window.location.href = "${pageContext.request.contextPath}/admin/order/cancel?id=" + e.target.value;
+            // Hiện popup nhập lý do
+            let reason = prompt('Vui lòng nhập lý do hủy đơn hàng:');
+
+            // Kiểm tra người dùng có bấm OK và có nhập nội dung không (tránh trường hợp để trống)
+            if (reason !== null) {
+                reason = reason.trim();
+                if (reason === "") {
+                    alert("Bạn phải nhập lý do mới có thể hủy đơn!");
+                    return;
+                }
+
+                // Lấy orderId (dùng currentTarget để tránh lỗi click trúng thẻ con bên trong button)
+                const orderId = e.currentTarget.value;
+
+                // Chuyển hướng kèm thêm query parameter 'reason'
+                window.location.href ="${pageContext.request.contextPath}/admin/order/cancel?orderId=" + orderId + "&reason=" + encodeURIComponent(reason);
             }
         });
     });

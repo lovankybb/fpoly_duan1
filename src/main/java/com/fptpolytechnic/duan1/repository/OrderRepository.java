@@ -105,6 +105,7 @@ public class OrderRepository {
         return null;
     }
 
+
     public Order returnOrder(String orderCode) {
 
         String query = """
@@ -152,12 +153,14 @@ public class OrderRepository {
     public List<Order> findAll(int offset, int limit) {
 
         String query = """
-                       SELECT * FROM orders ORDER BY updated DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                       SELECT * FROM orders ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
                 """;
 
         try (var conn = DBContext.getConnection();
              var ps = conn.prepareStatement(query);
         ) {
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
             var rs = ps.executeQuery();
             List<Order> orders = new ArrayList<>();
             while (rs.next()) {
@@ -176,7 +179,7 @@ public class OrderRepository {
 
         String query = """
                 UPDATE orders 
-                SET order_status=?
+                SET order_status=?, updated_at=GETDATE()
                 WHERE id=?
                 """;
         try (var conn = DBContext.getConnection();
@@ -195,7 +198,7 @@ public class OrderRepository {
 
         String query = """
                 UPDATE orders 
-                SET payment_status=?
+                SET payment_status=?, paid_at=GETDATE(), updated_at=GETDATE()
                 WHERE id=?
                 """;
 
@@ -211,6 +214,71 @@ public class OrderRepository {
         }
     }
 
+    public void updateCancelInfo(Long orderId, OrderStatus orderStatus, LocalDateTime canceledAt, String cancelReason) {
+
+        String query = """
+                UPDATE orders 
+                SET order_status=?, canceled_at=?, cancel_reason=?, updated_at=GETDATE()
+                WHERE id=?
+                """;
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ) {
+            ps.setString(1, orderStatus.name());
+            ps.setTimestamp(2, canceledAt == null ? null : Timestamp.valueOf(canceledAt));
+            ps.setString(3, cancelReason);
+            ps.setLong(4, orderId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateCompleteInfo(Long orderId, OrderStatus orderStatus, PaymentStatus paymentStatus, LocalDateTime paidAt) {
+
+        String query = """
+                UPDATE orders
+                SET order_status=?, payment_status=?, paid_at=?, updated_at=GETDATE()
+                WHERE id=?
+                """;
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ) {
+            ps.setString(1, orderStatus.name());
+            ps.setString(2, paymentStatus.name());
+            ps.setTimestamp(3, paidAt == null ? null : Timestamp.valueOf(paidAt));
+            ps.setLong(4, orderId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public List<Order> findByUserId(String userId, int offset, int limit) {
+        String query = """
+                SELECT * FROM orders
+                WHERE user_id=?
+                ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        """;
+
+        try(
+                var conn = DBContext.getConnection();
+                var ps = conn.prepareStatement(query);
+                ){
+            List<Order> orders = new ArrayList<>();
+            ps.setString(1, userId);
+            ps.setInt(2, offset);
+            ps.setInt(3, limit);
+            var rs = ps.executeQuery();
+            while (rs.next()) {
+                orders.add(this.mapToOrder(rs));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     private Order mapToOrder(ResultSet rs) throws SQLException {
         Order order = new Order();
@@ -221,6 +289,7 @@ public class OrderRepository {
         order.setCustomerName(rs.getString("customer_name"));
         order.setCustomerPhone(rs.getString("customer_phone"));
         order.setCustomerAddress(rs.getString("customer_address"));
+        order.setCustomerNote(rs.getString("customer_note"));
         order.setUserId(rs.getString("user_id") != null ? rs.getString("user_id") : "Anonymous");
 
 
@@ -246,7 +315,5 @@ public class OrderRepository {
         order.setCancelReason(rs.getString("cancel_reason") == null ? "" : rs.getString("cancel_reason"));
         return order;
     }
-
-    
 }
 
