@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/admin/colors")
+@WebServlet({"/admin/colors", "/admin/color/add", "/admin/color/delete"})
 public class ColorServlet extends HttpServlet {
     private final ColorService service = new ColorService();
 

@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/admin/versions")
+@WebServlet({"/admin/versions", "/admin/versions/add","/admin/version/delete"})
 public class VersionServlet  extends HttpServlet {
     private  final Versionervice service = new Versionervice();
 
@@ -25,6 +25,7 @@ public class VersionServlet  extends HttpServlet {
             int id = Integer.parseInt(req.getParameter("id"));
             service.delete(id);
             resp.sendRedirect(req.getContextPath() + "/admin/version");
+            return;
         } else {
 
             req.getRequestDispatcher("/views/admin/version.jsp").forward(req, resp);
