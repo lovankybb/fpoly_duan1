@@ -198,7 +198,7 @@ public class OrderRepository {
 
         String query = """
                 UPDATE orders 
-                SET payment_status=?, updated_at=GETDATE()
+                SET payment_status=?, paid_at=GETDATE(), updated_at=GETDATE()
                 WHERE id=?
                 """;
 
