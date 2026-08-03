@@ -60,7 +60,7 @@ public class OrderServlet extends HttpServlet {
                 try {
                     this.responseOrderSuccess(req, resp);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    responseOrderFailed(req, resp);
                 }
                 break;
             case "/orders-failed":
@@ -94,7 +94,11 @@ public class OrderServlet extends HttpServlet {
                 responseCheckout(req, resp);
                 break;
             case "/place-order":
-                handleOrder(req, resp);
+                try {
+                    handleOrder(req, resp);
+                } catch (SQLException e) {
+                    responseOrderFailed(req, resp);
+                }
                 break;
             case "/admin/order/update-payment":
                 this.handleUpdatePaymentStatus(req, resp);
@@ -227,14 +231,12 @@ public class OrderServlet extends HttpServlet {
             return;
         }
 
-
         System.out.println("INFO: Payment status: " + (order != null ? order.getPaymentStatus().name() : "UNKNOWN"));
         if (order != null) {
             req.setAttribute("paymentMethod", order.getPaymentMethod().name());
             req.setAttribute("totalAmount", order.getTotalAmount().doubleValue());
             req.setAttribute("paymentStatus", order.getPaymentStatus().name());
-        }
-        else {
+        } else {
             req.setAttribute("paymentMethod", "UNKNOWN");
             req.setAttribute("totalAmount", "UNKNOWN");
             req.setAttribute("paymentStatus", "UNKNOWN");
@@ -257,7 +259,7 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
-    private void handleOrder(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void handleOrder(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
 
         HttpSession session = req.getSession();
 
@@ -274,7 +276,7 @@ public class OrderServlet extends HttpServlet {
 
     }
 
-    private void handleBuyNowOrder(HttpServletRequest req, HttpServletResponse resp, HttpSession session) throws ServletException, IOException {
+    private void handleBuyNowOrder(HttpServletRequest req, HttpServletResponse resp, HttpSession session) throws ServletException, IOException, SQLException {
 
 
         System.out.println("INFO: Processing order......");
@@ -322,12 +324,13 @@ public class OrderServlet extends HttpServlet {
                     System.out.println("INFO: Persist order detail and updated total amount successfully! ");
 
                     if (order.getPaymentMethod() == PaymentMethod.VNPAY && order.getPaymentStatus() != PaymentStatus.PAID) {
-                        responseVnpayPayment( order.getId(), req, resp);
+                        responseVnpayPayment(order.getId(), req, resp);
                     } else {
                         resp.sendRedirect(req.getContextPath() + "/orders-success" + "?orderCode=" + order.getOrderCode());
                     }
 
                 } catch (SQLException e) {
+                    orderService.deleteOrderForRollBack(order.getId());
                     e.printStackTrace();
                 }
 

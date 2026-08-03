@@ -158,4 +158,9 @@ public class OrderService {
         }
         return this.orderRepository.findAll(offset, 20);
     }
+
+
+    public void deleteOrderForRollBack(Long orderId) throws SQLException {
+        this.orderRepository.delete(orderId);
+    }
 }
