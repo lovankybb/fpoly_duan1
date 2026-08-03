@@ -42,9 +42,11 @@ public class DashboardServlet extends HttpServlet {
         System.out.println("Total orders: " + totalOrder);
         System.out.println("Low stock count: " + lowStockCount);
 
-        orders.forEach(order -> {
-            System.out.println("Order ID: " + order.getId() + ", Total Amount: " + order.getTotalAmount() + ", Status: " + order.getOrderStatus());
-        });
+        if (orders != null) {
+            orders.forEach(order -> {
+                System.out.println("Order ID: " + order.getId() + ", Total Amount: " + order.getTotalAmount() + ", Status: " + order.getOrderStatus());
+            });
+        }
 
         req.setAttribute("orders", orders);
         req.setAttribute("revenue", revenue);

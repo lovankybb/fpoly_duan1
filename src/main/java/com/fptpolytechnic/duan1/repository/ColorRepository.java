@@ -3,13 +3,12 @@ package com.fptpolytechnic.duan1.repository;
 import com.fptpolytechnic.duan1.model.Color;
 import com.fptpolytechnic.duan1.utils.DBContext;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ColorRepository {
+
     public List<Color> getAll() {
         List<Color> list = new ArrayList<>();
         String sql = "SELECT * FROM colors";
@@ -25,10 +24,26 @@ public class ColorRepository {
         return list;
     }
 
-    public void add(Color c) {
-        String sql = "INSERT INTO colors (name, hex) VALUES(? , ?)";
+    public Color getById(int id) {
+        String sql = "SELECT * FROM colors WHERE id = ?";
         try (Connection con = DBContext.getConnection();
-        PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Color(rs.getInt("id"), rs.getString("name"), rs.getString("hex"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void add(Color c) {
+        String sql = "INSERT INTO colors (name, hex) VALUES (?, ?)";
+        try (Connection con = DBContext.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, c.getName());
             ps.setString(2, c.getHex());
             ps.executeUpdate();
@@ -36,16 +51,28 @@ public class ColorRepository {
             e.printStackTrace();
         }
     }
-    public  void delete(int id) {
-        String sql = "DELETE * FROM colors WHERE id = ?";
+
+    public void update(Color c) {
+        String sql = "UPDATE colors SET name = ?, hex = ? WHERE id = ?";
         try (Connection con = DBContext.getConnection();
-        PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, c.getName());
+            ps.setString(2, c.getHex());
+            ps.setInt(3, c.getId());
             ps.executeUpdate();
-        } catch (Exception e ) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-
+    public void delete(int id) {
+        String sql = "DELETE FROM colors WHERE id = ?";
+        try (Connection con = DBContext.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -5,9 +5,8 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý Màu Sắc - Admin Bảo Bình Mobile</title>
+    <title>Quản lý Màu Sắc - Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <link href="${pageContext.request.contextPath}/styles/color.css" rel="stylesheet">
 </head>
 <body>
@@ -40,19 +39,19 @@
                     <tr>
                         <td>#${color.id}</td>
                         <td>
-                            <div class="color-dot" style="background-color: ${color.hexCode};"></div>
-                            <span style="font-family: monospace; color: #666;">${color.hexCode}</span>
+                            <div class="color-dot" style="background-color:${color.hex};"></div>
+                            <span style="margin-left:8px;">${color.hex}</span>
                         </td>
                         <td><strong>${color.name}</strong></td>
                         <td>
                             <a href="${pageContext.request.contextPath}/admin/colors?editId=${color.id}" class="btn-action btn-edit">Sửa</a>
-                            <a href="${pageContext.request.contextPath}/admin/color/delete?id=${color.id}" class="btn-action btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa màu này?');">Xóa</a>
+                            <a href="${pageContext.request.contextPath}/admin/colors/delete?id=${color.id}" class="btn-action btn-delete" onclick="return confirm('Xóa màu này?');">Xóa</a>
                         </td>
                     </tr>
                 </c:forEach>
 
                 <c:if test="${empty colorList}">
-                    <tr><td colspan="4" style="text-align:center; padding: 30px;">Chưa có dữ liệu.</td></tr>
+                    <tr><td colspan="4" style="text-align:center;">Chưa có dữ liệu.</td></tr>
                 </c:if>
                 </tbody>
             </table>
@@ -63,15 +62,16 @@
             <c:choose>
                 <c:when test="${not empty editColor}">
                     <h2 class="card-title">Cập nhật màu sắc</h2>
-                    <c:set var="actionUrl" value="${pageContext.request.contextPath}/admin/color/update" />
+                    <c:set var="actionUrl" value="${pageContext.request.contextPath}/admin/colors/add" />
                 </c:when>
                 <c:otherwise>
                     <h2 class="card-title">Thêm màu sắc mới</h2>
-                    <c:set var="actionUrl" value="${pageContext.request.contextPath}/admin/color/add" />
+                    <c:set var="actionUrl" value="${pageContext.request.contextPath}/admin/colors/add" />
                 </c:otherwise>
             </c:choose>
 
             <form action="${actionUrl}" method="post">
+
                 <c:if test="${not empty editColor}">
                     <input type="hidden" name="id" value="${editColor.id}">
                 </c:if>
@@ -82,11 +82,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="hexCode">Chọn mã màu (Hex Code)</label>
+                    <label for="hex">Chọn mã màu (Hex Code)</label>
                     <div class="color-input-wrapper">
-                        <input type="color" id="colorPicker" value="${not empty editColor ? editColor.hexCode : '#000000'}">
-
-                        <input type="text" id="hexCode" name="hexCode" value="${not empty editColor ? editColor.hexCode : '#000000'}" placeholder="#000000" maxlength="7" required>
+                        <input type="color" id="colorPicker" value="${not empty editColor ? editColor.hex : '#000000'}">
+                        <input type="text" id="hex" name="hex" value="${not empty editColor ? editColor.hex : '#000000'}" placeholder="#000000" required>
                     </div>
                 </div>
 
@@ -97,35 +96,27 @@
                 <c:if test="${not empty editColor}">
                     <a href="${pageContext.request.contextPath}/admin/colors" class="btn btn-cancel">Hủy cập nhật</a>
                 </c:if>
+
             </form>
-
         </div>
-    </div>
 
+    </div>
 </main>
 
 <script>
     const colorPicker = document.getElementById('colorPicker');
-    const hexCode = document.getElementById('hexCode');
+    const hexInput = document.getElementById('hex');
 
-    // Khi người dùng click chọn màu từ bảng màu -> Cập nhật Text Input
-    colorPicker.addEventListener('input', function() {
-        hexCode.value = this.value.toUpperCase();
+    colorPicker.addEventListener('input', function () {
+        hexInput.value = colorPicker.value;
     });
 
-    // Khi người dùng gõ thẳng mã Hex vào Text Input -> Cập nhật Bảng màu
-    hexCode.addEventListener('input', function() {
-        let val = this.value;
-        // Tự động thêm dấu # nếu người dùng quên gõ
-        if(val.length > 0 && val[0] !== '#') {
-            val = '#' + val;
-            this.value = val;
-        }
-        // Nếu đủ 7 ký tự (VD: #FF0000) thì cập nhật bảng màu
-        if(/^#[0-9A-Fa-f]{6}$/i.test(val)) {
-            colorPicker.value = val;
+    hexInput.addEventListener('input', function () {
+        if (/^#[0-9A-Fa-f]{6}$/.test(hexInput.value)) {
+            colorPicker.value = hexInput.value;
         }
     });
 </script>
+
 </body>
 </html>
