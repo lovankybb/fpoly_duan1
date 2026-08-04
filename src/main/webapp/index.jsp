@@ -31,7 +31,7 @@
             </div>
             <div class="hero-image">
                 <!-- Thay thế bằng đường dẫn ảnh thật của bạn -->
-                <img src="${pageContext.request.contextPath}/image?name=iphone17-promax.png" alt="Iphone 17 Promax">
+                <img src="${pageContext.request.contextPath}/resources/imgs/iphone17-promax.png" alt="Iphone 17 Promax">
             </div>
         </section>
 

@@ -9,6 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
     <link href="${pageContext.request.contextPath}/styles/product.css" rel="stylesheet">
+    <style>
+        /* Bổ sung CSS nhẹ cho form lọc và nút Lọc để nằm ngang đẹp mắt */
+        .shop-filter-form { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .btn-submit-filter {
+            padding: 10px 20px; background-color: #000; color: #fff; font-weight: 600;
+            border: none; border-radius: 6px; cursor: pointer; transition: background 0.3s;
+        }
+        .btn-submit-filter:hover { background-color: #333; }
+    </style>
 </head>
 <body>
 
@@ -22,161 +31,125 @@
             <p>Khám phá bộ sưu tập công nghệ tinh tế nhất.</p>
         </div>
 
-        <div class="shop-filter-group">
+        <!-- Chuyển thành FORM Gửi dữ liệu GET -->
+        <form action="${pageContext.request.contextPath}/products" method="GET" class="shop-filter-group shop-filter-form">
+            <input type="hidden" name="offset" value="${offset}"> <!-- Reset offset khi lọc -->
             <div class="shop-search">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24"
                      stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
-                <input type="text" id="customerSearch" placeholder="Tìm kiếm sản phẩm...">
+                <input type="text" name="partName" value="${param.partname}" placeholder="Tìm kiếm sản phẩm...">
             </div>
 
-            <select id="brandFilter" class="filter-select">
+            <select name="brandId" class="filter-select">
                 <option value="">Tất cả thương hiệu</option>
-                <option value="apple">Apple</option>
-                <option value="samsung">Samsung</option>
-                <option value="phụ kiện">Phụ kiện</option>
+                <c:forEach var="brand" items="${brands}">
+                    <option value="${brand.id}" ${param.brandId == brand.id ? 'selected' : ''}>${brand.name}</option>
+                </c:forEach>
             </select>
 
-            <select id="categoryFilter" class="filter-select">
+            <select name="categoryId" class="filter-select">
                 <option value="">Tất cả danh mục</option>
-                <option value="đáp ứng dữ liệu động hoặc thêm tay vào đây">Điện thoại</option>
-                <option value="tablet">Máy tính bảng</option>
-                <option value="sạc">Củ sạc / Cáp sạc</option>
+                <c:forEach var="category" items="${categories}">
+                    <option value="${category.id}" ${param.categoryId == category.id ? 'selected' : ''}>${category.name}</option>
+                </c:forEach>
             </select>
-        </div>
+
+            <button type="submit" class="btn-submit-filter">Lọc</button>
+        </form>
     </div>
 
     <div class="product-grid" id="productGrid">
-
-        <c:forEach var="prod" items="${products}">
-            <a href="${pageContext.request.contextPath}/product/detail?id=${prod.id}" class="product-card"
-               data-category="điện thoại">
-                <div class="product-img-wrap">
-                    <span class="badge-new">Mới</span>
-                    <img src="${pageContext.request.contextPath}/image?name=${prod.image}"
-                         alt="${prod.name}">
-                </div>
-                <div class="product-info">
-                    <div class="product-brand">Apple</div>
-                    <h3 class="product-title">${prod.name}</h3>
-                    <div class="product-bottom">
-                        <div class="price-box">
-                            <!-- Thêm class dùng chung và data-price chứa số gốc -->
-                            <p class="product-sale-price js-format-price" data-price="${prod.salePrice}"></p>
-                            <del class="product-price js-format-price" data-price="${prod.price}"></del>
+        <c:choose>
+            <%-- Nếu có sản phẩm --%>
+            <c:when test="${not empty products}">
+                <c:forEach var="prod" items="${products}">
+                    <a href="${pageContext.request.contextPath}/product/detail?id=${prod.id}" class="product-card">
+                        <div class="product-img-wrap">
+                            <span class="badge-new">Mới</span>
+                            <img src="${pageContext.request.contextPath}/image?name=${prod.image}" alt="${prod.name}">
                         </div>
-                        <div class="btn-view">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                            </svg>
+                        <div class="product-info">
+                            <div class="product-brand">${prod.brand.name}</div>
+                            <h3 class="product-title">${prod.name}</h3>
+                            <div class="product-bottom">
+                                <div class="price-box">
+                                    <p class="product-sale-price js-format-price" data-price="${prod.salePrice}"></p>
+                                    <del class="product-price js-format-price" data-price="${prod.price}"></del>
+                                </div>
+                                <div class="btn-view">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
+                                         viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </a>
+                </c:forEach>
+            </c:when>
+
+            <%-- Nếu không tìm thấy sản phẩm nào --%>
+            <c:otherwise>
+                <div id="noResult" class="no-result-msg" style="display: block; grid-column: 1 / -1;">
+                    Rất tiếc, chúng tôi không tìm thấy sản phẩm nào khớp với bộ lọc của bạn.
                 </div>
-            </a>
-        </c:forEach>
-
-
-        <div id="noResult" class="no-result-msg">
-            Rất tiếc, chúng tôi không tìm thấy sản phẩm nào khớp với tìm kiếm của bạn.
-        </div>
-
+            </c:otherwise>
+        </c:choose>
     </div>
 
+    <!-- TẠO CHUỖI PARAM ĐỂ CHUYỂN TRANG KHÔNG BỊ MẤT BỘ LỌC -->
+    <c:set var="filterParams" value="&partname=${param.partname}&brandId=${param.brandId}&categoryId=${param.categoryId}" />
 
-    <c:if test="${offset >= 20}">
-        <a href="${pageContext.request.contextPath}/products?offset=${offset - 20}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                 class="lucide lucide-circle-arrow-left-icon lucide-circle-arrow-left">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="m12 8-4 4 4 4"/>
-                <path d="M16 12H8"/>
-            </svg>
-        </a>
-    </c:if>
-    <c:if test="${not empty offset}">
-        <a href="${pageContext.request.contextPath}/products?offset=${offset + 20}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                 class="lucide lucide-circle-arrow-right-icon lucide-circle-arrow-right">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="m12 16 4-4-4-4"/>
-                <path d="M8 12h8"/>
-            </svg>
-        </a>
-    </c:if>
+    <!-- PHÂN TRANG -->
+    <div style="display: flex; gap: 15px; margin-top: 30px;">
+        <c:if test="${offset >= 20}">
+            <a href="${pageContext.request.contextPath}/products?offset=${offset - 20}${filterParams}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><path d="m12 8-4 4 4 4"/><path d="M16 12H8"/>
+                </svg>
+            </a>
+        </c:if>
+
+        <c:if test="${not empty offset}">
+            <!-- Lưu ý: Cần có logic kiểm tra xem có còn trang sau không (ví dụ kiểm tra products.size() == 20) trước khi hiện nút Next -->
+            <a href="${pageContext.request.contextPath}/products?offset=${offset + 20}${filterParams}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><path d="m12 16 4-4-4-4"/><path d="M8 12h8"/>
+                </svg>
+            </a>
+        </c:if>
+    </div>
+
 </main>
 
 <%@ include file="/views/fragments/footer.jsp" %>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const searchInput = document.getElementById('customerSearch');
-        const brandSelect = document.getElementById('brandFilter');
-        const categorySelect = document.getElementById('categoryFilter');
-        const productCards = document.querySelectorAll('.product-card');
-        const noResultMsg = document.getElementById('noResult');
+    document.addEventListener("DOMContentLoaded", () => {
+        // --- CHỈ GIỮ LẠI LOGIC FORMAT GIÁ TIỀN ---
+        // (Logic lọc sản phẩm đã chuyển về cho Server xử lý qua form)
+        const initPriceFormatting = () => {
+            const priceElements = document.querySelectorAll('.js-format-price');
 
-        // Hàm xử lý lọc tổng hợp (kết hợp cả 3 điều kiện)
-        function filterProducts() {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            const selectedBrand = brandSelect.value.toLowerCase();
-            const selectedCategory = categorySelect.value.toLowerCase();
+            priceElements.forEach(el => {
+                const rawPrice = Number(el.dataset.price);
 
-            let visibleCount = 0;
-
-            productCards.forEach(function (card) {
-                // Lấy thông tin từ thẻ card
-                const title = card.querySelector('.product-title').textContent.toLowerCase();
-                const brand = card.querySelector('.product-brand').textContent.toLowerCase();
-                const category = card.getAttribute('data-category') ? card.getAttribute('data-category').toLowerCase() : '';
-
-                // Kiểm tra điều kiện lọc
-                const matchesSearch = title.includes(searchTerm);
-                const matchesBrand = selectedBrand === '' || brand.includes(selectedBrand);
-                const matchesCategory = selectedCategory === '' || category.includes(selectedCategory);
-
-                // Nếu thỏa mãn tất cả các điều kiện thì hiển thị
-                if (matchesSearch && matchesBrand && matchesCategory) {
-                    card.style.display = 'flex';
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
+                if (!isNaN(rawPrice) && rawPrice > 0) {
+                    el.textContent = new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(rawPrice);
                 }
             });
+        };
 
-            // Hiển thị thông báo nếu không có sản phẩm nào thỏa mãn
-            if (visibleCount === 0) {
-                noResultMsg.style.display = 'block';
-            } else {
-                noResultMsg.style.display = 'none';
-            }
-        }
-
-        // Lắng nghe sự kiện thay đổi của cả 3 bộ lọc
-        searchInput.addEventListener('input', filterProducts);
-        brandSelect.addEventListener('change', filterProducts);
-        categorySelect.addEventListener('change', filterProducts);
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        // Tìm tất cả các thẻ có class js-format-price
-        const priceElements = document.querySelectorAll('.js-format-price');
-
-        priceElements.forEach(function (el) {
-            // Lấy con số từ data-price
-            const rawPrice = Number(el.getAttribute('data-price'));
-
-            // Nếu có giá trị hợp lệ thì format và gán lại
-            if (!isNaN(rawPrice) && rawPrice > 0) {
-                el.innerText = rawPrice.toLocaleString('vi-VN') + ' ₫';
-            }
-        });
+        initPriceFormatting();
     });
 </script>
 

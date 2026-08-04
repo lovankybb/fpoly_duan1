@@ -99,7 +99,7 @@
                     <c:if test="${not empty editBrand and not empty editBrand.image}">
                         <div class="img-preview-box">
                             <p style="font-size: 11px; color: #888; margin-bottom: 5px;">Logo hiện tại:</p>
-                            <img src="${pageContext.request.contextPath}/uploads/brands/${editBrand.image}" alt="Preview">
+                            <img src="${pageContext.request.contextPath}/image?name=${editBrand.image}" alt="Preview">
                         </div>
                     </c:if>
                 </div>

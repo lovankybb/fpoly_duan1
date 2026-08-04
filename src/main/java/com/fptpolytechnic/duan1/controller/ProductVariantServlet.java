@@ -7,8 +7,10 @@ import com.fptpolytechnic.duan1.model.Color;
 import com.fptpolytechnic.duan1.model.Product;
 import com.fptpolytechnic.duan1.model.ProductVariant;
 import com.fptpolytechnic.duan1.model.Version;
+import com.fptpolytechnic.duan1.service.ColorService;
 import com.fptpolytechnic.duan1.service.ProductService;
 import com.fptpolytechnic.duan1.service.ProductVariantService;
+import com.fptpolytechnic.duan1.service.VersionService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -33,10 +35,14 @@ public class ProductVariantServlet extends HttpServlet {
 
     private final ProductService productService;
     private final ProductVariantService productVariantService;
+    private final VersionService versionService;
+    private final ColorService colorService;
 
     public ProductVariantServlet() {
         this.productService = new ProductService();
         this.productVariantService = new ProductVariantService();
+        this.versionService = new VersionService();
+        this.colorService = new ColorService();
     }
 
 
@@ -251,16 +257,9 @@ public class ProductVariantServlet extends HttpServlet {
             return;
         }
 
-        List<Version> versions = new ArrayList<>();
-        versions.add(new Version(1, "256Gb"));
-        versions.add(new Version(2, "12-256Gb"));
-        versions.add(new Version(3, "128Gb"));
+        List<Version> versions = versionService.getAll();
 
-        List<Color> colors = new ArrayList<>();
-        colors.add(new Color(1, "Orange", "#fb542b"));
-        colors.add(new Color(2, "Pink", "#fb578e"));
-        colors.add(new Color(3, "Black", "#000000"));
-
+        List<Color> colors = colorService.getAll();
 
         req.setAttribute("versions", versions);
         req.setAttribute("colors", colors);

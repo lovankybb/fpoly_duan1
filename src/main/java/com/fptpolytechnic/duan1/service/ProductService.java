@@ -87,14 +87,15 @@ public class ProductService {
         return this.toSimpleProdResponse(productRepository.findById(id));
     }
 
-    public List<SimpleProdResponse> findAllActiveProduct(int offSet) {
+    public List<SimpleProdResponse> findAllActiveProduct(int offSet, String categoryId, String brandId, String partName) {
 
 
+        System.out.println("offSet: " + offSet + ", categoryId: " + categoryId + ", brandId: " + brandId + ", partName: " + partName);
         if (offSet < 0) {
             offSet = 0;
         }
 
-        return productRepository.findAllActiveProduct(offSet, 20).stream().map(this::toSimpleProdResponse).toList();
+        return productRepository.findAllActiveProduct(offSet, 20, categoryId, brandId, partName).stream().map(this::toSimpleProdResponse).toList();
     }
 
 

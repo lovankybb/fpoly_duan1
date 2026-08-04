@@ -47,30 +47,24 @@ public class BrandServlet extends HttpServlet {
             throws ServletException, IOException {
 
         if (req.getRequestURI().contains("add")) {
-
-            String name = req.getParameter("name");
-            String description = req.getParameter("description");
-
-
-            Part part = req.getPart("image");
-
-            StorageService storage = new StorageService();
-
-
-
-
-            String imageName = storage.storage(part);
-            Brand b = new Brand();
-            b.setName(name);
-            b.setDescription(description);
-            b.setImage(imageName);
-            service.add(b);
-
-
-            resp.sendRedirect(req.getContextPath() + "/admin/brands");
-
-
-            return;
+            this.handleAddBrand(req, resp);
         }
+    }
+
+    private void handleAddBrand(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        String name = req.getParameter("name");
+        String description = req.getParameter("description");
+        Part part = req.getPart("image");
+
+        StorageService storage = new StorageService();
+        String imageName = storage.storage(part);
+
+        Brand b = new Brand();
+        b.setName(name);
+        b.setDescription(description);
+        b.setImage(imageName);
+        service.add(b);
+
+        resp.sendRedirect(req.getContextPath() + "/admin/brands");
     }
 }

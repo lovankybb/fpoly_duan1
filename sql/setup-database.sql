@@ -99,9 +99,9 @@ CREATE TABLE brands (
 CREATE TABLE products (
     id INT PRIMARY KEY IDENTITY(1001,1),
     name NVARCHAR(255) NOT NULL,
-    description NVARCHAR(255),
-    price DECIMAL(10, 2) NOT NULL,
-    sale_price DECIMAL(10, 2),
+    description NVARCHAR(5000),
+    price DECIMAL(12, 2) NOT NULL,
+    sale_price DECIMAL(12, 2),
     status NVARCHAR(50) NOT NULL,
     category_id INT,
     brand_id INT,

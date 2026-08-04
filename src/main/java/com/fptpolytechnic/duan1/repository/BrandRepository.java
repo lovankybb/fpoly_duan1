@@ -20,7 +20,7 @@ public class BrandRepository {
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("description"),
-                        rs.getString("image")
+                        rs.getString("image_url")
                 ));
             }
         } catch (Exception e) {
@@ -40,7 +40,7 @@ public class BrandRepository {
                             rs.getInt("id"),
                             rs.getString("name"),
                             rs.getString("description"),
-                            rs.getString("image")
+                            rs.getString("image_url")
                     );
                 }
             }

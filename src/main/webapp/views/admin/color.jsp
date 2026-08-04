@@ -23,6 +23,7 @@
 
     <div class="crud-layout">
 
+        <!-- Danh sách Màu sắc -->
         <div class="card">
             <h2 class="card-title">Danh sách Màu sắc</h2>
             <table>
@@ -44,7 +45,6 @@
                         </td>
                         <td><strong>${color.name}</strong></td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/admin/colors?editId=${color.id}" class="btn-action btn-edit">Sửa</a>
                             <a href="${pageContext.request.contextPath}/admin/colors/delete?id=${color.id}" class="btn-action btn-delete" onclick="return confirm('Xóa màu này?');">Xóa</a>
                         </td>
                     </tr>
@@ -57,45 +57,26 @@
             </table>
         </div>
 
+        <!-- Form Thêm mới -->
         <div class="card form-card">
+            <h2 class="card-title">Thêm màu sắc mới</h2>
 
-            <c:choose>
-                <c:when test="${not empty editColor}">
-                    <h2 class="card-title">Cập nhật màu sắc</h2>
-                    <c:set var="actionUrl" value="${pageContext.request.contextPath}/admin/colors/add" />
-                </c:when>
-                <c:otherwise>
-                    <h2 class="card-title">Thêm màu sắc mới</h2>
-                    <c:set var="actionUrl" value="${pageContext.request.contextPath}/admin/colors/add" />
-                </c:otherwise>
-            </c:choose>
-
-            <form action="${actionUrl}" method="post">
-
-                <c:if test="${not empty editColor}">
-                    <input type="hidden" name="id" value="${editColor.id}">
-                </c:if>
+            <form action="${pageContext.request.contextPath}/admin/colors/add" method="post">
 
                 <div class="form-group">
                     <label for="name">Tên màu (Hiển thị cho khách hàng)</label>
-                    <input type="text" id="name" name="name" value="${editColor.name}" placeholder="Ví dụ: Đen Titanium..." required>
+                    <input type="text" id="name" name="name" placeholder="Ví dụ: Đen Titanium..." required>
                 </div>
 
                 <div class="form-group">
                     <label for="hex">Chọn mã màu (Hex Code)</label>
                     <div class="color-input-wrapper">
-                        <input type="color" id="colorPicker" value="${not empty editColor ? editColor.hex : '#000000'}">
-                        <input type="text" id="hex" name="hex" value="${not empty editColor ? editColor.hex : '#000000'}" placeholder="#000000" required>
+                        <input type="color" id="colorPicker" value="#000000">
+                        <input type="text" id="hex" name="hex" value="#000000" placeholder="#000000" maxlength="7" required>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-save">
-                    ${not empty editColor ? 'Lưu thay đổi' : 'Thêm mới'}
-                </button>
-
-                <c:if test="${not empty editColor}">
-                    <a href="${pageContext.request.contextPath}/admin/colors" class="btn btn-cancel">Hủy cập nhật</a>
-                </c:if>
+                <button type="submit" class="btn btn-save">Thêm mới</button>
 
             </form>
         </div>
@@ -107,14 +88,37 @@
     const colorPicker = document.getElementById('colorPicker');
     const hexInput = document.getElementById('hex');
 
+    // Cập nhật text input khi chọn màu từ Color Picker
     colorPicker.addEventListener('input', function () {
-        hexInput.value = colorPicker.value;
+        hexInput.value = colorPicker.value.toUpperCase();
     });
 
-    hexInput.addEventListener('input', function () {
-        if (/^#[0-9A-Fa-f]{6}$/.test(hexInput.value)) {
-            colorPicker.value = hexInput.value;
+    // Cập nhật Color Picker khi nhập, paste hoặc thả mã HEX vào text input
+    function syncColorPicker() {
+        let hexVal = hexInput.value.trim();
+
+        // Tự động thêm dấu # nếu người dùng quên dán vào (ví dụ: dán "FF0000" -> "#FF0000")
+        if (hexVal !== '' && !hexVal.startsWith('#')) {
+            hexVal = '#' + hexVal;
+            hexInput.value = hexVal;
         }
+
+        // Trường hợp mã dạng ngắn #RGB -> chuyển thành #RRGGBB cho thẻ input[type="color"] hiểu
+        if (/^#[0-9A-Fa-f]{3}$/.test(hexVal)) {
+            hexVal = '#' + hexVal[1] + hexVal[1] + hexVal[2] + hexVal[2] + hexVal[3] + hexVal[3];
+        }
+
+        // Kiểm tra đúng định dạng Hex 6 ký tự (#RRGGBB) thì đổi màu ô xem trước
+        if (/^#[0-9A-Fa-f]{6}$/.test(hexVal)) {
+            colorPicker.value = hexVal;
+        }
+    }
+
+    // Lắng nghe cả các sự kiện input, change và paste
+    hexInput.addEventListener('input', syncColorPicker);
+    hexInput.addEventListener('paste', function () {
+        // Chờ dữ liệu dán hoàn tất rồi mới đồng bộ
+        setTimeout(syncColorPicker, 10);
     });
 </script>
 
