@@ -1,4 +1,4 @@
-package com.fptpolytechnic.duan1.filters;
+package com.fptpolytechnic.duan1.configuration.filters;
 
 import com.fptpolytechnic.duan1.exception.GlobalExceptionHandler;
 import com.fptpolytechnic.duan1.model.Authentication;
