@@ -41,7 +41,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${not empty brand.image}">
-                                    <img src="${pageContext.request.contextPath}/uploads/brands/${brand.image}" alt="${brand.name}" class="brand-thumb">
+                                    <img src="${pageContext.request.contextPath}/image?name=${brand.image}" alt="${brand.name}" class="brand-thumb">
                                 </c:when>
                                 <c:otherwise>
                                     <span class="no-img">Trống</span>
