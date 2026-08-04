@@ -1,8 +1,10 @@
 package com.fptpolytechnic.duan1.controller;
 
+
 import com.fptpolytechnic.duan1.model.Brand;
 import com.fptpolytechnic.duan1.service.BrandService;
 
+import com.fptpolytechnic.duan1.utils.StorageService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,17 +12,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
-
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
-@WebServlet({"/admin/brands", "/admin/brands/add", "/admin/brand/delete"})
+@WebServlet({"/admin/brands", "/admin/brand/add", "/admin/brand/delete"})
 @MultipartConfig
 public class BrandServlet extends HttpServlet {
 
     private final BrandService service = new BrandService();
-    private static final String UPLOAD_DIR = "D:/du_an1/images";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -49,39 +47,30 @@ public class BrandServlet extends HttpServlet {
             throws ServletException, IOException {
 
         if (req.getRequestURI().contains("add")) {
-            String idParam = req.getParameter("id");
+
             String name = req.getParameter("name");
             String description = req.getParameter("description");
 
-            String imageName = null;
-            Part filePart = req.getPart("image");
 
-            if (filePart != null && filePart.getSubmittedFileName() != null
-                    && !filePart.getSubmittedFileName().trim().isEmpty()) {
+            Part part = req.getPart("image");
 
-                String fileName = filePart.getSubmittedFileName();
-                File uploadDir = new File(UPLOAD_DIR);
-                if (!uploadDir.exists()) {
-                    uploadDir.mkdirs();
-                }
-                String safeFileName = new File(fileName).getName();
-                filePart.write(UPLOAD_DIR + File.separator + safeFileName);
-                imageName = safeFileName;
-            }
+            StorageService storage = new StorageService();
 
-            if (idParam != null && !idParam.isEmpty()) {
-                Brand existing = service.getById(Integer.parseInt(idParam));
-                // Nếu không upload ảnh mới, giữ nguyên ảnh cũ
-                String finalImage = (imageName != null) ? imageName : existing.getImage();
-                service.update(new Brand(Integer.parseInt(idParam), name, description, finalImage));
-            } else {
-                service.add(new Brand(name, description, imageName));
-            }
+
+
+
+            String imageName = storage.storage(part);
+            Brand b = new Brand();
+            b.setName(name);
+            b.setDescription(description);
+            b.setImage(imageName);
+            service.add(b);
+
 
             resp.sendRedirect(req.getContextPath() + "/admin/brands");
+
+
             return;
         }
-
-        doGet(req, resp);
     }
 }

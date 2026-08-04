@@ -51,7 +51,7 @@ public class BrandRepository {
     }
 
     public void add(Brand b) {
-        String sql = "INSERT INTO brands (name, description, image) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO brands (name, description, image_url) VALUES (?, ?, ?)";
         try (Connection con = DBContext.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, b.getName());
@@ -64,7 +64,7 @@ public class BrandRepository {
     }
 
     public void update(Brand b) {
-        String sql = "UPDATE brands SET name = ?, description = ?, image = ? WHERE id = ?";
+        String sql = "UPDATE brands SET name = ?, description = ?, image_url = ? WHERE id = ?";
         try (Connection con = DBContext.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, b.getName());
