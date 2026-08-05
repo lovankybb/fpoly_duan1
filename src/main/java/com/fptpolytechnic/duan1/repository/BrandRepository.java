@@ -29,6 +29,27 @@ public class BrandRepository {
         return list;
     }
 
+    public List<Brand> findNewest() {
+        List<Brand> list = new ArrayList<>();
+        String sql = "SELECT TOP 5 * FROM brands ORDER BY id DESC";
+        try(var conn = DBContext.getConnection();
+            var ps = conn.prepareStatement(sql);
+        ) {
+            var rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new Brand(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("description"),
+                        rs.getString("image_url")
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public Brand getById(int id) {
         String sql = "SELECT * FROM brands WHERE id = ?";
         try (Connection con = DBContext.getConnection();
@@ -77,11 +98,11 @@ public class BrandRepository {
         }
     }
 
-    public void delete(int id) {
+    public void delete(long id) {
         String sql = "DELETE FROM brands WHERE id = ?";
         try (Connection con = DBContext.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
+            ps.setLong(1, id);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

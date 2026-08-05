@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -10,7 +10,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${product.name} — Atelier.</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap"
+          rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <link href="${pageContext.request.contextPath}/styles/prod-detail.css" rel="stylesheet">
@@ -18,7 +19,7 @@
 </head>
 <body>
 
-<%@include file="fragments/header.jsp"%>
+<%@include file="fragments/header.jsp" %>
 
 <main class="container main-content">
     <div class="product-grid">
@@ -26,7 +27,9 @@
         <div class="gallery-container">
             <div class="thumbnails">
                 <c:forEach items="${product.images}" var="img" varStatus="loop">
-                    <button type="button" onclick="changeMainImage('${pageContext.request.contextPath}/image?name=${img.imageUrl}', this)" class="thumb-btn ${loop.first ? 'active' : ''}">
+                    <button type="button"
+                            onclick="changeMainImage('${pageContext.request.contextPath}/image?name=${img.imageUrl}', this)"
+                            class="thumb-btn ${loop.first ? 'active' : ''}">
                         <img src="${pageContext.request.contextPath}/image?name=${img.imageUrl}" alt="Thumbnail">
                     </button>
                 </c:forEach>
@@ -34,15 +37,18 @@
 
             <div class="main-image-wrapper">
                 <span class="badge-new">Mới</span>
-                <img id="mainImage" src="${pageContext.request.contextPath}/image?name=${product.images[0].imageUrl}" alt="${product.name}">
+                <img id="mainImage" src="${pageContext.request.contextPath}/image?name=${product.images[0].imageUrl}"
+                     alt="${product.name}">
             </div>
         </div>
 
         <div class="product-details">
             <div>
                 <div class="meta-row">
-                        <span class="brand-name">
-                            <c:out value="${product.brand}" default="THƯƠNG HIỆU" />
+                    <span class="brand-name">${product.category}</span>
+                    <span style="padding: 5px;">-</span>
+                    <span class="brand-name">
+                        ${product.brand}
                         </span>
                 </div>
 
@@ -84,12 +90,15 @@
                                 </button>
                             </div>
 
-                            <button type="submit" formaction="${pageContext.request.contextPath}/add-to-cart" id="addToCartBtn" class="btn-add-cart">
+                            <button type="submit" formaction="${pageContext.request.contextPath}/add-to-cart"
+                                    id="addToCartBtn" class="btn-add-cart">
                                 <i class="fa-solid fa-cart-plus"></i>
                                 <span>Thêm vào giỏ</span>
                             </button>
                         </div>
-                        <button type="submit" formaction="${pageContext.request.contextPath}/checkout?checkoutType=BUY_NOW" id="buyNowBtn" class="btn-buy-now">
+                        <button type="submit"
+                                formaction="${pageContext.request.contextPath}/checkout?checkoutType=BUY_NOW"
+                                id="buyNowBtn" class="btn-buy-now">
                             <span>Mua ngay</span>
                             <i class="fa-solid fa-arrow-right"></i>
                         </button>
@@ -108,6 +117,9 @@
         </div>
     </div>
 </main>
+<%@include file="fragments/footer.jsp" %>
+
+</body>
 
 <script>
     // 1. Map dữ liệu từ List<ProductVariantResponse> của backend sang Array JS
@@ -128,7 +140,7 @@
     let selectedVersionName = null;
 
     // 2. Khởi tạo giao diện khi tải trang
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         if (variants.length === 0) return;
 
         const uniqueColors = [];
@@ -137,7 +149,7 @@
         variants.forEach(v => {
             if (!seenColorNames.has(v.colorName)) {
                 seenColorNames.add(v.colorName);
-                uniqueColors.push({ name: v.colorName, hex: v.colorHex });
+                uniqueColors.push({name: v.colorName, hex: v.colorHex});
             }
         });
 
@@ -247,7 +259,10 @@
             if (variantInput) variantInput.value = matchedVariant.id;
 
             if (displayPrice) {
-                displayPrice.innerText = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(matchedVariant.price);
+                displayPrice.innerText = new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                }).format(matchedVariant.price);
             }
             if (stockCount) stockCount.innerText = matchedVariant.stock;
 
@@ -300,5 +315,4 @@
         qtyInput.value = currentVal;
     }
 </script>
-</body>
 </html>

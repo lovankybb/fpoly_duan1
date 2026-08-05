@@ -22,15 +22,14 @@ public class CategoryServlet extends HttpServlet {
 
         List<Category> categories = service.getAll();
         req.setAttribute("categories", categories);
-      String uri = req.getRequestURI();
-      if (uri.contains("delete")){
-          int id = Integer.parseInt(req.getParameter("id"));
-          service.delete(id);
-          resp.sendRedirect(req.getContextPath() + "/admin/categories");
-      } else {
-          req.getRequestDispatcher("/views/admin/category.jsp").forward(req, resp);
-      }
-
+        String uri = req.getRequestURI();
+        if (uri.contains("delete")) {
+            long id = Long.parseLong(req.getParameter("id"));
+            service.delete(id);
+            resp.sendRedirect(req.getContextPath() + "/admin/categories");
+        } else {
+            req.getRequestDispatcher("/views/admin/category.jsp").forward(req, resp);
+        }
 
 
     }
@@ -40,8 +39,6 @@ public class CategoryServlet extends HttpServlet {
         String uri = req.getRequestURI();
 
         if (uri.contains("add")) {
-
-
             String name = req.getParameter("name");
             String description = req.getParameter("description");
 
@@ -51,10 +48,6 @@ public class CategoryServlet extends HttpServlet {
             service.add(c);
 
             resp.sendRedirect(req.getContextPath() + "/admin/categories");
-
-
         }
-
-
     }
 }

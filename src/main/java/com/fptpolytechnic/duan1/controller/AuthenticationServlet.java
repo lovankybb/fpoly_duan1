@@ -94,7 +94,7 @@ public class AuthenticationServlet extends HttpServlet {
     }
 
 
-    private void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             authenticationService.logout(request, response);
             response.sendRedirect("/");

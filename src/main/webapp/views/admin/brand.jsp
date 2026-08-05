@@ -81,7 +81,7 @@
                 </c:otherwise>
             </c:choose>
 
-            <form action="${pageContext.request.contextPath}/admin/brand/add" method="post" enctype="multipart/form-data">
+            <form action="${actionUrl}" method="post" enctype="multipart/form-data">
                 <c:if test="${not empty editBrand}">
                     <input type="hidden" name="id" value="${editBrand.id}">
                     <input type="hidden" name="oldImage" value="${editBrand.image}">

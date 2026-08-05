@@ -4,8 +4,12 @@ package com.fptpolytechnic.duan1.service;
 import com.fptpolytechnic.duan1.dto.response.ProductDetailResponse;
 import com.fptpolytechnic.duan1.dto.response.ProductVariantResponse;
 import com.fptpolytechnic.duan1.dto.response.SimpleProdResponse;
+import com.fptpolytechnic.duan1.model.Brand;
+import com.fptpolytechnic.duan1.model.Category;
 import com.fptpolytechnic.duan1.model.Product;
 import com.fptpolytechnic.duan1.model.ProductImage;
+import com.fptpolytechnic.duan1.repository.BrandRepository;
+import com.fptpolytechnic.duan1.repository.CategoryRepository;
 import com.fptpolytechnic.duan1.repository.ProductRepository;
 import jakarta.servlet.http.Part;
 
@@ -18,14 +22,19 @@ import java.util.stream.Collectors;
 public class ProductService {
 
 
-    ProductRepository productRepository;
-    ProductImageService productImageService;
-    ProductVariantService productVariantService;
+    private final ProductRepository productRepository;
+    private final ProductImageService productImageService;
+    private final ProductVariantService productVariantService;
+    private final BrandRepository brandRepository;
+    private final CategoryRepository categoryRepository;
+
 
     public ProductService() {
         productRepository = new ProductRepository();
         productImageService = new ProductImageService();
         productVariantService = new ProductVariantService();
+        brandRepository = new BrandRepository();
+        categoryRepository = new CategoryRepository();
     }
 
     public Product create(Product product, Collection<Part> images) {
@@ -71,7 +80,6 @@ public class ProductService {
 
 
     public void delete(Long id) throws IOException {
-
         productImageService.delete(id);
         productVariantService.deleteByProductId(id);
         productRepository.delete(id);
@@ -109,6 +117,15 @@ public class ProductService {
     }
 
 
+    public List<Product> findByBrandId(Long brandId) {
+        return productRepository.findByBrandId(brandId);
+    }
+
+    public List<Product> findByCategoryId(Long categoryId) {
+        return productRepository.findByCategoryId(categoryId);
+    }
+
+
     public SimpleProdResponse findByProductVariantId(Long productVariantId) {
         return this.toSimpleProdResponse(this.productRepository.findProductByVariantId(productVariantId));
     }
@@ -121,8 +138,11 @@ public class ProductService {
         productDetailResponse.setName(product.getName());
         productDetailResponse.setDescription(product.getDescription());
 
-        productDetailResponse.setBrand("Brand");
-        productDetailResponse.setCategory("Category");
+        Brand brand = brandRepository.getById(Math.toIntExact(product.getBrandId()));
+        Category category = categoryRepository.findById(product.getCategoryId());
+
+        productDetailResponse.setBrand(brand != null ? brand.getName() : "Brand");
+        productDetailResponse.setCategory(category != null ? category.getName() : "Category");
 
         List<ProductImage> images = productImageService.findByProdId(product.getId());
         productDetailResponse.setImages(images);
@@ -142,7 +162,8 @@ public class ProductService {
         if (!productImages.isEmpty()) {
             mainImg = productImages.get(0).getImageUrl();
         }
-
+        Brand brand = brandRepository.getById(Math.toIntExact(product.getBrandId()));
+        Category category = categoryRepository.findById(product.getCategoryId());
         double salePrice = Objects.isNull(product.getSalePrice())
                 ? product.getPrice().doubleValue() : product.getSalePrice().doubleValue();
 
@@ -154,7 +175,11 @@ public class ProductService {
                 .price(product.getPrice().doubleValue())
                 .salePrice(salePrice)
                 .status(product.getStatus().name())
+                .brand(brand.getName())
+                .category(category.getName())
                 .build();
 
     }
+
+
 }

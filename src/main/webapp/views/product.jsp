@@ -72,7 +72,7 @@
                             <img src="${pageContext.request.contextPath}/image?name=${prod.image}" alt="${prod.name}">
                         </div>
                         <div class="product-info">
-                            <div class="product-brand">${prod.brand.name}</div>
+                            <div class="product-brand">${prod.brand}</div>
                             <h3 class="product-title">${prod.name}</h3>
                             <div class="product-bottom">
                                 <div class="price-box">

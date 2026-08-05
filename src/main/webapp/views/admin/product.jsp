@@ -68,12 +68,11 @@
                                  class="product-img">
                             <div>
                                 <div class="product-name">${prod.name}</div>
-                                <div class="product-brand">Brand</div>
+                                <div class="product-brand">${prod.brand}</div>
                             </div>
                         </div>
                     </td>
-                        <%--                    <td>${prod.category}</td>--%>
-                    <td>Category</td>
+                    <td>${prod.category}</td>
                     <td class="price">
                         <div>
 

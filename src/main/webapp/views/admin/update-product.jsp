@@ -51,7 +51,7 @@
                             <select name="categoryId" required>
                                 <option value="">-- Chọn danh mục --</option>
                                 <c:forEach var="cat" items="${categories}">
-                                    <option value="${cat.id}" ${cat.id == product.categoryId ? 'selected' : ''}>${cat.name}</option>
+                                    <option value="${cat.id}" ${cat.name == product.category ? 'selected' : ''}>${cat.name}</option>
                                 </c:forEach>
                             </select>
                             <span class="error-msg">${catError}</span>
@@ -62,7 +62,7 @@
                             <select name="brandId" required>
                                 <option value="">-- Chọn thương hiệu --</option>
                                 <c:forEach var="brand" items="${brands}">
-                                    <option value="${brand.id}" ${brand.id == product.brandId ? 'selected' : ''}>${brand.name}</option>
+                                    <option value="${brand.id}" ${brand.name == product.brand ? 'selected' : ''}>${brand.name}</option>
                                 </c:forEach>
                             </select>
                             <span class="error-msg">${brandError}</span>
