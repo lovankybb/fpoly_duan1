@@ -61,6 +61,47 @@ public class ProductRepository {
         return null;
     }
 
+
+    public List<Product> findByCategoryId(Long categoryId) {
+        String query = "SELECT * FROM products WHERE category_id=?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+
+        ) {
+            ps.setLong(1, categoryId);
+            var rs = ps.executeQuery();
+            List<Product> products = new java.util.ArrayList<>();
+            while (rs.next()) {
+                products.add(this.mapToProduct(rs));
+            }
+            return products;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Product> findByBrandId(Long brandId) {
+        String query = "SELECT * FROM products WHERE brand_id=?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+
+        ) {
+            ps.setLong(1, brandId);
+            var rs = ps.executeQuery();
+            List<Product> products = new java.util.ArrayList<>();
+            while (rs.next()) {
+                products.add(this.mapToProduct(rs));
+            }
+            return products;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public List<Product> findAll(int offset, int row) {
         String query = "SELECT * FROM products ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
@@ -137,16 +178,51 @@ public class ProductRepository {
     }
 
 
-    public List<Product> findAllActiveProduct(int offset, int row) {
-        String query = "SELECT * FROM products WHERE status='ACTIVE' ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+    public List<Product> findAllActiveProduct(int offset, int row, String categoryId, String brandId, String partName) {
+
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM products WHERE status='ACTIVE' ");
+        boolean categoriesExists = false;
+        boolean brandExists = false;
+        boolean partNameExists = false;
+        int count = 1;
+
+        if(categoryId != null &&  !categoryId.trim().isEmpty()) {
+            sqlBuilder.append("AND category_id=? ");
+            categoriesExists = true;
+        }
+        if(brandId != null &&  !brandId.trim().isEmpty()) {
+            sqlBuilder.append("AND brand_id=? ");
+            brandExists = true;
+        }
+        if(partName != null && !partName.trim().isEmpty()) {
+            sqlBuilder.append("AND name LIKE ? ");
+            partNameExists = true;
+        }
+
+
+//        "SELECT * FROM products WHERE status='ACTIVE' ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String query = sqlBuilder.append("ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY").toString();
 
         List<Product> products = new ArrayList<>();
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(query);
 
         ) {
-            ps.setInt(1, offset);
-            ps.setInt(2, row);
+            if(categoriesExists) {
+                ps.setLong(count++, Long.parseLong(categoryId));
+            }
+            if(brandExists) {
+                ps.setLong(count++, Long.parseLong(brandId));
+            }
+            if (partNameExists) {
+                ps.setString(count++, "%" + partName + "%");
+            }
+            ps.setInt(count++, offset);
+            ps.setInt(count, row);
+
+
+            System.out.println(ps.toString());
+            System.out.println("query: " + query);
             var rs = ps.executeQuery();
             while (rs.next()) {
                 products.add(this.mapToProduct(rs));
@@ -161,7 +237,7 @@ public class ProductRepository {
 
     public List<Product> findNewestProducts() {
         String query = "SELECT TOP 5 * FROM products WHERE status='ACTIVE' ORDER BY updated_at DESC";
-        List<Product> products = new java.util.ArrayList<>();
+        List<Product> products = new ArrayList<>();
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(query);

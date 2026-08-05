@@ -41,7 +41,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${not empty brand.image}">
-                                    <img src="${pageContext.request.contextPath}/uploads/brands/${brand.image}" alt="${brand.name}" class="brand-thumb">
+                                    <img src="${pageContext.request.contextPath}/image?name=${brand.image}" alt="${brand.name}" class="brand-thumb">
                                 </c:when>
                                 <c:otherwise>
                                     <span class="no-img">Trống</span>
@@ -81,7 +81,7 @@
                 </c:otherwise>
             </c:choose>
 
-            <form action="${pageContext.request.contextPath}/admin/brand/add" method="post" enctype="multipart/form-data">
+            <form action="${actionUrl}" method="post" enctype="multipart/form-data">
                 <c:if test="${not empty editBrand}">
                     <input type="hidden" name="id" value="${editBrand.id}">
                     <input type="hidden" name="oldImage" value="${editBrand.image}">
@@ -99,7 +99,7 @@
                     <c:if test="${not empty editBrand and not empty editBrand.image}">
                         <div class="img-preview-box">
                             <p style="font-size: 11px; color: #888; margin-bottom: 5px;">Logo hiện tại:</p>
-                            <img src="${pageContext.request.contextPath}/uploads/brands/${editBrand.image}" alt="Preview">
+                            <img src="${pageContext.request.contextPath}/image?name=${editBrand.image}" alt="Preview">
                         </div>
                     </c:if>
                 </div>

@@ -280,6 +280,21 @@ public class OrderRepository {
         return null;
     }
 
+    public void delete(Long orderId) {
+        String query = """
+                DELETE FROM orders WHERE id=?
+        """;
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ){
+            ps.setLong(1, orderId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private Order mapToOrder(ResultSet rs) throws SQLException {
         Order order = new Order();
         order.setId(rs.getLong("id"));

@@ -202,4 +202,31 @@ public class ProductVariantRepository {
             e.printStackTrace();
         }
     }
+
+
+    public void deleteByVersionId(Long versionId) {
+        String query = "DELETE FROM product_variants WHERE version_id = ?";
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ) {
+            ps.setLong(1, versionId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteByColorId(Long colorId) {
+        String query = "DELETE FROM product_variants WHERE color_id = ?";
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ) {
+            ps.setLong(1, colorId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

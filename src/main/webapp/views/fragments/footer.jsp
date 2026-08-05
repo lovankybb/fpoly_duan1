@@ -74,39 +74,6 @@
             padding-left: 4px;
         }
 
-        /* Cột nhận bản tin (Newsletter) */
-        .newsletter-text {
-            font-size: 14px;
-            color: #777777;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-        .newsletter-form {
-            display: flex;
-            border-bottom: 1px solid #1a1a1a;
-            padding-bottom: 5px;
-        }
-        .newsletter-input {
-            border: none;
-            background: transparent;
-            font-size: 13px;
-            width: 100%;
-            padding: 5px 0;
-            outline: none;
-            font-family: inherit;
-        }
-        .newsletter-btn {
-            border: none;
-            background: transparent;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            color: #1a1a1a;
-            padding: 0 5px;
-        }
-
         /* Dòng bản quyền bên dưới cùng */
         .footer-bottom {
             max-width: 1200px;
@@ -161,32 +128,11 @@
         <div class="footer-column">
             <h4>Khám phá</h4>
             <ul>
-                <li><a href="${pageContext.request.contextPath}/shop">Bộ sưu tập</a></li>
+                <li><a href="${pageContext.request.contextPath}/products">Cửa hàng</a></li>
                 <li><a href="${pageContext.request.contextPath}/about">Về chúng tôi</a></li>
-                <li><a href="${pageContext.request.contextPath}/blog">Tạp chí</a></li>
-            </ul>
-        </div>
-
-        <!-- Cột 3: Hỗ trợ khách hàng -->
-        <div class="footer-column">
-            <h4>Dịch vụ</h4>
-            <ul>
                 <li><a href="${pageContext.request.contextPath}/contact">Liên hệ</a></li>
-                <li><a href="${pageContext.request.contextPath}/faq">Câu hỏi thường gặp</a></li>
-                <li><a href="${pageContext.request.contextPath}/privacy">Chính sách bảo mật</a></li>
             </ul>
         </div>
-
-        <!-- Cột 4: Đăng ký nhận tin tức -->
-        <div class="footer-column">
-            <h4>Bản tin</h4>
-            <p class="newsletter-text">Đăng ký để nhận thông tin về các bộ sưu tập mới nhất và ưu đãi đặc quyền.</p>
-            <form class="newsletter-form" action="#" method="post">
-                <input type="email" class="newsletter-input" placeholder="Địa chỉ email của bạn" required />
-                <button type="submit" class="newsletter-btn">Gửi</button>
-            </form>
-        </div>
-
     </div>
 
     <!-- Bản quyền & Điều khoản -->

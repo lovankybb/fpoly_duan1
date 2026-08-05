@@ -84,11 +84,11 @@ public class DashBoardRepository {
 
     public long getTotalOrderCount() {
         String query = """
-                SELECT COUNT(*) AS order_count
+             SELECT COUNT(*) AS order_count
                 FROM orders o
-                WHERE o.created_at >= DATEADD(month, DATEDIFF(month, 0, GETDATE()), 0)
-                AND o.created_at <  DATEADD(month, DATEDIFF(month, 0, GETDATE()) + 1, 0)
-                """;
+                WHERE MONTH(o.created_at) = MONTH(GETDATE()) 
+                     AND YEAR(o.created_at) = YEAR(GETDATE())
+    """;
         try(var conn = DBContext.getConnection();
             var ps = conn.prepareStatement(query);
         ) {

@@ -12,9 +12,13 @@ import java.util.List;
 public class ProductVariantService {
 
     private final ProductVariantRepository productVariantRepository;
+    private final VersionService versionService;
+    private final ColorService colorService;
 
     public ProductVariantService() {
         productVariantRepository = new ProductVariantRepository();
+        versionService = new VersionService();
+        colorService = new ColorService();
     }
 
     public List<ProductVariantResponse> getProductVariantsByProductId(Long productId, int offset, int limit) {
@@ -52,15 +56,8 @@ public class ProductVariantService {
 
     public ProductVariantResponse toProductVariantResponse(ProductVariant productVariant) {
 
-        List<Version> versions = new ArrayList<>();
-        versions.add(new Version(1, "256Gb"));
-        versions.add(new Version(2, "12-256Gb"));
-        versions.add(new Version(3, "128Gb"));
-
-        List<Color> colors = new ArrayList<>();
-        colors.add(new Color(1, "Orange", "#fb542b"));
-        colors.add(new Color(2, "Pink", "#fb578e"));
-        colors.add(new Color(3, "Black", "#000000"));
+        List<Version> versions = versionService.getAll();
+        List<Color> colors = colorService.getAll();
 
         Version version = versions.stream().filter(v -> v.getId() == productVariant.getVersionId()).findFirst().orElse(null);
         Color color = colors.stream().filter(c -> c.getId() == productVariant.getColorId()).findFirst().orElse(null);
