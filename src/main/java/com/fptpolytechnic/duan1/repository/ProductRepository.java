@@ -62,6 +62,45 @@ public class ProductRepository {
     }
 
 
+    public List<Product> findByCategoryId(Long categoryId) {
+        String query = "SELECT * FROM products WHERE category_id=?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+
+        ) {
+            ps.setLong(1, categoryId);
+            var rs = ps.executeQuery();
+            List<Product> products = new java.util.ArrayList<>();
+            while (rs.next()) {
+                products.add(this.mapToProduct(rs));
+            }
+            return products;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Product> findByBrandId(Long brandId) {
+        String query = "SELECT * FROM products WHERE brand_id=?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+
+        ) {
+            ps.setLong(1, brandId);
+            var rs = ps.executeQuery();
+            List<Product> products = new java.util.ArrayList<>();
+            while (rs.next()) {
+                products.add(this.mapToProduct(rs));
+            }
+            return products;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public List<Product> findAll(int offset, int row) {
         String query = "SELECT * FROM products ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
@@ -198,7 +237,7 @@ public class ProductRepository {
 
     public List<Product> findNewestProducts() {
         String query = "SELECT TOP 5 * FROM products WHERE status='ACTIVE' ORDER BY updated_at DESC";
-        List<Product> products = new java.util.ArrayList<>();
+        List<Product> products = new ArrayList<>();
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(query);

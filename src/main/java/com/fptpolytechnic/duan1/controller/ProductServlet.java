@@ -265,7 +265,6 @@ public class ProductServlet extends HttpServlet {
             response.sendRedirect("/error?code=UNCATEGORIZED");
         }
 
-
         ProductDetailResponse product = this.productService.getProductDetail(Long.parseLong(id));
         request.setAttribute("product", product);
 

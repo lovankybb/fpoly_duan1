@@ -161,7 +161,7 @@ CREATE TABLE orders(
     customer_phone NVARCHAR(255) NOT NULL,
     customer_note NVARCHAR(255),
 
-    user_id VARCHAR(255)  REFERENCES users(id),
+    user_id VARCHAR(255),
 
     total_amount DECIMAL(12, 2),
 

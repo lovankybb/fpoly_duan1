@@ -39,31 +39,13 @@
         <section class="brands-section">
             <h2 class="section-title">Khám phá Thương hiệu</h2>
             <div class="brands-grid">
-                <a href="#" class="brand-card">
-                    <img src="path/to/apple_logo.png" alt="Apple">
-                    <p>Apple</p>
-                    <span>(iPhone, Mac)</span>
-                </a>
-                <a href="#" class="brand-card">
-                    <img src="path/to/samsung_logo.png" alt="Samsung">
-                    <p>Samsung</p>
-                    <span>(Galaxy, Watch)</span>
-                </a>
-                <a href="#" class="brand-card">
-                    <img src="path/to/xiaomi_logo.png" alt="Xiaomi">
-                    <p>Xiaomi</p>
-                    <span>(Mi-series, IoT)</span>
-                </a>
-                <a href="#" class="brand-card">
-                    <img src="path/to/google_logo.png" alt="Google">
-                    <p>Google</p>
-                    <span>(Pixel, Buds)</span>
-                </a>
-                <a href="#" class="brand-card">
-                    <img src="path/to/accessories_icon.png" alt="Phụ kiện">
-                    <p>Phụ kiện</p>
-                    <span>Cao cấp</span>
-                </a>
+                <c:forEach var="brand" items="${brands}">
+                    <a href="${pageContext.request.contextPath}/products?brandId=${brand.id}" class="brand-card">
+                        <img src="${pageContext.request.contextPath}/image?name=${brand.image}" alt="${brand.name}">
+                        <p>${brand.name}</p>
+                    </a>
+
+                </c:forEach>
             </div>
         </section>
 
@@ -79,7 +61,7 @@
                         </div>
                         <div class="product-details">
                             <h3>${p.name}</h3>
-                            <p>Brand</p>
+                            <p>${p.brand}</p>
                             <div class="price-row">
                                 <span class="product-price">
                                      Từ <fmt:formatNumber value="${p.salePrice}" type="currency" currencySymbol=""

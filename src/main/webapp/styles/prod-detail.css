@@ -137,7 +137,7 @@ ul {
 
 .meta-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     margin-bottom: 8px;
 }
@@ -347,6 +347,7 @@ ul {
 }
 
 .tab-content {
+    white-space: pre-wrap;
     color: #4B5563;
     line-height: 1.8;
     font-size: 0.95rem;
