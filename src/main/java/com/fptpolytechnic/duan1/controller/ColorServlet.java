@@ -25,16 +25,14 @@ public class ColorServlet extends HttpServlet {
 
         if (uri.contains("delete")) {
             int id = Integer.parseInt(req.getParameter("id"));
-            service.delete(id);
-            resp.sendRedirect(req.getContextPath() + "/admin/colors");
-            return;
-        }
+            boolean success = service.delete(id);
 
-        // Bấm nút "Sửa" -> load color lên form
-        String editId = req.getParameter("editId");
-        if (editId != null && !editId.isEmpty()) {
-            Color editColor = service.getById(Integer.parseInt(editId));
-            req.setAttribute("editColor", editColor);
+            if (success) {
+                resp.sendRedirect(req.getContextPath() + "/admin/colors");
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/admin/colors?error=inuse");
+            }
+            return;
         }
 
         List<Color> colorList = service.getAll();

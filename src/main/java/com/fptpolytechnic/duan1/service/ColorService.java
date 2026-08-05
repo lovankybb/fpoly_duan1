@@ -11,6 +11,7 @@ public class ColorService {
     public Color getById(int id) { return repository.getById(id); }
     public void add(Color c) { repository.add(c); }
     public void update(Color c) { repository.update(c); }
-    public void delete(int id) { repository.delete(id); }
+    public boolean delete(int id) { return repository.delete(id);
+    }
 }
 

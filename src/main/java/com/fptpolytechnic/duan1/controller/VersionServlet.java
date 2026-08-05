@@ -25,14 +25,14 @@ public class VersionServlet extends HttpServlet {
 
         if (uri.contains("delete")) {
             int id = Integer.parseInt(req.getParameter("id"));
-            service.delete(id);
-            resp.sendRedirect(req.getContextPath() + "/admin/versions");
-            return;
-        }
+            boolean success = service.delete(id);
 
-        String editId = req.getParameter("editId");
-        if (editId != null && !editId.isEmpty()) {
-            req.setAttribute("editVersion", service.getById(Integer.parseInt(editId)));
+            if (success) {
+                resp.sendRedirect(req.getContextPath() + "/admin/versions");
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/admin/versions?error=inuse");
+            }
+            return;
         }
 
         req.setAttribute("versions", service.getAll());

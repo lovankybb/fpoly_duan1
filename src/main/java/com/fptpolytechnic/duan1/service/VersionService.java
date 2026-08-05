@@ -11,5 +11,6 @@ public class VersionService {
     public Version getById(int id) { return repository.getById(id); }
     public void add(Version v) { repository.add(v); }
     public void update(Version v) { repository.update(v); }
-    public void delete(int id) { repository.delete(id); }
+    public boolean delete(int id) { return repository.delete(id);
+    }
 }
