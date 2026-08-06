@@ -6,6 +6,7 @@ import com.fptpolytechnic.duan1.utils.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -161,6 +162,24 @@ public class UserRepository {
         }
 
 
+        return false;
+    }
+
+
+    public boolean changePassword(String userId, String newPassword) {
+        String query = "UPDATE users SET password = ? WHERE id = ?";
+        try(
+                var conn = DBContext.getConnection();
+                var ps = conn.prepareStatement(query);
+        ) {
+            ps.setString(1, newPassword);
+            ps.setString(2, userId);
+            ps.executeUpdate();
+            return true;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 }

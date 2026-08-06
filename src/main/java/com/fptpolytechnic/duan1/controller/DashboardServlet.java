@@ -38,10 +38,6 @@ public class DashboardServlet extends HttpServlet {
         Long totalOrder = dashBoardRepository.getTotalOrderCount();
         Long lowStockCount = dashBoardRepository.getLowStockProductCount();
 
-        System.out.println("New users this month: " + newUserCount);
-        System.out.println("Total orders: " + totalOrder);
-        System.out.println("Low stock count: " + lowStockCount);
-
         if (orders != null) {
             orders.forEach(order -> {
                 System.out.println("Order ID: " + order.getId() + ", Total Amount: " + order.getTotalAmount() + ", Status: " + order.getOrderStatus());

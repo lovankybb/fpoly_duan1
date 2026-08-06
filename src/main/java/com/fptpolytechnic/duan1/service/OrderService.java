@@ -1,6 +1,7 @@
 package com.fptpolytechnic.duan1.service;
 
 
+import com.fptpolytechnic.duan1.dto.response.OrderHistoryResponse;
 import com.fptpolytechnic.duan1.dto.response.OrderItemResponse;
 import com.fptpolytechnic.duan1.dto.response.ProductVariantResponse;
 import com.fptpolytechnic.duan1.dto.response.SimpleProdResponse;
@@ -15,7 +16,6 @@ import com.fptpolytechnic.duan1.repository.OrderDetailRepository;
 import com.fptpolytechnic.duan1.repository.OrderRepository;
 import com.fptpolytechnic.duan1.repository.ProductVariantRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -32,7 +32,6 @@ public class OrderService {
     private final OrderDetailRepository orderDetailRepository;
     private final ProductVariantRepository productVariantRepository;
     private final UserService userService;
-    private PaymentService paymentService;
     private final ProductService productService;
 
     public OrderService() {
@@ -159,6 +158,9 @@ public class OrderService {
         return this.orderRepository.findAll(offset, 20);
     }
 
+    public List<OrderHistoryResponse> getOrderHistory(String userId, int offset) throws SQLException {
+        return this.orderRepository.getHistoryByUserId(userId, offset, 3);
+    }
 
     public void deleteOrderForRollBack(Long orderId) throws SQLException {
         this.orderRepository.delete(orderId);

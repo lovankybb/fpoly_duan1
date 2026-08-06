@@ -99,7 +99,7 @@ CREATE TABLE brands (
 CREATE TABLE products (
     id INT PRIMARY KEY IDENTITY(1001,1),
     name NVARCHAR(255) NOT NULL,
-    description NVARCHAR(5000),
+    description NVARCHAR(4000),
     price DECIMAL(12, 2) NOT NULL,
     sale_price DECIMAL(12, 2),
     status NVARCHAR(50) NOT NULL,
@@ -185,29 +185,5 @@ CREATE TABLE order_details (
     variant_id INT NOT NULL REFERENCES product_variants(id),
     price DECIMAL(12, 2) NOT NULL,
     quantity int NOT NULL
-);
-
-
--- PAYMENT
-CREATE TABLE payment_attempts(
-
-  id INT PRIMARY KEY IDENTITY,
-  order_id BIGINT NOT NULL REFERENCES orders(id),
-  amount DECIMAL(10, 2) NOT NULL,
-  currency VARCHAR(255),
-  payment_status VARCHAR(255),
-  gateway_txn_id VARCHAR(255),
-  response_code INT,
-  response_message NVARCHAR(255),
-
-  redirect_url VARCHAR(255),
-  client_ip_address VARCHAR(255),
-  request_payload  VARCHAR(255),
-  response_payload  VARCHAR(255),
-
-  created_at DATETIME,
-  updated_at DATETIME,
-  paid_at DATETIME
-
 );
 

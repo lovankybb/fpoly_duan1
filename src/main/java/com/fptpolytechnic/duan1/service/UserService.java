@@ -16,13 +16,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final OrderRepository orderRepository;
 
     public UserService(){
         userRepository = new UserRepository();
         roleRepository = new RoleRepository();
         passwordEncoder = new PasswordEncoder();
-        orderRepository = new OrderRepository();
     }
 
 
@@ -51,6 +49,15 @@ public class UserService {
         roleRepository.setRoleUser(id, role.getId());
 
         return user;
+    }
+
+
+    public boolean changePassword(String userName, String oldPassword, String newPassword){
+        User user = userRepository.findByUsername(userName);
+        if(!passwordEncoder.matches(oldPassword, user.getPassword())){
+            return false;
+        }
+        return userRepository.changePassword(user.getId(), passwordEncoder.encode(newPassword));
     }
 
 
