@@ -9,15 +9,9 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Tài khoản của tôi - Bảo Bình Mobile</title>
-<<<<<<< HEAD
+    <title>Tài khoản của tôi - Atelier Mobile</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/styles/profile.css" rel="stylesheet">
-=======
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
-    <link href="/styles/profile.css" rel="stylesheet">
->>>>>>> 889b80c (update: complete change password and order history)
 </head>
 <body>
 
