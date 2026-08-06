@@ -109,7 +109,7 @@ public class UserServlet extends HttpServlet {
             user.setUsername(username);
             user.setPassword(password);
             userService.create(user);
-            response.sendRedirect("/");
+            response.sendRedirect(request.getContextPath() + "/");
         } else {
             request.getRequestDispatcher("/views/sign-up.jsp").forward(request, response);
         }
