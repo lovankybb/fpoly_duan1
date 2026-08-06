@@ -62,15 +62,16 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String path = req.getContextPath();
+        String path = req.getServletPath();
 
+        System.out.println("INFO: Path: " + path);
         switch (path) {
             case "/sign-up":
                 handleSignup(req, resp);
                 break;
 
             case "/user/change-pwd":
-                handleSignup(req, resp);
+                this.handleChangePwd(req, resp);
                 break;
 
             default:
@@ -142,38 +143,49 @@ public class UserServlet extends HttpServlet {
 
     public void responseChangePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Authentication auth = (Authentication) request.getAttribute("authentication");
+
         if (auth == null) {
             response.sendRedirect("/sign-in");
         } else {
+
+//            message = {SUCCESS, EMPTY, INVALID_PASSWORD}
+            String message = request.getParameter("msg");
+            if (message != null && !message.trim().isEmpty()) {
+                request.setAttribute("message", message);
+            }
+
             request.getRequestDispatcher("/views/change-pwd.jsp").forward(request, response);
         }
     }
 
-    public void handleChangePwd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void handleChangePwd(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String password = request.getParameter("password");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
-
         Authentication auth = (Authentication) request.getAttribute("authentication");
-        if(auth == null) {
-            response.sendRedirect( request.getContextPath() + "/sign-in");
+
+        if (auth == null) {
+            response.sendRedirect(request.getContextPath() + "/sign-in");
         }
 
         if (password == null || password.trim().isEmpty()
-            || newPassword == null || newPassword.trim().isEmpty()
+                || newPassword == null || newPassword.trim().isEmpty()
                 || confirmPassword == null || confirmPassword.trim().isEmpty()
         ) {
             response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=EMPTY");
+            return;
         }
-        if(!newPassword.equals(confirmPassword)) {
-            response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=WRONG");
+        if (!newPassword.equals(confirmPassword)) {
+            response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=INVALID_PASSWORD");
+            return;
         }
-        if(!userService.changePassword(auth.getUsername(),password, newPassword)) {
-            response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=WRONG");
+        if (!userService.changePassword(auth.getUsername(), password, newPassword)) {
+            response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=INVALID_PASSWORD");
+            return;
         }
 
-        response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=WRONG");
+        response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=SUCCESS");
     }
 }
 
