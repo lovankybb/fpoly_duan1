@@ -63,15 +63,15 @@ public class VersionRepository {
         }
     }
 
-    public boolean checkUsed(int id) {
-        String sql = "SELECT COUNT(*) FROM product_variants WHERE version_id = ?";
+    public boolean checkUsed(long id) {
+        String sql = "SELECT * FROM product_variants WHERE version_id = ?";
         try (Connection con = DBContext.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
+            ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
+
+                    return rs.next();
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,7 +79,7 @@ public class VersionRepository {
         return false;
     }
 
-    public boolean delete(int id) {
+    public boolean delete(long id) {
         if (checkUsed(id)) {
             return false;
         }
@@ -87,9 +87,9 @@ public class VersionRepository {
         String sql = "DELETE FROM versions WHERE id = ?";
         try (Connection con = DBContext.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
-            return true;
+            ps.setLong(1, id);
+
+            return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

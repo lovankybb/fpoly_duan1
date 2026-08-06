@@ -22,22 +22,19 @@ public class ColorServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String uri = req.getRequestURI();
-
-        if (uri.contains("delete")) {
-            int id = Integer.parseInt(req.getParameter("id"));
-            boolean success = service.delete(id);
-
-            if (success) {
-                resp.sendRedirect(req.getContextPath() + "/admin/colors");
-            } else {
-                resp.sendRedirect(req.getContextPath() + "/admin/colors?error=inuse");
-            }
-            return;
-        }
-
         List<Color> colorList = service.getAll();
         req.setAttribute("colorList", colorList);
-        req.getRequestDispatcher("/views/admin/color.jsp").forward(req, resp);
+
+        if (uri.contains("delete")) {
+            long id = Long.parseLong(req.getParameter("id"));
+            service.delete(id);
+            resp.sendRedirect(req.getContextPath() + "/admin/colors");
+        } else {
+            req.getRequestDispatcher("/views/admin/color.jsp").forward(req, resp);
+        }
+
+
+
     }
 
     @Override

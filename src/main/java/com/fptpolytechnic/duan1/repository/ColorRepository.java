@@ -65,11 +65,11 @@ public class ColorRepository {
         }
     }
 
-    public boolean checkUsed(int id) {
-        String sql = "SELECT COUNT(*) FROM product_variants WHERE color_id = ?";
+    public boolean checkUsed(long id) {
+        String sql = "SELECT * FROM product_variants WHERE color_id = ?";
         try (Connection con = DBContext.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
+            ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
@@ -81,7 +81,7 @@ public class ColorRepository {
         return false;
     }
 
-    public boolean delete(int id) {
+    public boolean delete(long id) {
         if (checkUsed(id)) {
             return false;
         }
@@ -89,7 +89,7 @@ public class ColorRepository {
         String sql = "DELETE FROM colors WHERE id = ?";
         try (Connection con = DBContext.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
+            ps.setLong(1, id);
             ps.executeUpdate();
             return true;
         } catch (Exception e) {

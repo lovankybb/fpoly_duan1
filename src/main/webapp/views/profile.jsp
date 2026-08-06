@@ -11,7 +11,7 @@
     <meta charset="UTF-8">
     <title>Tài khoản của tôi - Bảo Bình Mobile</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="/styles/profile.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/styles/profile.css" rel="stylesheet">
 </head>
 <body>
 
