@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html>
@@ -70,13 +71,15 @@
 
                         <div class="form-group">
                             <label>Giá (VNĐ)</label>
-                            <input type="number" name="price" value="${product.price}" placeholder="VD: 1400000" min="0" required>
+                            <input type="number" name="price"
+                                   value="<fmt:formatNumber value='${product.price}' groupingUsed='false' maxFractionDigits='0'/>"
+                                   placeholder="VD: 1400000" min="0" required>
                             <span class="error-msg">${priceError}</span>
                         </div>
 
                         <div class="form-group">
                             <label>Giá bán ra (VNĐ)</label>
-                            <input type="number" name="salePrice" value="${product.salePrice}" placeholder="VD: 830000" min="0" required>
+                            <input type="number" name="salePrice" value="<fmt:formatNumber value='${product.salePrice}' groupingUsed='false' maxFractionDigits='0'/>" placeholder="VD: 830000" min="0" required>
                         </div>
 
                         <div class="form-group">

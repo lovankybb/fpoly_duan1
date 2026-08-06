@@ -1,11 +1,13 @@
 package com.fptpolytechnic.duan1.repository;
 
 
+import com.fptpolytechnic.duan1.dto.response.OrderHistoryResponse;
 import com.fptpolytechnic.duan1.enums.OrderStatus;
 import com.fptpolytechnic.duan1.enums.PaymentMethod;
 import com.fptpolytechnic.duan1.enums.PaymentStatus;
 import com.fptpolytechnic.duan1.model.Order;
 import com.fptpolytechnic.duan1.utils.DBContext;
+import com.oracle.wls.shaded.org.apache.xpath.operations.Or;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -257,15 +259,15 @@ public class OrderRepository {
 
     public List<Order> findByUserId(String userId, int offset, int limit) {
         String query = """
-                SELECT * FROM orders
-                WHERE user_id=?
-                ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-        """;
+                        SELECT * FROM orders
+                        WHERE user_id=?
+                        ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                """;
 
-        try(
+        try (
                 var conn = DBContext.getConnection();
                 var ps = conn.prepareStatement(query);
-                ){
+        ) {
             List<Order> orders = new ArrayList<>();
             ps.setString(1, userId);
             ps.setInt(2, offset);
@@ -274,7 +276,7 @@ public class OrderRepository {
             while (rs.next()) {
                 orders.add(this.mapToOrder(rs));
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
@@ -282,11 +284,11 @@ public class OrderRepository {
 
     public void delete(Long orderId) {
         String query = """
-                DELETE FROM orders WHERE id=?
-        """;
+                        DELETE FROM orders WHERE id=?
+                """;
         try (var conn = DBContext.getConnection();
              var ps = conn.prepareStatement(query);
-        ){
+        ) {
             ps.setLong(1, orderId);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -329,6 +331,74 @@ public class OrderRepository {
         order.setCancelledAt(rs.getTimestamp("canceled_at") == null ? null : rs.getTimestamp("canceled_at").toLocalDateTime());
         order.setCancelReason(rs.getString("cancel_reason") == null ? "" : rs.getString("cancel_reason"));
         return order;
+    }
+
+
+//    History
+
+    public List<OrderHistoryResponse> getHistoryByUserId(String userId, int offset, int limit) {
+
+        String query = """
+                WITH FirstProductImage AS (
+                    SELECT
+                        product_id,
+                        image_url,
+                        ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY id ASC) AS rn
+                    FROM product_images
+                )
+                SELECT
+                    od.id AS o_detail_id,
+                    o.order_code AS order_code,
+                    p.name AS name,
+                    v.name AS version_name,
+                    c.name AS color_name,
+                    o.order_status AS order_status,
+                    o.payment_status AS payment_status,
+                    pdi.image_url,
+                    od.quantity,
+                    od.price,
+                    o.created_at
+                FROM order_details od
+                         JOIN orders o ON od.order_id = o.id
+                         JOIN product_variants pv ON od.variant_id = pv.id
+                         JOIN products p ON pv.prod_id = p.id
+                         JOIN colors c ON pv.color_id = c.id
+                         JOIN versions v ON pv.version_id = v.id
+                         LEFT JOIN FirstProductImage pdi ON p.id = pdi.product_id AND pdi.rn = 1
+                WHERE o.user_id = ?
+                ORDER BY o.created_at DESC
+                OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                """;
+
+
+        List<OrderHistoryResponse> histories = new ArrayList<>();
+
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ) {
+            ps.setString(1, userId);
+            ps.setInt(2, offset);
+            ps.setInt(3, limit);
+            var rs = ps.executeQuery();
+            while (rs.next()) {
+                histories.add(OrderHistoryResponse.builder()
+                        .oderDetailId(rs.getLong("o_detail_id"))
+                        .orderCode(rs.getString("order_code"))
+                        .name(rs.getString("name"))
+                        .version(rs.getString("version_name"))
+                        .color(rs.getString("color_name"))
+                        .imageUrl(rs.getString("image_url"))
+                        .quantity(rs.getInt("quantity"))
+                        .price(rs.getDouble("price"))
+                        .orderStatus(rs.getString("order_status"))
+                        .paymentStatus(rs.getString("payment_status"))
+                        .createdAt(rs.getTimestamp("created_at").toLocalDateTime().toLocalDate())
+                        .build());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return histories;
     }
 }
 

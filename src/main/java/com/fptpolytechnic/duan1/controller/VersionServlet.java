@@ -21,22 +21,26 @@ public class VersionServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
+
         String uri = req.getRequestURI();
+        List<Version> versions = service.getAll();
+        req.setAttribute("versions", versions);
+
 
         if (uri.contains("delete")) {
-            int id = Integer.parseInt(req.getParameter("id"));
+            long id = Long.parseLong(req.getParameter("id"));
             service.delete(id);
             resp.sendRedirect(req.getContextPath() + "/admin/versions");
-            return;
+
+        } else {
+            req.getRequestDispatcher("/views/admin/version.jsp").forward(req, resp);
         }
 
-        String editId = req.getParameter("editId");
-        if (editId != null && !editId.isEmpty()) {
-            req.setAttribute("editVersion", service.getById(Integer.parseInt(editId)));
-        }
 
-        req.setAttribute("versions", service.getAll());
-        req.getRequestDispatcher("/views/admin/version.jsp").forward(req, resp);
+
+
+
+
     }
 
     @Override

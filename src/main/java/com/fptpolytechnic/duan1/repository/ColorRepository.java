@@ -65,14 +65,36 @@ public class ColorRepository {
         }
     }
 
-    public void delete(int id) {
+    public boolean checkUsed(long id) {
+        String sql = "SELECT * FROM product_variants WHERE color_id = ?";
+        try (Connection con = DBContext.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean delete(long id) {
+        if (checkUsed(id)) {
+            return false;
+        }
+
         String sql = "DELETE FROM colors WHERE id = ?";
         try (Connection con = DBContext.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
+            ps.setLong(1, id);
             ps.executeUpdate();
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 }
