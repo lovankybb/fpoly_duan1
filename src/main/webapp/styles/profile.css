@@ -173,6 +173,11 @@ body {
     color: #c62828;
 }
 
+.status.shipping {
+    background-color: #c3e6fa;
+    color: #282bc6;
+}
+
 .order-body {
     display: flex;
     gap: 15px;
@@ -207,6 +212,13 @@ body {
     font-size: 16px;
     font-weight: 700;
     color: #1a1a1a;
+}
+
+
+.order-sub-price {
+    font-size: 12px;
+    font-weight: 700;
+    color: #e42f2f;
 }
 
 /* Responsive */

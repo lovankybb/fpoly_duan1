@@ -8,6 +8,8 @@ import com.fptpolytechnic.duan1.model.Brand;
 import com.fptpolytechnic.duan1.model.Category;
 import com.fptpolytechnic.duan1.model.Product;
 import com.fptpolytechnic.duan1.model.ProductImage;
+import com.fptpolytechnic.duan1.service.BrandService;
+import com.fptpolytechnic.duan1.service.CategoryService;
 import com.fptpolytechnic.duan1.service.ProductImageService;
 import com.fptpolytechnic.duan1.service.ProductService;
 import jakarta.servlet.ServletException;
@@ -42,12 +44,16 @@ public class ProductServlet extends HttpServlet {
 
 
     private final ProductService productService;
-
     private final ProductImageService productImageService;
+
+    private final BrandService brandService;
+    private final CategoryService categoryService;
 
     public ProductServlet() {
         productService = new ProductService();
         productImageService = new ProductImageService();
+        brandService = new BrandService();
+        categoryService = new CategoryService();
     }
 
 
@@ -145,17 +151,8 @@ public class ProductServlet extends HttpServlet {
         }
 
 
-        List<Category> categories = new ArrayList<>();
-        categories.add(new Category(1l, "Điện thoại", ""));
-        categories.add(new Category(2l, "Máy tính", ""));
-        categories.add(new Category(3l, "PC", ""));
-
-
-        List<Brand> brands = new ArrayList<>();
-        brands.add(new Brand(1, "Apple", ""));
-        brands.add(new Brand(2, "Oppo", ""));
-        brands.add(new Brand(3, "Samsung", ""));
-
+        List<Category> categories = categoryService.getAll();
+        List<Brand> brands = brandService.getAll();
 
         req.setAttribute("categories", categories);
         req.setAttribute("brands", brands);
@@ -198,21 +195,6 @@ public class ProductServlet extends HttpServlet {
         } else {
 
             Collection<Part> parts = request.getParts();
-
-            parts.stream()
-                    .filter(p ->
-                            "image".equals(p.getName())
-                                    && p.getSubmittedFileName() != null
-                                    && !p.getSubmittedFileName().trim().isEmpty()
-                                    && p.getSize() > 1
-
-                    ).forEach(p -> {
-                        System.out.println("p.getName(): " + p.getName());
-                        System.out.println("p.getContentType(): " + p.getContentType());
-                        System.out.println("p.getSize(): " + p.getContentType());
-                        System.out.println("p.getSubmittedName(): " + p.getSubmittedFileName());
-                    });
-
             Set<Part> images = parts.stream()
                     .filter(p -> "image".equals(p.getName())
                             && p.getSubmittedFileName() != null
@@ -283,7 +265,6 @@ public class ProductServlet extends HttpServlet {
             response.sendRedirect("/error?code=UNCATEGORIZED");
         }
 
-
         ProductDetailResponse product = this.productService.getProductDetail(Long.parseLong(id));
         request.setAttribute("product", product);
 
@@ -293,17 +274,17 @@ public class ProductServlet extends HttpServlet {
 
     private void responseProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-//        String offSet = request.getParameter("offset");
-//        String categoryId = request.getParameter("categoryId");
-//        String brandId = request.getParameter("brandId");
-//        String price = request.getParameter("price");
+        String offsetParam = request.getParameter("offset");
+        if (offsetParam == null || offsetParam.trim().isEmpty()) {
+            offsetParam = "0";
+        }
 
+        int offset = Integer.parseInt(offsetParam);
 
-        int offset = Integer.parseInt(request.getParameter("offset"));
         request.setAttribute("offset", offset);
-
-
-        List<SimpleProdResponse> products = productService.findAllActiveProduct(offset);
+        request.setAttribute("brands", brandService.getAll());
+        request.setAttribute("categories", categoryService.getAll());
+        List<SimpleProdResponse> products = productService.findAllActiveProduct(offset, request.getParameter("categoryId"), request.getParameter("brandId"), request.getParameter("partName"));
         request.setAttribute("products", products);
 
         request.getRequestDispatcher("/views/product.jsp").forward(request, response);
@@ -350,17 +331,8 @@ public class ProductServlet extends HttpServlet {
         }
 
 
-        List<Category> categories = new ArrayList<>();
-        categories.add(new Category(1l, "Điện thoại", ""));
-        categories.add(new Category(2l, "Máy tính", ""));
-        categories.add(new Category(3l, "PC", ""));
-
-
-        List<Brand> brands = new ArrayList<>();
-        brands.add(new Brand(1, "Apple", ""));
-        brands.add(new Brand(2, "Oppo", ""));
-        brands.add(new Brand(3, "Samsung", ""));
-
+        List<Category> categories = categoryService.getAll();
+        List<Brand> brands = brandService.getAll();
 
         request.setAttribute("categories", categories);
         request.setAttribute("brands", brands);

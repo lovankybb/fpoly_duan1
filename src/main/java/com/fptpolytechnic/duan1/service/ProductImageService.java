@@ -14,7 +14,7 @@ public class ProductImageService {
     private ProductImageRepository productImageRepository;
     private StorageService storageService;
 
-    public ProductImageService(){
+    public ProductImageService() {
         productImageRepository = new ProductImageRepository();
         storageService = new StorageService();
     }
@@ -23,7 +23,7 @@ public class ProductImageService {
     public void insert(Long prodId, Part file) throws IOException {
 
         String imageUrl = storageService.storage(file);
-        if(imageUrl != null){
+        if (imageUrl != null) {
             ProductImage productImage = new ProductImage();
             productImage.setProductId(prodId);
             productImage.setImageUrl(imageUrl);
@@ -31,7 +31,7 @@ public class ProductImageService {
         }
     }
 
-    public void delete( Long productId) throws IOException {
+    public void delete(Long productId) throws IOException {
 
         List<ProductImage> productImages = productImageRepository.findByProductId(productId);
         for (ProductImage productImage : productImages) {
@@ -40,7 +40,7 @@ public class ProductImageService {
         productImageRepository.deleteByProductId(productId);
     }
 
-    public List<ProductImage> findByProdId(Long prodId){
+    public List<ProductImage> findByProdId(Long prodId) {
         return productImageRepository.findByProductId(prodId);
     }
 

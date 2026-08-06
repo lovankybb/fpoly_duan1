@@ -6,7 +6,7 @@
     <title>Liên hệ với chúng tôi - Bảo Bình Mobile</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght=0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
-    <link href="/styles/contact.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/styles/contact.css" rel="stylesheet">
 </head>
 <body>
 

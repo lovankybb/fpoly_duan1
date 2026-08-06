@@ -26,26 +26,47 @@ public class CategoryRepository {
         return list;
     }
 
-   public void add(Category c) {
-       String sql = "INSERT INTO categories (name, description) VALUES(?, ?)";
-       try (Connection con = DBContext.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)) {
-           ps.setString(1, c.getName());
-           ps.setString(2, c.getDescription());
-           ps.executeUpdate();
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
-   }
-   public  void delete(int id) {
-       String sql = "DELETE FROM categories WHERE id = ?";
-       try (Connection con = DBContext.getConnection();
-       PreparedStatement ps = con.prepareStatement(sql)) {
-           ps.setInt(1, id);
-           ps.executeUpdate();
+    public void add(Category c) {
+        String sql = "INSERT INTO categories (name, description) VALUES(?, ?)";
+        try (Connection con = DBContext.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, c.getName());
+            ps.setString(2, c.getDescription());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
-   }
+    public void delete(long id) {
+        String sql = "DELETE FROM categories WHERE id = ?";
+        try (Connection con = DBContext.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setLong(1, id);
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Category findById(long id) {
+
+        String query = "SELECT * FROM categories WHERE id=?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+        ) {
+            ps.setLong(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Category(
+                        rs.getLong("id"),
+                        rs.getString("name"),
+                        rs.getString("description"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

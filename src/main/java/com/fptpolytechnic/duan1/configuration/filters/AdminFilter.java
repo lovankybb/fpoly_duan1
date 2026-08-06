@@ -1,4 +1,4 @@
-package com.fptpolytechnic.duan1.filters;
+package com.fptpolytechnic.duan1.configuration.filters;
 
 import com.fptpolytechnic.duan1.service.IntrospectService;
 import com.nimbusds.jose.JOSEException;

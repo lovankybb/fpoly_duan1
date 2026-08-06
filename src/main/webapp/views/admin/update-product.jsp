@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html>
@@ -51,7 +52,7 @@
                             <select name="categoryId" required>
                                 <option value="">-- Chọn danh mục --</option>
                                 <c:forEach var="cat" items="${categories}">
-                                    <option value="${cat.id}" ${cat.id == product.categoryId ? 'selected' : ''}>${cat.name}</option>
+                                    <option value="${cat.id}" ${cat.name == product.category ? 'selected' : ''}>${cat.name}</option>
                                 </c:forEach>
                             </select>
                             <span class="error-msg">${catError}</span>
@@ -62,7 +63,7 @@
                             <select name="brandId" required>
                                 <option value="">-- Chọn thương hiệu --</option>
                                 <c:forEach var="brand" items="${brands}">
-                                    <option value="${brand.id}" ${brand.id == product.brandId ? 'selected' : ''}>${brand.name}</option>
+                                    <option value="${brand.id}" ${brand.name == product.brand ? 'selected' : ''}>${brand.name}</option>
                                 </c:forEach>
                             </select>
                             <span class="error-msg">${brandError}</span>
@@ -70,13 +71,15 @@
 
                         <div class="form-group">
                             <label>Giá (VNĐ)</label>
-                            <input type="number" name="price" value="${product.price}" placeholder="VD: 1400000" min="0" required>
+                            <input type="number" name="price"
+                                   value="<fmt:formatNumber value='${product.price}' groupingUsed='false' maxFractionDigits='0'/>"
+                                   placeholder="VD: 1400000" min="0" required>
                             <span class="error-msg">${priceError}</span>
                         </div>
 
                         <div class="form-group">
                             <label>Giá bán ra (VNĐ)</label>
-                            <input type="number" name="salePrice" value="${product.salePrice}" placeholder="VD: 830000" min="0" required>
+                            <input type="number" name="salePrice" value="<fmt:formatNumber value='${product.salePrice}' groupingUsed='false' maxFractionDigits='0'/>" placeholder="VD: 830000" min="0" required>
                         </div>
 
                         <div class="form-group">

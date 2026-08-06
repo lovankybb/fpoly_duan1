@@ -1,7 +1,9 @@
 package com.fptpolytechnic.duan1.controller;
 
+import com.fptpolytechnic.duan1.dto.response.OrderHistoryResponse;
 import com.fptpolytechnic.duan1.model.Authentication;
 import com.fptpolytechnic.duan1.model.User;
+import com.fptpolytechnic.duan1.service.OrderService;
 import com.fptpolytechnic.duan1.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,18 +14,26 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
-@WebServlet({"/sign-up", "/admin/users", "/profile"})
+@WebServlet({
+        "/sign-up",
+        "/admin/users",
+        "/profile",
+        "/user/change-pwd"
+})
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserServlet  extends HttpServlet {
+public class UserServlet extends HttpServlet {
 
 
-    UserService userService;
+    private final UserService userService;
+    private final OrderService orderService;
 
-    public UserServlet(){
+    public UserServlet() {
         userService = new UserService();
+        orderService = new OrderService();
     }
-
 
 
     @Override
@@ -35,7 +45,14 @@ public class UserServlet  extends HttpServlet {
                 req.getRequestDispatcher("/views/sign-up.jsp").forward(req, resp);
                 break;
             case "/profile":
-                handleResponseProfile(req, resp);
+                try {
+                    handleResponseProfile(req, resp);
+                } catch (SQLException e) {
+                    resp.sendRedirect(req.getContextPath() + "/error?code=UNAUTHORIZED");
+                }
+                break;
+            case "/user/change-pwd":
+                this.responseChangePassword(req, resp);
                 break;
             default:
                 req.getRequestDispatcher("/views/sign-up.jsp").forward(req, resp);
@@ -47,9 +64,18 @@ public class UserServlet  extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getContextPath();
 
-        switch (path){
-            case "/sign-up": handleSignup(req, resp); break;
-            default: handleSignup(req, resp); break;
+        switch (path) {
+            case "/sign-up":
+                handleSignup(req, resp);
+                break;
+
+            case "/user/change-pwd":
+                handleSignup(req, resp);
+                break;
+
+            default:
+                handleSignup(req, resp);
+                break;
         }
 
     }
@@ -62,44 +88,92 @@ public class UserServlet  extends HttpServlet {
 
         boolean hasError = false;
 
-        if(username == null || username.trim().isEmpty()){
+        if (username == null || username.trim().isEmpty()) {
             request.setAttribute("usernameError", "Tên đăng nhập không được để trống");
             hasError = true;
         }
 
-        if(password.length() < 6){
+        if (password.length() < 6) {
             request.setAttribute("passwordError", "Mật khẩu phải có ít nhất 6 ký tự");
             hasError = true;
         }
 
-        if(!password.equals(confirmPsw)){
+        if (!password.equals(confirmPsw)) {
             request.setAttribute("confirmPswError", "Xác nhận mật khẩu không khớp");
             hasError = true;
         }
 
-        if(!hasError){
+        if (!hasError) {
             // Proceed with user registration logic
             User user = new User();
             user.setUsername(username);
             user.setPassword(password);
             userService.create(user);
             response.sendRedirect("/");
-        }
-        else {
+        } else {
             request.getRequestDispatcher("/views/sign-up.jsp").forward(request, response);
         }
 
     }
 
-    private void handleResponseProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void handleResponseProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 
         Authentication auth = (Authentication) request.getAttribute("authentication");
-        if(auth == null){
+        if (auth == null) {
             response.sendRedirect("/sign-in");
-        }
-        else {
+        } else {
+
+            String offset = request.getParameter("offset");
+            if (offset == null || offset.trim().isEmpty()) {
+                offset = "0";
+            }
+
+            User user = userService.findByUsername(auth.getUsername());
+            List<OrderHistoryResponse> histories = orderService.getOrderHistory(user.getId(), Integer.parseInt(offset));
+
+            request.setAttribute("user", user);
+            request.setAttribute("offset", offset);
+            request.setAttribute("histories", histories);
+
             request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
         }
+
+    }
+
+    public void responseChangePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Authentication auth = (Authentication) request.getAttribute("authentication");
+        if (auth == null) {
+            response.sendRedirect("/sign-in");
+        } else {
+            request.getRequestDispatcher("/views/change-pwd.jsp").forward(request, response);
+        }
+    }
+
+    public void handleChangePwd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String password = request.getParameter("password");
+        String newPassword = request.getParameter("newPassword");
+        String confirmPassword = request.getParameter("confirmPassword");
+
+        Authentication auth = (Authentication) request.getAttribute("authentication");
+        if(auth == null) {
+            response.sendRedirect( request.getContextPath() + "/sign-in");
+        }
+
+        if (password == null || password.trim().isEmpty()
+            || newPassword == null || newPassword.trim().isEmpty()
+                || confirmPassword == null || confirmPassword.trim().isEmpty()
+        ) {
+            response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=EMPTY");
+        }
+        if(!newPassword.equals(confirmPassword)) {
+            response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=WRONG");
+        }
+        if(!userService.changePassword(auth.getUsername(),password, newPassword)) {
+            response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=WRONG");
+        }
+
+        response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=WRONG");
     }
 }
 
