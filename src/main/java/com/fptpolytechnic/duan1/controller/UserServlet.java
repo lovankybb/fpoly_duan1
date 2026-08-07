@@ -1,8 +1,11 @@
 package com.fptpolytechnic.duan1.controller;
 
+import java.io.IOException;
+
 import com.fptpolytechnic.duan1.model.Authentication;
 import com.fptpolytechnic.duan1.model.User;
 import com.fptpolytechnic.duan1.service.UserService;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,8 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-
-import java.io.IOException;
 
 @WebServlet({"/sign-up", "/admin/users", "/profile"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -83,9 +84,9 @@ public class UserServlet  extends HttpServlet {
             user.setUsername(username);
             user.setPassword(password);
             userService.create(user);
-            response.sendRedirect("/");
-        }
-        else {
+
+            response.sendRedirect(request.getContextPath() + "/");
+        } else {
             request.getRequestDispatcher("/views/sign-up.jsp").forward(request, response);
         }
 
@@ -98,8 +99,6 @@ public class UserServlet  extends HttpServlet {
             response.sendRedirect("/sign-in");
         }
         else {
-
-
             request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
         }
     }

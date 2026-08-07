@@ -148,7 +148,7 @@
             </div>
 
             <button type="submit">Đăng nhập</button>
-            <a href="/sign-up">Chưa có tài khoản? Đăng ký ngay</a>
+            <a href="${pageContext.request.contextPath}/sign-up">Chưa có tài khoản? Đăng ký ngay</a>
         </form>
     </div>
 

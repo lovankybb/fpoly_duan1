@@ -97,7 +97,7 @@ public class AuthenticationServlet extends HttpServlet {
     private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             authenticationService.logout(request, response);
-            response.sendRedirect("/");
+            response.sendRedirect(request.getContextPath() + "/");
         }catch ( Exception e) {
            response.sendRedirect(request.getContextPath() + "/error?code=UNCATEGORIZED");
         }
