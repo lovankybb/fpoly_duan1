@@ -1,6 +1,7 @@
 package com.fptpolytechnic.duan1.controller;
 
 import com.fptpolytechnic.duan1.dto.CheckoutFormDTO;
+import com.fptpolytechnic.duan1.dto.response.CartItemResponse;
 import com.fptpolytechnic.duan1.dto.response.OrderItemResponse;
 import com.fptpolytechnic.duan1.dto.response.ProductVariantResponse;
 import com.fptpolytechnic.duan1.dto.response.SimpleProdResponse;
@@ -38,6 +39,7 @@ import java.util.*;
 })
 public class OrderServlet extends HttpServlet {
 
+    private final CartService cartService;
     private final UserService userService;
     private final OrderService orderService;
     private final ProductService productService;
@@ -46,6 +48,7 @@ public class OrderServlet extends HttpServlet {
 
     public OrderServlet() {
         userService = new UserService();
+        cartService = new CartService();
         orderService = new OrderService();
         productService = new ProductService();
         productVariantService = new ProductVariantService();
@@ -68,6 +71,9 @@ public class OrderServlet extends HttpServlet {
                 break;
             case "/admin/orders":
                 this.responseOderManagement(req, resp);
+                break;
+            case "/checkout":
+                this.responseCheckout(req, resp);
                 break;
             case "/admin/order/detail":
                 try {
@@ -178,7 +184,7 @@ public class OrderServlet extends HttpServlet {
         String orderId = req.getParameter("id");
 
         if (orderId == null || orderId.trim().isEmpty()) {
-            resp.sendRedirect( req.getContextPath() + "/error?code=UNCATEGORIZED");
+            resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
         }
 
         Order order = this.orderService.getOrderById(Long.parseLong(orderId));
@@ -249,7 +255,7 @@ public class OrderServlet extends HttpServlet {
 
         String checkoutType = req.getParameter("checkoutType");
         if (checkoutType == null || checkoutType.trim().isEmpty()) {
-            resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
+            checkoutType = "CART_CHECKOUT";
         }
 
         if (checkoutType.equals("BUY_NOW")) {
@@ -265,23 +271,26 @@ public class OrderServlet extends HttpServlet {
 
         Object checkoutTypeObj = session.getAttribute("CHECKOUT_TYPE");
 
-        System.out.println("*******: Checkout_Type: " + checkoutTypeObj);
+        System.out.println("INFO: Checkout_Type: " + checkoutTypeObj);
         String checkoutType = (String) checkoutTypeObj;
 
         if ("BUY_NOW".equals(checkoutType)) {
-            this.handleBuyNowOrder(req, resp, session);
+            this.handleCreateOrder(req, resp, (List<OrderItemResponse>) session.getAttribute("CHECKOUT_ITEMS"));
         } else {
-//            Handle default ch
+            Authentication authentication = (Authentication) req.getAttribute("authentication");
+            User user = userService.findByUsername(authentication.getUsername());
+            if(user == null) {
+                resp.sendRedirect(req.getContextPath() + "/sign-in");
+            }
+           this.handleCreateOrder(req, resp, cartService.getOrderItems(user.getId()));
         }
 
     }
 
-    private void handleBuyNowOrder(HttpServletRequest req, HttpServletResponse resp, HttpSession session) throws ServletException, IOException, SQLException {
+    private void handleCreateOrder(HttpServletRequest req, HttpServletResponse resp, List<OrderItemResponse> checkoutItems) throws ServletException, IOException, SQLException {
 
 
         System.out.println("INFO: Processing order......");
-        List<OrderItemResponse> checkoutItems = (List<OrderItemResponse>) session.getAttribute("CHECKOUT_ITEMS");
-
         CheckoutFormDTO form = CheckoutFormDTO.builder()
                 .customerName(req.getParameter("customerName"))
                 .customerPhone(req.getParameter("customerPhone"))
@@ -363,17 +372,8 @@ public class OrderServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
         }
 
-        Authentication auth = (Authentication) req.getAttribute("authentication");
-
-        if (auth != null) {
-            User user = userService.findByUsername(auth.getUsername());
-            if (user != null) {
-                req.setAttribute("customerName", user.getUsername());
-                req.setAttribute("customerPhone", user.getPhone() != null ? user.getPhone() : "");
-                req.setAttribute("customerAddress", user.getAddress() != null ? user.getAddress() : "");
-            }
-        }
-
+//        set default receiver
+        this.setDefaultReceiver(req, resp);
 
         SimpleProdResponse product = this.productService.findByProductVariantId(Long.valueOf(variantId));
         ProductVariantResponse variant = this.productVariantService.findById(Long.valueOf(variantId));
@@ -412,8 +412,33 @@ public class OrderServlet extends HttpServlet {
 
     private void responseDefaultCheckout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        String userId = this.setDefaultReceiver(req, resp);
+        List<CartItemResponse> checkoutItems = cartService.getCartItems(userId);
+
+        BigDecimal subTotal = BigDecimal.ZERO;
+        for (CartItemResponse item : checkoutItems) {
+            subTotal = subTotal.add(BigDecimal.valueOf(item.getQuantity()).multiply(BigDecimal.valueOf(item.getPrice())));
+        }
+        req.setAttribute("subTotal", subTotal.doubleValue());
+        req.setAttribute("checkoutItems", checkoutItems);
+        req.getRequestDispatcher("/views/checkout.jsp").forward(req, resp);
     }
 
+
+    private String setDefaultReceiver(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Authentication auth = (Authentication) req.getAttribute("authentication");
+
+        if (auth != null) {
+            User user = userService.findByUsername(auth.getUsername());
+            if (user != null) {
+                req.setAttribute("customerName", user.getUsername());
+                req.setAttribute("customerPhone", user.getPhone() != null ? user.getPhone() : "");
+                req.setAttribute("customerAddress", user.getAddress() != null ? user.getAddress() : "");
+                return user.getId();
+            }
+        }
+        return "Anonymous";
+    }
 
     private Map<String, String> validateCheckoutForm(CheckoutFormDTO form) throws ServletException, IOException {
 

@@ -1,6 +1,7 @@
 package com.fptpolytechnic.duan1.service;
 
 import com.fptpolytechnic.duan1.dto.response.CartItemResponse;
+import com.fptpolytechnic.duan1.dto.response.OrderItemResponse;
 import com.fptpolytechnic.duan1.dto.response.ProductVariantResponse;
 import com.fptpolytechnic.duan1.dto.response.SimpleProdResponse;
 import com.fptpolytechnic.duan1.model.Cart;
@@ -92,6 +93,23 @@ public class CartService {
                     .build());
         }
         return result;
+    }
+
+
+    public List<OrderItemResponse> getOrderItems(String userId) {
+        return this.getCartItems(userId).stream().map(this::toOrderItemResponse).toList();
+    }
+
+    private OrderItemResponse toOrderItemResponse(CartItemResponse item) {
+        return OrderItemResponse.builder()
+                .productName(item.getProductName())
+                .variantId(item.getVariantId())
+                .quantity(item.getQuantity())
+                .price(item.getPrice())
+                .imageUrl(item.getImageUrl())
+                .colorName(item.getColorName())
+                .versionName(item.getVersionName())
+                .build();
     }
 
     public int countItems(String userId) {
