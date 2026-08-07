@@ -38,12 +38,6 @@ public class DashboardServlet extends HttpServlet {
         Long totalOrder = dashBoardRepository.getTotalOrderCount();
         Long lowStockCount = dashBoardRepository.getLowStockProductCount();
 
-        if (orders != null) {
-            orders.forEach(order -> {
-                System.out.println("Order ID: " + order.getId() + ", Total Amount: " + order.getTotalAmount() + ", Status: " + order.getOrderStatus());
-            });
-        }
-
         req.setAttribute("orders", orders);
         req.setAttribute("revenue", revenue);
         req.setAttribute("newUserCount", newUserCount);
