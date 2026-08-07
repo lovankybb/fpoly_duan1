@@ -73,7 +73,7 @@ public class OrderServlet extends HttpServlet {
                 try {
                     this.responseOrderDetailManagement(req, resp);
                 } catch (SQLException e) {
-                    resp.sendRedirect("/error?code=UNCATEGORIZED");
+                    resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
                 }
                 break;
 
@@ -115,7 +115,7 @@ public class OrderServlet extends HttpServlet {
 
         String cancelReason = req.getParameter("reason");
         if (orderId == null || orderId.trim().isEmpty()) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
+            resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
         }
 
         if (cancelReason == null || cancelReason.trim().isEmpty()) {
@@ -126,7 +126,7 @@ public class OrderServlet extends HttpServlet {
             orderService.cancelOrder(Long.parseLong(orderId), cancelReason);
             resp.sendRedirect("/admin/orders");
         } catch (SQLException e) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
+            resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
         }
 
     }
@@ -137,7 +137,7 @@ public class OrderServlet extends HttpServlet {
         String paymentStatus = req.getParameter("paymentStatus");
 
         if (orderId == null || orderId.trim().isEmpty()) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
+            resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
         }
 
         if (paymentStatus == null || paymentStatus.trim().isEmpty()) {
@@ -146,9 +146,9 @@ public class OrderServlet extends HttpServlet {
 
         try {
             orderService.updatePaymentStatus(Long.parseLong(orderId), PaymentStatus.valueOf(paymentStatus));
-            resp.sendRedirect("/admin/order/detail?id=" + orderId);
+            resp.sendRedirect(req.getContextPath() + "/admin/order/detail?id=" + orderId);
         } catch (SQLException e) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
+            resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
         }
     }
 
@@ -158,7 +158,7 @@ public class OrderServlet extends HttpServlet {
         String orderStatus = req.getParameter("orderStatus");
 
         if (orderId == null || orderId.trim().isEmpty()) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
+            resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
         }
 
         if (orderStatus == null || orderStatus.trim().isEmpty()) {
@@ -167,9 +167,9 @@ public class OrderServlet extends HttpServlet {
 
         try {
             orderService.updateOrderStatus(Long.parseLong(orderId), OrderStatus.valueOf(orderStatus));
-            resp.sendRedirect("/admin/order/detail?id=" + orderId);
+            resp.sendRedirect(req.getContextPath() + "/admin/order/detail?id=" + orderId);
         } catch (SQLException e) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
+            resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
         }
     }
 
@@ -178,7 +178,7 @@ public class OrderServlet extends HttpServlet {
         String orderId = req.getParameter("id");
 
         if (orderId == null || orderId.trim().isEmpty()) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
+            resp.sendRedirect( req.getContextPath() + "/error?code=UNCATEGORIZED");
         }
 
         Order order = this.orderService.getOrderById(Long.parseLong(orderId));
@@ -227,7 +227,7 @@ public class OrderServlet extends HttpServlet {
         try {
             order = orderService.getOrderByOrderCode(orderCode);
         } catch (SQLException e) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
+            resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
             return;
         }
 
@@ -249,7 +249,7 @@ public class OrderServlet extends HttpServlet {
 
         String checkoutType = req.getParameter("checkoutType");
         if (checkoutType == null || checkoutType.trim().isEmpty()) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
+            resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
         }
 
         if (checkoutType.equals("BUY_NOW")) {
@@ -355,12 +355,12 @@ public class OrderServlet extends HttpServlet {
 
         String variantId = req.getParameter("productVariantId");
         if (variantId == null || variantId.trim().isEmpty()) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
+            resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
         }
 
         String quantity = req.getParameter("quantity");
         if (quantity == null || quantity.trim().isEmpty()) {
-            resp.sendRedirect("/error?code=UNCATEGORIZED");
+            resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
         }
 
         Authentication auth = (Authentication) req.getAttribute("authentication");
