@@ -325,13 +325,22 @@ public class OrderServlet extends HttpServlet {
                             .variantId(item.getVariantId())
                             .build());
 
+                    System.out.println("INFO: Order Item: " + item.getVariantId() + " " + item.getQuantity() + " " + item.getPrice());
+
                     totalAmount = totalAmount.add(BigDecimal.valueOf(item.getQuantity()).multiply(BigDecimal.valueOf(item.getPrice())));
+                    System.out.println("INFO: Total Amount: " + totalAmount);
                 }
                 try {
                     orderService.persistOrderDetail(orderDetails);
                     orderService.updateTotalAmount(order.getId(), totalAmount);
                     System.out.println("INFO: Persist order detail and updated total amount successfully! ");
 
+                    Authentication authentication = (Authentication) req.getAttribute("authentication");
+                    if(authentication != null) {
+                        User user = userService.findByUsername(authentication.getUsername());
+                        cartService.clearCart(user.getId());
+                        System.out.println("INFO: Clear cart successfully!");
+                    }
                     if (order.getPaymentMethod() == PaymentMethod.VNPAY && order.getPaymentStatus() != PaymentStatus.PAID) {
                         responseVnpayPayment(order.getId(), req, resp);
                     } else {

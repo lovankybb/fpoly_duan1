@@ -104,7 +104,6 @@ public class UserServlet extends HttpServlet {
                 break;
             case "/user/info/delete":
                 handlePersonalInfoDelete(req, resp);
-                this.handleChangePwd(req, resp);
                 break;
             default:
                 resp.sendRedirect(req.getContextPath() + "/");

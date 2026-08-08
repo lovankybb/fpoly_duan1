@@ -125,7 +125,7 @@
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
 
-                <a href="${pageContext.request.contextPath}/shop" class="btn-continue">
+                <a href="${pageContext.request.contextPath}/products?offset=0" class="btn-continue">
                     Tiếp tục mua sắm
                 </a>
             </div>
