@@ -187,3 +187,15 @@ CREATE TABLE order_details (
     quantity int NOT NULL
 );
 
+
+
+-- Message
+CREATE TABLE messages(
+    id BIGINT PRIMARY KEY IDENTITY(1, 1),
+    sender NVARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    title NVARCHAR(500) NOT NULL,
+    message NVARCHAR(1000),
+    status NVARCHAR(255),
+    created_at DATETIME
+)

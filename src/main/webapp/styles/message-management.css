@@ -1,0 +1,252 @@
+/* =========================================
+   BASE & LAYOUT ADMIN
+========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #f4f6f9;
+    color: #1a1a1a;
+}
+
+.admin-main-content {
+    margin-left: 260px;
+    padding: 30px 40px;
+    min-height: 100vh;
+}
+
+/* =========================================
+   UI COMPONENTS (Header, Buttons, Alerts)
+========================================= */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.btn-add {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-add:hover {
+    background-color: #444;
+}
+
+.btn-back {
+    background-color: #fff;
+    color: #1a1a1a;
+    border: 1px solid #eaeaea;
+}
+
+.btn-back:hover {
+    background-color: #f4f6f9;
+}
+
+.alert {
+    padding: 14px 16px;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+.alert-success {
+    background-color: #bcedbc;
+    color: #32b302;
+    border: 1px solid #598759;
+}
+
+.alert-error {
+    background-color: #edbcbc;
+    color: #b30202;
+    border: 1px solid #875959;
+}
+
+
+
+/* =========================================
+   CARD & TABLE (Danh sách tin nhắn)
+========================================= */
+.card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    padding: 25px;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-box {
+    position: relative;
+    width: 350px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    background-color: #fbfbfc;
+    transition: all 0.3s;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #1a1a1a;
+    background-color: #fff;
+}
+
+.search-box svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    width: 18px;
+    height: 18px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 15px 10px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid #eaeaea;
+    vertical-align: middle;
+}
+
+th {
+    color: #888;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.msg-sender {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge.instock {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.badge.outstock {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.btn-action {
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    margin-right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-manage {
+    color: #32b302;
+}
+
+.btn-delete {
+    color: #e74c3c;
+}
+
+.no-result {
+    text-align: center;
+    padding: 40px;
+    color: #888;
+    display: none;
+}
+
+/* =========================================
+   CHI TIẾT TIN NHẮN (Message Detail)
+========================================= */
+.msg-detail-header {
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.msg-title-display {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+}
+
+.msg-meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 14px;
+    color: #555;
+    flex-wrap: wrap;
+}
+
+.msg-meta-item strong {
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+.msg-body {
+    background-color: #fbfbfc;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #eaeaea;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #333;
+    min-height: 200px;
+    white-space: pre-wrap;
+}
+
+.actions-footer {
+    margin-top: 25px;
+    display: flex;
+    gap: 15px;
+}

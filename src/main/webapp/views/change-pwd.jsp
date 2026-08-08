@@ -148,13 +148,14 @@
 
     <div class="password-card">
         <h2>Đổi mật khẩu</h2>
-        <form action="${pageContext.request.contextPath}/user/change-pwd" method="post">
+        <form action="${pageContext.request.contextPath}/user/change-pwd" method="POST">
 
             <!-- Mật khẩu cũ -->
             <div class="form-group">
                 <label for="oldPassword">Mật khẩu hiện tại</label>
                 <div class="input-wrapper">
-                    <input name="password" type="password" id="oldPassword" required placeholder="Nhập mật khẩu hiện tại">
+                    <input name="password" type="password" id="oldPassword" required
+                           placeholder="Nhập mật khẩu hiện tại">
                     <button type="button" class="toggle-btn" onclick="togglePassword('oldPassword', this)">Hiện</button>
                 </div>
             </div>
@@ -172,14 +173,29 @@
             <div class="form-group">
                 <label for="confirmPassword">Xác nhận mật khẩu mới</label>
                 <div class="input-wrapper">
-                    <input name="confirmPassword" type="password" id="confirmPassword" required placeholder="Nhập lại mật khẩu mới">
-                    <button type="button" class="toggle-btn" onclick="togglePassword('confirmPassword', this)">Hiện</button>
+                    <input name="confirmPassword" type="password" id="confirmPassword" required
+                           placeholder="Nhập lại mật khẩu mới">
+                    <button type="button" class="toggle-btn" onclick="togglePassword('confirmPassword', this)">Hiện
+                    </button>
                 </div>
             </div>
 
             <button type="submit" class="submit-btn">Cập nhật mật khẩu</button>
-            <c:if test="${not empty errorMsg}">
-                <div class="message">${errorMsg}</div>
+            <c:if test="${not empty message}">
+
+                <c:choose>
+                    <c:when test="${message == 'SUCCESS'}">
+                        <div class="message success">Đổi mật khẩu thành công</div>
+                    </c:when>
+                    <c:when test="${message == 'EMPTY'}">
+                        <div class="message error">Vui lòng điền đầy đủ các trường</div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="message error">Mật khẩu sai</div>
+                    </c:otherwise>
+
+                </c:choose>
+
             </c:if>
         </form>
     </div>

@@ -80,11 +80,13 @@ public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
 
+        System.out.println("INFO: Path: " + path);
         switch (path) {
             case "/sign-up":
                 handleSignup(req, resp);
                 break;
             case "/user/change-pwd":
+<<<<<<< HEAD
                 handleChangePwd(req, resp);
                 break;
             case "/admin/user/add":
@@ -98,6 +100,9 @@ public class UserServlet extends HttpServlet {
                 break;
             case "/user/info/delete":
                 handlePersonalInfoDelete(req, resp);
+=======
+                this.handleChangePwd(req, resp);
+>>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
                 break;
             default:
                 resp.sendRedirect(req.getContextPath() + "/");
@@ -240,6 +245,10 @@ public class UserServlet extends HttpServlet {
             user.setUsername(username);
             user.setPassword(password);
             userService.create(user);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
             response.sendRedirect(request.getContextPath() + "/");
         } else {
             request.getRequestDispatcher("/views/sign-up.jsp").forward(request, response);
@@ -344,39 +353,72 @@ public class UserServlet extends HttpServlet {
     public void responseChangePassword(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Authentication auth = (Authentication) request.getAttribute("authentication");
+
         if (auth == null) {
             response.sendRedirect(request.getContextPath() + "/sign-in");
         } else {
+<<<<<<< HEAD
             request.setAttribute("user", userService.findByUsername(auth.getUsername()));
             request.setAttribute("profileMenuActive", "change-pwd");
+=======
+
+//            message = {SUCCESS, EMPTY, INVALID_PASSWORD}
+            String message = request.getParameter("msg");
+            if (message != null && !message.trim().isEmpty()) {
+                request.setAttribute("message", message);
+            }
+
+>>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
             request.getRequestDispatcher("/views/change-pwd.jsp").forward(request, response);
         }
     }
 
+<<<<<<< HEAD
     public void handleChangePwd(HttpServletRequest request, HttpServletResponse response) throws IOException {
+=======
+    private void handleChangePwd(HttpServletRequest request, HttpServletResponse response) throws IOException {
+>>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
 
         String password = request.getParameter("password");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
-
         Authentication auth = (Authentication) request.getAttribute("authentication");
+<<<<<<< HEAD
         if (auth == null) {
             response.sendRedirect(request.getContextPath() + "/sign-in");
             return;
+=======
+
+        if (auth == null) {
+            response.sendRedirect(request.getContextPath() + "/sign-in");
+>>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
         }
 
         if (password == null || password.trim().isEmpty()
                 || newPassword == null || newPassword.trim().isEmpty()
+<<<<<<< HEAD
                 || confirmPassword == null || confirmPassword.trim().isEmpty()) {
+=======
+                || confirmPassword == null || confirmPassword.trim().isEmpty()
+        ) {
+>>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
             response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=EMPTY");
             return;
         }
         if (!newPassword.equals(confirmPassword)) {
+<<<<<<< HEAD
             response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=WRONG");
             return;
         }
         if (!userService.changePassword(auth.getUsername(), password, newPassword)) {
             response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=WRONG");
+=======
+            response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=INVALID_PASSWORD");
+            return;
+        }
+        if (!userService.changePassword(auth.getUsername(), password, newPassword)) {
+            response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=INVALID_PASSWORD");
+>>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
             return;
         }
 

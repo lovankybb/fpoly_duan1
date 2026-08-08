@@ -10,7 +10,7 @@
 </head>
 <body>
 
- <%@ include file="/views/fragments/header.jsp" %>
+<%@ include file="/views/fragments/header.jsp" %>
 
 <main class="container">
 
@@ -57,33 +57,42 @@
 
         <div class="contact-form-card">
             <h2>Gửi lời nhắn cho chúng tôi</h2>
-
-            <%--
-            <c:if test="${not empty successMessage}">
-                <div class="success-msg">${successMessage}</div>
+            <c:if test="${not empty successMsg}">
+                <div class="success-msg">Chúng tôi đã nhận được thư của bạn</div>
             </c:if>
-            --%>
 
-            <form action="${pageContext.request.contextPath}/contact" method="post">
+            <form action="${pageContext.request.contextPath}/messages" method="post">
                 <div class="form-group">
                     <label for="name">Họ và tên</label>
-                    <input type="text" id="name" name="name" placeholder="Nguyễn Văn A" required>
+                    <input type="text" id="name" name="sender" placeholder="Nguyễn Văn A" required>
+                    <c:if test="${not empty senderErr}">
+                        <p class="err-msg">Tên không hợp lệ</p>
+                    </c:if>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Địa chỉ Email</label>
                     <input type="email" id="email" name="email" placeholder="name@example.com" required>
+                    <c:if test="${not empty emailErr}">
+                        <p class="err-msg">Email không hợp lệ</p>
+                    </c:if>
                 </div>
 
                 <div class="form-group">
                     <label for="subject">Tiêu đề</label>
-                    <input type="text" id="subject" name="subject" placeholder="Cần tư vấn về sản phẩm..." required>
+                    <input type="text" id="subject" name="title" placeholder="Cần tư vấn về sản phẩm..." required>
+                    <c:if test="${not empty titleErr}">
+                        <p class="err-msg">Tiêu đề không hợp lệ</p>
+                    </c:if>
                 </div>
 
                 <div class="form-group">
                     <label for="message">Nội dung lời nhắn</label>
                     <textarea id="message" name="message" rows="5" placeholder="Viết lời nhắn của bạn tại đây..."
                               required></textarea>
+                    <c:if test="${not empty messageErr}">
+                        <p class="err-msg">Tin nhắn không hợp lệ</p>
+                    </c:if>
                 </div>
 
                 <button type="submit" class="btn-submit">Gửi thông điệp</button>
@@ -94,7 +103,7 @@
 
 </main>
 
- <%@ include file="/views/fragments/footer.jsp" %>
+<%@ include file="/views/fragments/footer.jsp" %>
 
 </body>
 </html>

@@ -56,6 +56,11 @@ body {
     font-weight: 600;
 }
 
+.err-msg {
+    font-size: 12px;
+    color: #cc2525;
+}
+
 .info-item {
     display: flex;
     align-items: flex-start;
