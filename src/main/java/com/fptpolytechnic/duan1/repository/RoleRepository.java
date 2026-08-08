@@ -59,6 +59,17 @@ public class RoleRepository {
         return role;
     }
 
+    public void deleteByUserId(String userId) {
+        String query = "DELETE FROM users_roles WHERE user_id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, userId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setRoleUser(String userId, Long roleId){
         String query = "INSERT INTO users_roles (user_id, role_id) VALUES (?, ?)";
         try(Connection conn = DBContext.getConnection();

@@ -198,13 +198,112 @@ th {
 
 .alert {
     padding: 14px 16px;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 14px;
     margin-bottom: 20px;
     font-weight: 500;
-    background-color: #bcedbc;
-    color: #32b302;
-    border: 1px solid #598759;
+}
+
+.alert-success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.alert-error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.crud-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 15px;
+}
+
+.user-count {
+    font-size: 13px;
+    color: #888;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #444;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    background: #fbfbfc;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #1a1a1a;
+    background: #fff;
+}
+
+.required {
+    color: #e74c3c;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.btn-save {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+.btn-save:hover {
+    background: #333;
+}
+
+.btn-cancel {
+    background: #f0f0f0;
+    color: #555;
+}
+
+.btn-edit {
+    color: #3498db;
+}
+
+.empty-cell {
+    text-align: center;
+    padding: 30px;
+    color: #888;
 }
 
 /* Phân trang */

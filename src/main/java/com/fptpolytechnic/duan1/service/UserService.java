@@ -69,6 +69,51 @@ public class UserService {
     public User findByUsername(String username){
         return userRepository.findByUsername(username);
     }
+
+    public User findById(String id) {
+        return userRepository.findById(id);
+    }
+
+    public User update(User user, String newPasswordPlain) {
+        User existing = userRepository.findById(user.getId());
+        if (existing.getId() == null || existing.getId().isBlank()) {
+            return null;
+        }
+        user.setCreatedAt(existing.getCreatedAt());
+        user.setUpdatedAt(LocalDateTime.now());
+        if (newPasswordPlain != null && !newPasswordPlain.isBlank()) {
+            user.setPassword(passwordEncoder.encode(newPasswordPlain));
+        } else {
+            user.setPassword(existing.getPassword());
+        }
+        return userRepository.update(user);
+    }
+
+    public void delete(String id) {
+        roleRepository.deleteByUserId(id);
+        userRepository.delete(id);
+    }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public boolean savePersonalInfo(String username, String email, String phone, String address) {
+        User existing = userRepository.findByUsername(username);
+        
+        if(userRepository.updateUserInfo(existing.getId(), address, email, phone))
+        return true; 
+		return false; 
+   }
+
+    public boolean clearPersonalInfo(String username) {
+        User existing = userRepository.findByUsername(username);
+        if (existing.getId() == null || existing.getId().isBlank()) {
+            return false;
+        }
+        userRepository.clearContactInfo(existing.getId());
+        return true;
+    }
 }
 
 

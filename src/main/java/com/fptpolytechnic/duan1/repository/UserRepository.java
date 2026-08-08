@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,9 @@ public class UserRepository {
                 user.setId(rs.getString("id"));
                 user.setUsername(rs.getString("username"));
                 user.setEmail(rs.getString("email"));
+                user.setPhone(rs.getString("phone"));
+                user.setAddress(rs.getString("address"));
+                user.setCreatedAt(rs.getObject("created_at", java.time.LocalDateTime.class));
                 users.add(user);
             }
         } catch (Exception e) {
@@ -79,6 +84,32 @@ public class UserRepository {
         }
         return null;
     }
+    
+    
+   public boolean updateUserInfo(String userId, String address, String email, String phone) {
+    	
+    	
+        String query = "UPDATE users SET email = ?, phone = ?, address = ?, updated_at = ? WHERE id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);) {
+            ps.setString(1, email);
+            ps.setString(2, phone);
+            ps.setString(3, address);
+            ps.setObject(4, LocalDateTime.now() );
+            ps.setString(5, userId);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0; 
+           
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false; 
+    }
+    
+    
+    
 
     public void delete(String id) {
         String query = "DELETE FROM users WHERE id = ?";
@@ -165,6 +196,18 @@ public class UserRepository {
         return false;
     }
 
+
+    public void clearContactInfo(String userId) {
+        String query = "UPDATE users SET email = NULL, phone = NULL, address = NULL, updated_at = ? WHERE id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setObject(1, java.time.LocalDateTime.now());
+            ps.setString(2, userId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public boolean changePassword(String userId, String newPassword) {
         String query = "UPDATE users SET password = ? WHERE id = ?";

@@ -1,157 +1,149 @@
-    /* Reset & Base */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
+/* Thông tin cá nhân — dùng cùng layout profile.css */
 
-body {
-    background-color: #f7f9fc;
+.info-panels {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
+    flex-direction: column;
+    gap: 24px;
 }
 
-/* Card Container */
-.profile-card {
-    background-color: #ffffff;
+.info-table {
     width: 100%;
-    max-width: 500px;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(149, 157, 165, 0.1);
+    border-collapse: collapse;
 }
 
-/* Avatar Section */
-.avatar-section {
-    text-align: center;
-    margin-bottom: 32px;
-    position: relative;
+.info-table th,
+.info-table td {
+    padding: 14px 12px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid #eaeaea;
+    vertical-align: top;
 }
 
-.avatar-section img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #f3f4f6;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.avatar-section h2 {
-    font-size: 22px;
-    color: #111827;
-    margin-top: 12px;
+.info-table th {
+    width: 200px;
+    color: #666;
     font-weight: 600;
 }
 
-.avatar-section p {
-    color: #6b7280;
-    font-size: 14px;
-    margin-top: 4px;
+.info-table td {
+    color: #1a1a1a;
+    font-weight: 500;
 }
 
-/* Form Grid */
-.form-grid {
+.info-form .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
-.form-group {
+.info-form .form-group {
     display: flex;
     flex-direction: column;
 }
 
-/* Trải dài 2 cột cho địa chỉ */
-.full-width {
+.info-form .full-width {
     grid-column: span 2;
 }
 
-.form-group label {
+.info-form label {
     font-size: 13px;
     color: #4b5563;
     margin-bottom: 6px;
     font-weight: 500;
 }
 
-.form-group input {
+.info-form input {
     padding: 12px 16px;
     font-size: 14px;
     color: #111827;
     background-color: #f9fafb;
     border: 1px solid #d1d5db;
     border-radius: 8px;
-    transition: all 0.2s ease;
     outline: none;
+    font-family: inherit;
 }
 
-.form-group input:focus:not(:read-only) {
+.info-form input:focus:not(:read-only) {
     background-color: #ffffff;
-    border-color: #111827;
-    box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
+    border-color: #1a1a1a;
 }
 
-/* Trạng thái Read-only */
-.form-group input:read-only {
+.info-form input:read-only {
     background-color: #f3f4f6;
     color: #6b7280;
     cursor: not-allowed;
-    border-color: #e5e7eb;
 }
 
-/* Action Buttons */
-.actions {
-    margin-top: 32px;
-    display: flex;
-    gap: 12px;
+.info-form .actions {
+    margin-top: 24px;
 }
 
 .btn {
-    flex: 1;
-    padding: 12px;
+    padding: 12px 20px;
     border-radius: 8px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: center;
-    text-decoration: none;
     border: none;
+    font-family: inherit;
 }
 
 .btn-primary {
-    background-color: #111827;
+    background-color: #1a1a1a;
     color: #ffffff;
 }
 
 .btn-primary:hover {
-    background-color: #374151;
+    background-color: #333;
 }
 
-.btn-secondary {
-    background-color: #ffffff;
-    color: #111827;
-    border: 1px solid #d1d5db;
+.btn-danger {
+    background-color: #fff;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
 }
 
-.btn-secondary:hover {
-    background-color: #f9fafb;
-    border-color: #9ca3af;
+.btn-danger:hover {
+    background-color: #ffebee;
 }
 
-/* Responsive */
-@media (max-width: 480px) {
-    .form-grid {
+.alert {
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.alert-error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.card-danger .danger-hint {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .info-form .form-grid {
         grid-template-columns: 1fr;
     }
-    .full-width {
+
+    .info-form .full-width {
         grid-column: span 1;
     }
-    .actions {
-        flex-direction: column;
+
+    .info-table th {
+        width: 120px;
     }
 }

@@ -102,8 +102,13 @@ body {
     transition: color 0.2s;
 }
 
-.profile-menu a:hover {
+.profile-menu a:hover,
+.profile-menu a.menu-active {
     color: #3498db;
+}
+
+.profile-menu a.menu-active {
+    font-weight: 700;
 }
 
 .btn-logout {
