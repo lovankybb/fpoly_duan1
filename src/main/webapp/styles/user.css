@@ -321,3 +321,8 @@ th {
 .pagination-container a:hover {
     color: #3498db;
 }
+
+.total-spend{
+    font-weight: 700;
+    color: #ff3333;
+}

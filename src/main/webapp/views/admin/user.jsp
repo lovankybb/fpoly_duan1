@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html>
@@ -71,11 +70,13 @@
                             </c:choose>
                         </td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/admin/users?editId=${user.id}"
-                               class="btn-action btn-edit">Sửa</a>
-                            <a href="${pageContext.request.contextPath}/admin/user/delete?id=${user.id}"
-                               class="btn-action btn-delete"
-                               onclick="return confirm('Xóa người dùng này? Hành động không thể hoàn tác.');">Xóa</a>
+                            <a href="${pageContext.request.contextPath}/admin/users?userId=${user.id}"
+                               class="btn-action btn-edit">Chi tiết</a>
+                            <c:if test="${user.username != 'admin'}">
+                                <a href="${pageContext.request.contextPath}/admin/user/delete?id=${user.id}"
+                                   class="btn-action btn-delete"
+                                   onclick="return confirm('Xóa người dùng này? Hành động không thể hoàn tác.');">Xóa</a>
+                            </c:if>
                         </td>
                     </tr>
                 </c:forEach>
@@ -92,65 +93,65 @@
         </div>
 
         <div class="card form-card">
-            <c:choose>
-                <c:when test="${not empty editUser}">
-                    <h2 class="card-title">Cập nhật người dùng</h2>
-                    <c:set var="formAction" value="${pageContext.request.contextPath}/admin/user/update"/>
-                </c:when>
-                <c:otherwise>
-                    <h2 class="card-title">Thêm người dùng</h2>
-                    <c:set var="formAction" value="${pageContext.request.contextPath}/admin/user/add"/>
-                </c:otherwise>
-            </c:choose>
+                    <h2 class="card-title">Chi tiết khách hàng</h2>
 
-            <form action="${formAction}" method="post">
-                <c:if test="${not empty editUser}">
-                    <input type="hidden" name="id" value="${editUser.id}">
-                </c:if>
-
+            <div>
                 <div class="form-group">
-                    <label for="username">Tên đăng nhập <span class="required">*</span></label>
-                    <input type="text" id="username" name="username"
-                           value="${editUser.username}" required
-                           autocomplete="off">
+                   <strong style="font-size: 20px">${userDetail.username}</strong>
                 </div>
 
                 <div class="form-group">
-                    <label for="password">
-                        Mật khẩu
-                        <c:if test="${empty editUser}"><span class="required">*</span></c:if>
-                    </label>
-                    <input type="password" id="password" name="password"
-                           minlength="6"
-                           placeholder="${not empty editUser ? 'Để trống nếu không đổi mật khẩu' : ''}"
-                           ${empty editUser ? 'required' : ''}
-                           autocomplete="new-password">
+                    <strong>Email: ${userDetail.email != null ? userDetail.email : '—'}</strong>
+                </div>
+                <div class="form-group">
+                    <strong>Số điện thọai: ${userDetail.phone != null ? userDetail.phone : '—'}</strong>
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="${editUser.email}">
+                    <strong>Địa chỉ: ${userDetail.address != null ? userDetail.address : '—'}</strong>
                 </div>
 
                 <div class="form-group">
-                    <label for="phone">Số điện thoại</label>
-                    <input type="text" id="phone" name="phone" value="${editUser.phone}">
+                    <strong>Tổng đơn hàng: ${totalOrder}</strong>
                 </div>
-
                 <div class="form-group">
-                    <label for="address">Địa chỉ</label>
-                    <textarea id="address" name="address" rows="3">${editUser.address}</textarea>
+                    <strong style="color: #0cbc0c">Hoàn thành: ${userSpend.completedOrder}</strong>
                 </div>
+                <div class="form-group">
+                    <p>Tổng chi tiêu: </p>
+                    <c:choose>
+                        <c:when test="${userSpend.totalSpend gt 0}">
+                            <p class="total-spend js-format-price" data-price="${userSpend.totalSpend}"></p>
+                        </c:when>
+                        <c:otherwise>
+                            <p class="total-spend">0.00đ</p>
+                        </c:otherwise>
+                    </c:choose>
 
-                <button type="submit" class="btn btn-save">
-                    ${not empty editUser ? 'Lưu thay đổi' : 'Thêm mới'}
-                </button>
-                <c:if test="${not empty editUser}">
-                    <a href="${pageContext.request.contextPath}/admin/users" class="btn btn-cancel">Hủy</a>
-                </c:if>
-            </form>
+                </div>
+            </div>
         </div>
     </div>
+    <c:if test="${offset gt 0}">
+        <a href="${pageContext.request.contextPath}/admin/users?offset=${offset - 10}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 class="lucide lucide-circle-arrow-left-icon lucide-circle-arrow-left">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="m12 8-4 4 4 4"/>
+                <path d="M16 12H8"/>
+            </svg>
+        </a>
+    </c:if>
+    <a href="${pageContext.request.contextPath}/admin/users?offset=${offset + 10}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="lucide lucide-circle-arrow-right-icon lucide-circle-arrow-right">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="m12 16 4-4-4-4"/>
+            <path d="M8 12h8"/>
+        </svg>
+    </a>
 </main>
 
 <script>
@@ -180,6 +181,22 @@
             }
         });
     }
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Tìm tất cả các thẻ có class js-format-price
+        const priceElements = document.querySelectorAll('.js-format-price');
+
+        priceElements.forEach(function (el) {
+            // Lấy con số từ data-price
+            const rawPrice = Number(el.getAttribute('data-price'));
+
+            // Nếu có giá trị hợp lệ thì format và gán lại
+            if (!isNaN(rawPrice) && rawPrice > 0) {
+                el.innerText = rawPrice.toLocaleString('vi-VN') + ' ₫';
+            }
+        });
+    });
 </script>
 </body>
 </html>

@@ -14,14 +14,17 @@ import java.util.List;
 
 public class UserRepository {
 
-    public List<User> findAll() {
-        String query = "SELECT * FROM users";
+    public List<User> findAll(int offset, int limit) {
+        String query = "SELECT * FROM users ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         List<User> users = new ArrayList<>();
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(query);
-             ResultSet rs = ps.executeQuery();
+
         ) {
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 User user = new User();
                 user.setId(rs.getString("id"));

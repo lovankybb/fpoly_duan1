@@ -1,10 +1,7 @@
 package com.fptpolytechnic.duan1.service;
 
 
-import com.fptpolytechnic.duan1.dto.response.OrderHistoryResponse;
-import com.fptpolytechnic.duan1.dto.response.OrderItemResponse;
-import com.fptpolytechnic.duan1.dto.response.ProductVariantResponse;
-import com.fptpolytechnic.duan1.dto.response.SimpleProdResponse;
+import com.fptpolytechnic.duan1.dto.response.*;
 import com.fptpolytechnic.duan1.enums.OrderStatus;
 import com.fptpolytechnic.duan1.enums.PaymentMethod;
 import com.fptpolytechnic.duan1.enums.PaymentStatus;
@@ -165,4 +162,13 @@ public class OrderService {
     public void deleteOrderForRollBack(Long orderId) throws SQLException {
         this.orderRepository.delete(orderId);
     }
+
+    public int getTotalOrderByUser(String userId) throws SQLException {
+        return orderRepository.countOrderByUserId(userId);
+    }
+
+    public UserSpendResponse getCompletedOrderByUser(String userId) throws SQLException {
+        return orderRepository.countCompletedOrderByUserId(userId);
+    }
+
 }

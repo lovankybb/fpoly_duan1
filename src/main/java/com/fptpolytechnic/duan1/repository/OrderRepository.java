@@ -2,6 +2,7 @@ package com.fptpolytechnic.duan1.repository;
 
 
 import com.fptpolytechnic.duan1.dto.response.OrderHistoryResponse;
+import com.fptpolytechnic.duan1.dto.response.UserSpendResponse;
 import com.fptpolytechnic.duan1.enums.OrderStatus;
 import com.fptpolytechnic.duan1.enums.PaymentMethod;
 import com.fptpolytechnic.duan1.enums.PaymentStatus;
@@ -256,31 +257,49 @@ public class OrderRepository {
         }
     }
 
-
-    public List<Order> findByUserId(String userId, int offset, int limit) {
+    public int countOrderByUserId(String userId) {
         String query = """
-                        SELECT * FROM orders
-                        WHERE user_id=?
-                        ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-                """;
+                SELECT COUNT(*) FROM orders WHERE user_id=?
+        """;
 
-        try (
-                var conn = DBContext.getConnection();
-                var ps = conn.prepareStatement(query);
-        ) {
-            List<Order> orders = new ArrayList<>();
+        try(var conn = DBContext.getConnection();
+            var ps = conn.prepareStatement(query);
+        ){
+
             ps.setString(1, userId);
-            ps.setInt(2, offset);
-            ps.setInt(3, limit);
             var rs = ps.executeQuery();
-            while (rs.next()) {
-                orders.add(this.mapToOrder(rs));
+            if(rs.next()) {
+                return rs.getInt(1);
             }
-        } catch (SQLException e) {
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public UserSpendResponse countCompletedOrderByUserId(String userId) {
+        String query = """
+                SELECT COUNT(*) AS completed_order, SUM(total_amount) AS total_spend FROM orders WHERE user_id=? AND order_status='COMPLETED'
+        """;
+
+        try(var conn = DBContext.getConnection();
+            var ps = conn.prepareStatement(query);
+        ){
+
+            ps.setString(1, userId);
+            var rs = ps.executeQuery();
+            if(rs.next()) {
+                UserSpendResponse userSpendResponse = new UserSpendResponse();
+                userSpendResponse.setCompletedOrder(rs.getInt("completed_order"));
+                userSpendResponse.setTotalSpend(rs.getDouble("total_spend"));
+                return userSpendResponse;
+            }
+        }catch (SQLException e){
             e.printStackTrace();
         }
         return null;
     }
+
 
     public void delete(Long orderId) {
         String query = """

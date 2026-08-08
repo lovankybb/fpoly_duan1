@@ -1,6 +1,7 @@
 package com.fptpolytechnic.duan1.controller;
 
 import com.fptpolytechnic.duan1.dto.response.OrderHistoryResponse;
+import com.fptpolytechnic.duan1.dto.response.UserSpendResponse;
 import com.fptpolytechnic.duan1.model.Authentication;
 import com.fptpolytechnic.duan1.model.User;
 import com.fptpolytechnic.duan1.service.OrderService;
@@ -55,7 +56,11 @@ public class UserServlet extends HttpServlet {
                 req.getRequestDispatcher("/views/sign-up.jsp").forward(req, resp);
                 break;
             case "/admin/users":
-                handleAdminUsersPage(req, resp);
+                try {
+                    handleAdminUsersPage(req, resp);
+                } catch (SQLException e) {
+                    resp.sendRedirect(req.getContextPath() + "/error?code=UNAUTHORIZED");
+                }
                 break;
             case "/profile":
                 try {
@@ -86,7 +91,6 @@ public class UserServlet extends HttpServlet {
                 handleSignup(req, resp);
                 break;
             case "/user/change-pwd":
-<<<<<<< HEAD
                 handleChangePwd(req, resp);
                 break;
             case "/admin/user/add":
@@ -100,9 +104,7 @@ public class UserServlet extends HttpServlet {
                 break;
             case "/user/info/delete":
                 handlePersonalInfoDelete(req, resp);
-=======
                 this.handleChangePwd(req, resp);
->>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
                 break;
             default:
                 resp.sendRedirect(req.getContextPath() + "/");
@@ -111,27 +113,36 @@ public class UserServlet extends HttpServlet {
     }
 
     private void handleAdminUsersPage(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        String editId = req.getParameter("editId");
-        if (editId != null && !editId.isBlank()) {
-            User editUser = userService.findById(editId);
-            if (editUser.getId() != null) {
-                req.setAttribute("editUser", editUser);
-            }
+            throws ServletException, IOException, SQLException {
+
+        String offset = req.getParameter("offset");
+        if(offset == null || offset.trim().isEmpty()) {
+            offset = "0";
+        }
+        List<User> users =  userService.findAll(Integer.parseInt(offset));
+
+        if(users.isEmpty()) {
+            resp.sendRedirect(req.getContextPath() + "/admin/users?offset=" +( Integer.parseInt(offset) - 10));
+            return;
         }
 
-        String msg = req.getParameter("msg");
-        if ("created".equals(msg)) {
-            req.setAttribute("successMsg", "Thêm người dùng thành công.");
-        } else if ("updated".equals(msg)) {
-            req.setAttribute("successMsg", "Cập nhật người dùng thành công.");
-        } else if ("deleted".equals(msg)) {
-            req.setAttribute("successMsg", "Xóa người dùng thành công.");
-        } else if ("duplicate".equals(msg)) {
-            req.setAttribute("errorMsg", "Tên đăng nhập đã tồn tại.");
+        String userId = req.getParameter("userId");
+        User user = null;
+        if(userId == null || userId.trim().isEmpty()) {
+            user = users.get(0);
+        }
+        else {
+            user = userService.findById(userId);
         }
 
-        req.setAttribute("users", userService.findAll());
+        int totalOrder = orderService.getTotalOrderByUser(user.getId());
+        UserSpendResponse userSpend  = orderService.getCompletedOrderByUser(userId);
+
+        req.setAttribute("userDetail", user);
+        req.setAttribute("users", users);
+        req.setAttribute("totalOrder", totalOrder);
+        req.setAttribute("userSpend", userSpend);
+        req.setAttribute("offset", offset);
         req.getRequestDispatcher("/views/admin/user.jsp").forward(req, resp);
     }
 
@@ -245,10 +256,6 @@ public class UserServlet extends HttpServlet {
             user.setUsername(username);
             user.setPassword(password);
             userService.create(user);
-<<<<<<< HEAD
-=======
-
->>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
             response.sendRedirect(request.getContextPath() + "/");
         } else {
             request.getRequestDispatcher("/views/sign-up.jsp").forward(request, response);
@@ -357,10 +364,8 @@ public class UserServlet extends HttpServlet {
         if (auth == null) {
             response.sendRedirect(request.getContextPath() + "/sign-in");
         } else {
-<<<<<<< HEAD
             request.setAttribute("user", userService.findByUsername(auth.getUsername()));
             request.setAttribute("profileMenuActive", "change-pwd");
-=======
 
 //            message = {SUCCESS, EMPTY, INVALID_PASSWORD}
             String message = request.getParameter("msg");
@@ -368,60 +373,36 @@ public class UserServlet extends HttpServlet {
                 request.setAttribute("message", message);
             }
 
->>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
             request.getRequestDispatcher("/views/change-pwd.jsp").forward(request, response);
         }
     }
 
-<<<<<<< HEAD
-    public void handleChangePwd(HttpServletRequest request, HttpServletResponse response) throws IOException {
-=======
     private void handleChangePwd(HttpServletRequest request, HttpServletResponse response) throws IOException {
->>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
 
         String password = request.getParameter("password");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
         Authentication auth = (Authentication) request.getAttribute("authentication");
-<<<<<<< HEAD
         if (auth == null) {
             response.sendRedirect(request.getContextPath() + "/sign-in");
             return;
-=======
-
-        if (auth == null) {
-            response.sendRedirect(request.getContextPath() + "/sign-in");
->>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
         }
 
         if (password == null || password.trim().isEmpty()
                 || newPassword == null || newPassword.trim().isEmpty()
-<<<<<<< HEAD
                 || confirmPassword == null || confirmPassword.trim().isEmpty()) {
-=======
-                || confirmPassword == null || confirmPassword.trim().isEmpty()
-        ) {
->>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
             response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=EMPTY");
             return;
         }
         if (!newPassword.equals(confirmPassword)) {
-<<<<<<< HEAD
             response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=WRONG");
             return;
         }
         if (!userService.changePassword(auth.getUsername(), password, newPassword)) {
             response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=WRONG");
-=======
             response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=INVALID_PASSWORD");
             return;
         }
-        if (!userService.changePassword(auth.getUsername(), password, newPassword)) {
-            response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=INVALID_PASSWORD");
->>>>>>> 2f2fd4726ec2da6e42a3627a0d4d90a6a452d3b6
-            return;
-        }
-
         response.sendRedirect(request.getContextPath() + "/user/change-pwd?msg=SUCCESS");
     }
 }

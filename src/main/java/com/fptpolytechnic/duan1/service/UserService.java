@@ -61,8 +61,9 @@ public class UserService {
     }
 
 
-    public List<User> findAll(){
-        return userRepository.findAll();
+    public List<User> findAll(int offset){
+        if(offset < 0) offset = 0;
+        return userRepository.findAll(offset, 10);
     }
 
 
