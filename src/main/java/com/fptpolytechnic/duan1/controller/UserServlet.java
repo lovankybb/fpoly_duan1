@@ -4,6 +4,7 @@ import com.fptpolytechnic.duan1.dto.response.OrderHistoryResponse;
 import com.fptpolytechnic.duan1.dto.response.UserSpendResponse;
 import com.fptpolytechnic.duan1.model.Authentication;
 import com.fptpolytechnic.duan1.model.User;
+import com.fptpolytechnic.duan1.service.CartService;
 import com.fptpolytechnic.duan1.service.OrderService;
 import com.fptpolytechnic.duan1.service.UserService;
 import jakarta.servlet.ServletException;
@@ -35,10 +36,12 @@ public class UserServlet extends HttpServlet {
 
     private final UserService userService;
     private final OrderService orderService;
+    private final CartService cartService;
 
     public UserServlet() {
         userService = new UserService();
         orderService = new OrderService();
+        cartService = new CartService();
     }
 
     @Override
@@ -205,6 +208,7 @@ public class UserServlet extends HttpServlet {
     private void handleAdminDeleteUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String id = trimParam(req.getParameter("id"));
         if (id != null && !id.isEmpty()) {
+            cartService.clearCart(id);
             userService.delete(id);
         }
         resp.sendRedirect(req.getContextPath() + "/admin/users?msg=deleted");

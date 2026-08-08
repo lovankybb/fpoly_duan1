@@ -217,20 +217,26 @@ public class OrderRepository {
         }
     }
 
-    public void updateCancelInfo(Long orderId, OrderStatus orderStatus, LocalDateTime canceledAt, String cancelReason) {
+    public void updateCancelInfo(Long orderId, OrderStatus orderStatus, String cancelReason) {
 
+
+        System.out.println("INFO: Order status changed to " + orderStatus.name() + " at OrderRepository.updateCancelInfo");
+        System.out.println("INFO: Cancel Reason: " + cancelReason);
+        System.out.println("INFO: ORDER ID: " + orderId);
         String query = """
                 UPDATE orders 
-                SET order_status=?, canceled_at=?, cancel_reason=?, updated_at=GETDATE()
+                SET order_status=?, canceled_at=?, cancel_reason=?, updated_at=?
                 WHERE id=?
                 """;
         try (var conn = DBContext.getConnection();
              var ps = conn.prepareStatement(query);
         ) {
+            LocalDateTime now = LocalDateTime.now();
             ps.setString(1, orderStatus.name());
-            ps.setTimestamp(2, canceledAt == null ? null : Timestamp.valueOf(canceledAt));
+            ps.setTimestamp(2, Timestamp.valueOf(now));
             ps.setString(3, cancelReason);
-            ps.setLong(4, orderId);
+            ps.setTimestamp(4, Timestamp.valueOf(now));
+            ps.setLong(5, orderId);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

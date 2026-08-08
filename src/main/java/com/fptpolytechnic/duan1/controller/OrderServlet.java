@@ -130,7 +130,7 @@ public class OrderServlet extends HttpServlet {
 
         try {
             orderService.cancelOrder(Long.parseLong(orderId), cancelReason);
-            resp.sendRedirect("/admin/orders");
+            resp.sendRedirect(req.getContextPath() + "/admin/orders");
         } catch (SQLException e) {
             resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
         }

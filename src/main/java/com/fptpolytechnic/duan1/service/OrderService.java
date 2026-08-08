@@ -124,7 +124,7 @@ public class OrderService {
         for (OrderDetail orderDetail : orderDetails) {
             this.productVariantRepository.updateStock(orderDetail.getVariantId(), orderDetail.getQuantity(), false);
         }
-        this.orderRepository.updateCancelInfo(orderId, OrderStatus.CANCELLED, LocalDateTime.now(), cancelReason);
+        this.orderRepository.updateCancelInfo(orderId, OrderStatus.CANCELLED, cancelReason);
     }
 
 
