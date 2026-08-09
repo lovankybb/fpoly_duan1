@@ -251,6 +251,7 @@ th {
 
 .form-select {
     flex: 1;
+    max-width: 400px;
     padding: 10px 15px;
     border: 1px solid #eaeaea;
     border-radius: 8px;

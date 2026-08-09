@@ -187,23 +187,26 @@
             <!-- ================= HAI FORM CẬP NHẬT TRẠNG THÁI ================= -->
             <div class="admin-actions-container">
 
+                <c:if test="${order.paymentStatus.name() != 'PAID'}">
+                    <div class="action-box">
+                        <h4>Trạng thái thanh toán</h4>
+                        <form action="${pageContext.request.contextPath}/admin/order/update-payment" method="POST"
+                              class="action-form">
+                            <input type="hidden" name="id" value="${order.id}">
+                            <select name="paymentStatus" class="form-select">
+                                <option value="UNPAID" ${order.paymentStatus.name() == 'UNPAID' ? 'selected' : ''}>Chưa
+                                    thanh toán
+                                </option>
+                                <option value="PAID" ${order.paymentStatus.name() == 'PAID' ? 'selected' : ''}>Đã thanh
+                                    toán
+                                </option>
+                            </select>
+                            <button type="submit" class="btn btn-outline">Lưu</button>
+                        </form>
+                    </div>
+                </c:if>
                 <!-- FORM 1: CẬP NHẬT TRẠNG THÁI THANH TOÁN -->
-                <div class="action-box">
-                    <h4>Trạng thái thanh toán</h4>
-                    <form action="${pageContext.request.contextPath}/admin/order/update-payment" method="POST"
-                          class="action-form">
-                        <input type="hidden" name="id" value="${order.id}">
-                        <select name="paymentStatus" class="form-select">
-                            <option value="UNPAID" ${order.paymentStatus.name() == 'UNPAID' ? 'selected' : ''}>Chưa
-                                thanh toán
-                            </option>
-                            <option value="PAID" ${order.paymentStatus.name() == 'PAID' ? 'selected' : ''}>Đã thanh
-                                toán
-                            </option>
-                        </select>
-                        <button type="submit" class="btn btn-outline">Lưu</button>
-                    </form>
-                </div>
+
 
                 <!-- FORM 2: CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG -->
                 <div class="action-box">
@@ -218,12 +221,14 @@
                             <option value="SHIPPING" ${order.orderStatus.name() == 'SHIPPING' ? 'selected' : ''}>Đang
                                 giao hàng
                             </option>
-                            <option value="COMPLETED" ${order.orderStatus.name() == 'COMPLETED' ? 'selected' : ''}>Hoàn
-                                thành
+                            <option value="COMPLETED" ${order.orderStatus.name() == 'COMPLETED' ? 'selected' : ''}>
+                                Hoàn thành
                             </option>
-                            <option value="CANCELLED" ${order.orderStatus.name() == 'CANCELLED' ? 'selected' : ''}>Đã
-                                hủy
-                            </option>
+                            <c:if test="${order.paymentStatus.name() != 'PAID'}">
+                                <option value="CANCELLED" ${order.orderStatus.name() == 'CANCELLED' ? 'selected' : ''}>Đã
+                                    hủy
+                                </option>
+                            </c:if>
                         </select>
                         <button type="submit" class="btn btn-primary">Lưu</button>
                     </form>

@@ -36,7 +36,6 @@
                         <td>#${version.id}</td>
                         <td><strong>${version.name}</strong></td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/admin/version?editId=${version.id}" class="btn-action btn-edit">Sửa</a>
                             <a href="${pageContext.request.contextPath}/admin/version/delete?id=${version.id}" class="btn-action btn-delete" onclick="return confirm('Xóa phiên bản này?');">Xóa</a>
                         </td>
                     </tr>

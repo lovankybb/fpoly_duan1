@@ -7,7 +7,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Quản lý Đơn hàng - Atelier</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
     <link href="${pageContext.request.contextPath}/styles/order.css" rel="stylesheet">
 
 </head>
@@ -27,12 +28,40 @@
 
     <div class="card">
         <div class="toolbar">
-            <div class="search-box">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-                <input type="text" id="searchInput" placeholder="Nhập mã đơn hoặc tên khách hàng...">
+            <div class="left">
+                <div class="search-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Nhập mã đơn hoặc tên khách hàng...">
+                </div>
+                <select name="categoryId" class="filter-select"
+                        onchange="if(this.value) window.location.href=this.value;">
+                    <option value="${pageContext.request.contextPath}/admin/orders?offset=${offset}">Tất cả trạng thái
+                    </option>
+
+                    <option value="${pageContext.request.contextPath}/admin/orders?offset=${offset}&orderStatus=PENDING"
+                    ${orderStatus == 'PENDING' ? 'selected' : ''}>
+                        Chờ xử lý
+                    </option>
+
+                    <option value="${pageContext.request.contextPath}/admin/orders?offset=${offset}&orderStatus=COMPLETED"
+                    ${orderStatus == 'COMPLETED' ? 'selected' : ''}>
+                        Hoàn thành
+                    </option>
+
+                    <option value="${pageContext.request.contextPath}/admin/orders?offset=${offset}&orderStatus=SHIPPING"
+                    ${orderStatus == 'SHIPPING' ? 'selected' : ''}>
+                        Đang giao
+                    </option>
+                    <option value="${pageContext.request.contextPath}/admin/orders?offset=${offset}&orderStatus=CANCELLED"
+                    ${orderStatus == 'CANCELLED' ? 'selected' : ''}>
+                        Đã hủy
+                    </option>
+                </select>
             </div>
+
 
             <div class="filters">
                 <span style="font-size: 13px; color: #888;">Tổng: ${orders.size()} đơn hàng</span>
@@ -69,10 +98,9 @@
                     <!-- Cột Giá trị -->
                     <td>
                         <div class="total-price js-format-price" data-price="${order.totalAmount}"></div>
-<%--                        <div style="font-size: 12px; color: #888; margin-top: 4px;">${order.totalItems} sản phẩm</div>--%>
                     </td>
 
-<%--                    <!-- Cột Thanh toán -->--%>
+                        <%--                    <!-- Cột Thanh toán -->--%>
                     <td>
                         <div style="font-size: 13px; font-weight: 500;">${order.paymentMethod.name()}</div>
                         <div class="payment-method">
@@ -103,11 +131,14 @@
                         </c:if>
                     </td>
 
-<%--                    <!-- Cột Thao tác -->--%>
+                        <%--                    <!-- Cột Thao tác -->--%>
                     <td>
-                        <a href="${pageContext.request.contextPath}/admin/order/detail?id=${order.id}" class="btn-action btn-view">Chi tiết</a>
+                        <a href="${pageContext.request.contextPath}/admin/order/detail?id=${order.id}"
+                           class="btn-action btn-view">Chi tiết</a>
 
-                        <c:if test="${order.orderStatus.name() != 'CANCELLED' && order.orderStatus.name() != 'COMPLETED'}">
+                        <c:if test="${order.orderStatus.name() != 'CANCELLED'
+                                    && order.orderStatus.name() != 'COMPLETED'
+                                    && order.paymentStatus.name() != 'PAID'}">
                             <button class="btn-action btn-cancel" value="${order.id}">Hủy</button>
                         </c:if>
                     </td>
@@ -125,16 +156,18 @@
     <!-- Phân trang -->
     <div class="pagination-container">
         <c:if test="${offset gt 0}">
-            <a href="${pageContext.request.contextPath}/admin/orders?offset=${offset - 10}" title="Trang trước">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <a href="${pageContext.request.contextPath}/admin/orders?offset=${offset - 10}&orderStatus=${orderStatus}" title="Trang trước">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="m12 8-4 4 4 4"/>
                     <path d="M16 12H8"/>
                 </svg>
             </a>
         </c:if>
-        <a href="${pageContext.request.contextPath}/admin/orders?offset=${offset + 10}" title="Trang sau">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <a href="${pageContext.request.contextPath}/admin/orders?offset=${offset + 10}&orderStatus=${orderStatus}" title="Trang sau">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/>
                 <path d="m12 16 4-4-4-4"/>
                 <path d="M8 12h8"/>
@@ -159,7 +192,7 @@
             let match = false;
 
             targets.forEach(target => {
-                if(target.textContent.toLowerCase().includes(searchTerm)) {
+                if (target.textContent.toLowerCase().includes(searchTerm)) {
                     match = true;
                 }
             });
@@ -200,7 +233,7 @@
                 const orderId = e.currentTarget.value;
 
                 // Chuyển hướng kèm thêm query parameter 'reason'
-                window.location.href ="${pageContext.request.contextPath}/admin/order/cancel?orderId=" + orderId + "&reason=" + encodeURIComponent(reason);
+                window.location.href = "${pageContext.request.contextPath}/admin/order/cancel?orderId=" + orderId + "&reason=" + encodeURIComponent(reason);
             }
         });
     });

@@ -24,15 +24,66 @@
             <div class="admin-avatar">AD</div>
         </div>
     </header>
+    <select name="categoryId" class="filter-select"
+            onchange="if(this.value) window.location.href=this.value;">
+        <option value="${pageContext.request.contextPath}/admin?month=1"
+        ${month == '1' ? 'selected' : ''}>
+            Tháng 1
+        </option>
+        <option value="${pageContext.request.contextPath}/admin?month=2"
+        ${month == '2' ? 'selected' : ''}>
+            Tháng 2
+        </option>
+        <option value="${pageContext.request.contextPath}/admin?month=3"
+        ${month == '3' ? 'selected' : ''}>
+            Tháng 3
+        </option>
+        <option value="${pageContext.request.contextPath}/admin?month=4"
+        ${month == '4' ? 'selected' : ''}>
+            Tháng 4
+        </option>
+        <option value="${pageContext.request.contextPath}/admin?month=5"
+        ${month == '5' ? 'selected' : ''}>
+            Tháng 5
+        </option>
+        <option value="${pageContext.request.contextPath}/admin?month=6"
+        ${month == '6' ? 'selected' : ''}>
+            Tháng 6
+        </option>
+        <option value="${pageContext.request.contextPath}/admin?month=7"
+        ${month == '7' ? 'selected' : ''}>
+            Tháng 7
+        </option>
+        <option value="${pageContext.request.contextPath}/admin?month=8"
+        ${month == '8' ? 'selected' : ''}>
+            Tháng 8
+        </option>
+        <option value="${pageContext.request.contextPath}/admin?month=9"
+        ${month == '9' ? 'selected' : ''}>
+            Tháng 9
+        </option>
+        <option value="${pageContext.request.contextPath}/admin?month=10"
+        ${month == '10' ? 'selected' : ''}>
+            Tháng 10
+        </option>
+        <option value="${pageContext.request.contextPath}/admin?month=11"
+        ${month == '11' ? 'selected' : ''}>
+            Tháng 11
+        </option>
+        <option value="${pageContext.request.contextPath}/admin?month=12"
+        ${month == '12' ? 'selected' : ''}>
+            Tháng 12
+        </option>
+    </select>
 
     <div class="stats-grid">
         <div class="stat-card">
-            <span class="title">Doanh thu tháng này</span>
+            <span class="title">Doanh thu tháng ${month}</span>
             <span class="value js-format-price" data-price="${revenue.monthRevenue}"></span>
-            <span class="trend up" >Tổng đơn hoàn thành: ${revenue.orderCount}</span>
+            <span class="trend up">Tổng đơn hoàn thành: ${revenue.orderCount}</span>
         </div>
         <div class="stat-card">
-            <span class="title">Tổng đơn hàng tháng này</span>
+            <span class="title">Tổng đơn hàng tháng ${month}</span>
             <span class="value">${totalOrder}</span>
             <span class="trend up">Hoàn thành: ${revenue.orderCount}</span>
             <span class="trend down">Chưa hoàn thành: ${totalOrder - revenue.orderCount}</span>
@@ -47,6 +98,32 @@
             <span class="value">${lowStockCount}</span>
             <span class="trend down">Cần nhập thêm hàng</span>
         </div>
+    </div>
+
+
+    <div class="recent-orders">
+        <h2>Top 5 sản phẩm tháng ${month}</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Tồn kho</th>
+                <th>Giá</th>
+                <th>Đã bán</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach var="product" items="${popularProducts}">
+                <tr>
+                    <td><strong>${product.name}</strong></td>
+                    <td>${product.stock}</td>
+                    <td><span style="color: #f43232" class="value js-format-price" data-price="${product.price}"></span>
+                    </td>
+                    <td><strong>${product.sold}</strong></td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
     </div>
 
     <div class="recent-orders">
@@ -67,7 +144,8 @@
                 <tr>
                     <td>${order.orderCode}</td>
                     <td>${order.customerName}</td>
-                    <td><span class="value js-format-price" data-price="${order.totalAmount}"></span></td>
+                    <td><span style="color: #f43232" class="value js-format-price"
+                              data-price="${order.totalAmount}"></span></td>
                     <td>
                         <c:choose>
                             <c:when test="${order.orderStatus.name() == 'PENDING'}">
@@ -104,7 +182,6 @@
             </tbody>
         </table>
     </div>
-
 </main>
 
 </body>

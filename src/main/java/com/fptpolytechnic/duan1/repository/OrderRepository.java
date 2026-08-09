@@ -21,37 +21,6 @@ import java.util.List;
 
 public class OrderRepository {
 
-
-
-/*
-*
- TABLE orders(
-    id BIGINT PRIMARY KEY IDENTITY(1001, 1),
-    order_code VARCHAR(255) NOT NULL,
-
-    customer_name NVARCHAR(255) NOT NULL,
-    customer_address NVARCHAR(255) NOT NULL,
-    customer_phone NVARCHAR(255) NOT NULL,
-    customer_note NVARCHAR(255) NOT NULL,
-
-    user_id VARCHAR(255)  REFERENCES users(id),
-
-    total_amount DECIMAL(10, 2),
-
-    order_status VARCHAR(255) NOT NULL,
-    payment_status VARCHAR(255) NOT NULL,
-    payment_method VARCHAR(255) NOT NULL,
-    paid_at DATETIME,
-
-
-    created_at DATETIME,
-    updated_at DATETIME,
-
-    canceled_at DATETIME,
-    cancel_reason NVARCHAR(255),
-* */
-
-
     public Order create(Order order) {
 
         String query = """
@@ -153,17 +122,35 @@ public class OrderRepository {
     }
 
 
-    public List<Order> findAll(int offset, int limit) {
+    public List<Order> findAll(int offset, int limit, String statusName) {
 
-        String query = """
-                       SELECT * FROM orders ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-                """;
+        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM orders ");
+
+
+        boolean isExistStatus = false;
+        if (statusName != null &&  !statusName.trim().isEmpty()) {
+            queryBuilder.append("WHERE order_status=? ORDER BY created_at ");
+            if (!statusName.equals(OrderStatus.PENDING.name())) {
+                queryBuilder.append("DESC ");
+            } else {
+                queryBuilder.append("ASC ");
+            }
+            isExistStatus = true;
+        } else {
+            queryBuilder.append("ORDER BY created_at DESC ");
+        }
+        queryBuilder.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        String query = queryBuilder.toString();
 
         try (var conn = DBContext.getConnection();
              var ps = conn.prepareStatement(query);
         ) {
-            ps.setInt(1, offset);
-            ps.setInt(2, limit);
+            int count = 1;
+            if (isExistStatus) {
+                ps.setString(count++, statusName);
+            }
+            ps.setInt(count++, offset);
+            ps.setInt(count, limit);
             var rs = ps.executeQuery();
             List<Order> orders = new ArrayList<>();
             while (rs.next()) {
@@ -219,10 +206,6 @@ public class OrderRepository {
 
     public void updateCancelInfo(Long orderId, OrderStatus orderStatus, String cancelReason) {
 
-
-        System.out.println("INFO: Order status changed to " + orderStatus.name() + " at OrderRepository.updateCancelInfo");
-        System.out.println("INFO: Cancel Reason: " + cancelReason);
-        System.out.println("INFO: ORDER ID: " + orderId);
         String query = """
                 UPDATE orders 
                 SET order_status=?, canceled_at=?, cancel_reason=?, updated_at=?
@@ -265,19 +248,19 @@ public class OrderRepository {
 
     public int countOrderByUserId(String userId) {
         String query = """
-                SELECT COUNT(*) FROM orders WHERE user_id=?
-        """;
+                        SELECT COUNT(*) FROM orders WHERE user_id=?
+                """;
 
-        try(var conn = DBContext.getConnection();
-            var ps = conn.prepareStatement(query);
-        ){
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ) {
 
             ps.setString(1, userId);
             var rs = ps.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 return rs.getInt(1);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
@@ -285,22 +268,22 @@ public class OrderRepository {
 
     public UserSpendResponse countCompletedOrderByUserId(String userId) {
         String query = """
-                SELECT COUNT(*) AS completed_order, SUM(total_amount) AS total_spend FROM orders WHERE user_id=? AND order_status='COMPLETED'
-        """;
+                        SELECT COUNT(*) AS completed_order, SUM(total_amount) AS total_spend FROM orders WHERE user_id=? AND order_status='COMPLETED'
+                """;
 
-        try(var conn = DBContext.getConnection();
-            var ps = conn.prepareStatement(query);
-        ){
+        try (var conn = DBContext.getConnection();
+             var ps = conn.prepareStatement(query);
+        ) {
 
             ps.setString(1, userId);
             var rs = ps.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 UserSpendResponse userSpendResponse = new UserSpendResponse();
                 userSpendResponse.setCompletedOrder(rs.getInt("completed_order"));
                 userSpendResponse.setTotalSpend(rs.getDouble("total_spend"));
                 return userSpendResponse;
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;

@@ -58,6 +58,18 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
     padding: 25px;
 }
+.filter-select{
+    width: 200px;
+    padding: 12px 15px 12px 40px;
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    background-color: #fbfbfc;
+    transition: all 0.3s;
+    outline: none;
+}
+
 
 .toolbar {
     display: flex;
@@ -66,6 +78,11 @@ body {
     margin-bottom: 20px;
 }
 
+.left{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
 .search-box {
     position: relative;
     width: 350px;

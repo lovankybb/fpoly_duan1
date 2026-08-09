@@ -147,12 +147,12 @@ public class OrderService {
         this.orderRepository.updatePaymentStatus(orderId, paymentStatus);
     }
 
-    public List<Order> findAll(int offset) {
+    public List<Order> findAll(int offset, String orderStatus) throws SQLException {
 
         if (offset < 0) {
             offset = 0;
         }
-        return this.orderRepository.findAll(offset, 20);
+        return this.orderRepository.findAll(offset, 20, orderStatus );
     }
 
     public List<OrderHistoryResponse> getOrderHistory(String userId, int offset) throws SQLException {

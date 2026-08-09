@@ -70,7 +70,11 @@ public class OrderServlet extends HttpServlet {
                 this.responseOrderFailed(req, resp);
                 break;
             case "/admin/orders":
-                this.responseOderManagement(req, resp);
+                try {
+                    this.responseOderManagement(req, resp);
+                } catch (SQLException e) {
+                    resp.sendRedirect(req.getContextPath() + "/error?code=UNCATEGORIZED");
+                }
                 break;
             case "/checkout":
                 this.responseCheckout(req, resp);
@@ -197,7 +201,7 @@ public class OrderServlet extends HttpServlet {
     }
 
 
-    private void responseOderManagement(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void responseOderManagement(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
 
         String offset = req.getParameter("offset");
 
@@ -205,10 +209,15 @@ public class OrderServlet extends HttpServlet {
             offset = "0";
         }
 
-        List<Order> orders = this.orderService.findAll(Integer.parseInt(offset));
+        String orderStatus = req.getParameter("orderStatus");
+        if (offset == null || offset.trim().isEmpty()) {
+            orderStatus = "";
+        }
+        List<Order> orders = this.orderService.findAll(Integer.parseInt(offset), orderStatus);
 
         req.setAttribute("orders", orders);
         req.setAttribute("offset", offset);
+        req.setAttribute("orderStatus", orderStatus);
 
         req.getRequestDispatcher("/views/admin/order.jsp").forward(req, resp);
     }
@@ -276,6 +285,8 @@ public class OrderServlet extends HttpServlet {
 
         if ("BUY_NOW".equals(checkoutType)) {
             this.handleCreateOrder(req, resp, (List<OrderItemResponse>) session.getAttribute("CHECKOUT_ITEMS"));
+            session.removeAttribute("CHECKOUT_ITEMS");
+            session.removeAttribute("CHECKOUT_TYPE");
         } else {
             Authentication authentication = (Authentication) req.getAttribute("authentication");
             User user = userService.findByUsername(authentication.getUsername());
@@ -291,6 +302,12 @@ public class OrderServlet extends HttpServlet {
 
 
         System.out.println("INFO: Processing order......");
+
+        checkoutItems.forEach(item -> {
+            System.out.println("Variant id" +  item.getVariantId() + "Quantity id" +  item.getQuantity());
+        });
+
+
         CheckoutFormDTO form = CheckoutFormDTO.builder()
                 .customerName(req.getParameter("customerName"))
                 .customerPhone(req.getParameter("customerPhone"))
@@ -328,8 +345,8 @@ public class OrderServlet extends HttpServlet {
                     System.out.println("INFO: Order Item: " + item.getVariantId() + " " + item.getQuantity() + " " + item.getPrice());
 
                     totalAmount = totalAmount.add(BigDecimal.valueOf(item.getQuantity()).multiply(BigDecimal.valueOf(item.getPrice())));
-                    System.out.println("INFO: Total Amount: " + totalAmount);
                 }
+                    System.out.println("INFO: Total Amount: " + totalAmount);
                 try {
                     orderService.persistOrderDetail(orderDetails);
                     orderService.updateTotalAmount(order.getId(), totalAmount);
